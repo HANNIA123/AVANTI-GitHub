@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "361833868381",
+    "project_id": "avanti-c4ba7",
+    "storage_bucket": "avanti-c4ba7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361833868381:android:3d8924b14bbe89917031b4",
+        "android_client_info": {
+          "package_name": "com.example.avanti1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEiKDMY8PZLjj-2GXEdzP2r0DLIzRRlQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361833868381:android:ebf1cc2946b672837031b4",
+        "android_client_info": {
+          "package_name": "com.example.avanti2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEiKDMY8PZLjj-2GXEdzP2r0DLIzRRlQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361833868381:android:0214066e831345de7031b4",
+        "android_client_info": {
+          "package_name": "com.example.curdfirestore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEiKDMY8PZLjj-2GXEdzP2r0DLIzRRlQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
