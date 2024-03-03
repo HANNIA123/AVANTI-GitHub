@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
 import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
+import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
 import com.example.curdfirestore.Usuario.resetPassword
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -25,46 +26,52 @@ fun NavGraph(
         startDestination = Screens.Login.route
     ) {
         // main screen
-      composable(
+        composable(
             route = Screens.Login.route
         ) {
-            Login(  navController = navController) {
+            Login(navController = navController) {
                 navController.navigate("home/$it")
                 //-------------------FCM--------------------------------------------
-            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val token = task.result
-                    println("TOKEN")
-                    println(token)
-                    println("ID")
-                    println(it)
-                    sendTokenToServer(it,token)    }
-                else {
-                    println("FCM -> Error al obtener el token: ${task.exception}")    }}
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val token = task.result
+                        println("TOKEN")
+                        println(token)
+                        println("ID")
+                        println(it)
+                        sendTokenToServer(it, token)
+                    } else {
+                        println("FCM -> Error al obtener el token: ${task.exception}")
+                    }
+                }
 
             }
         }
-
-        composable( "home/{useid}"
-        ) {
-            val userId= it.arguments?.getString("useid")?:""
-        obtenerTipoUsuario(navController = navController, userId = userId)
-        // homePantallaConductor(navController = navController, userid = )
-
-        }
-        composable( "cuenta_conductor/{userid}"
-        ) {
-            val userId= it.arguments?.getString("userid")?:""
-            cuentaPantallaCon( navController = navController, userID =userId )
-
-        }
-
-        composable("reset_password"){
+        composable("reset_password") {
             resetPassword(navController = navController)
-    }
+        }
 
+        composable(
+            "home/{useid}"
+        ) {
+            val userId = it.arguments?.getString("useid") ?: ""
+            obtenerTipoUsuario(navController = navController, userId = userId)
+            // homePantallaConductor(navController = navController, userid = )
 
+        }
+        //Pantallas entrando con conductor
+        composable(
+            "cuenta_conductor/{userid}"
+        ) {
+            val userId = it.arguments?.getString("userid") ?: ""
+            cuentaPantallaCon(navController = navController, userID = userId)
 
+        }
+        composable("viaje_inicio/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            viajesInicio(navController = navController, userId = userId)
+
+        }
 
 
     }

@@ -1,4 +1,4 @@
-package com.example.avanti.Usuario.Conductor.Pantallas
+package com.example.curdfirestore.Usuario.Conductor.Pantallas
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -10,14 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,84 +25,61 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.avanti.UserData
-import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
-import com.example.avanti.Usuario.LoginViewModel
-import com.example.avanti.ui.theme.Aplicacion.CoilImage
+import androidx.navigation.compose.rememberNavController
+
 import com.example.avanti.ui.theme.Aplicacion.encabezado
+
+import com.example.avanti.ui.theme.Aplicacion.tituloNoAtras
+
+import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 
+var mhv = 0.dp
 
-var maxh=0.dp
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun cuentaPantallaCon(
+fun viajesInicio(
     navController: NavController,
-    userID:String
-){
-    val usuario= conObtenerUsuarioId(correo = userID)
+    userId: String
 
-    val viewModel= LoginViewModel()
-
-    BoxWithConstraints{
-        maxh = this.maxHeight-50.dp
+) {
+    BoxWithConstraints {
+        mhv = this.maxHeight - 50.dp
     }
-
     Scaffold(
         bottomBar = {
             BottomAppBar(modifier = Modifier.height(45.dp)) {
-menuCon(navController = navController, userID = userID)
-                //pruebaMenu(navController,userID)
+                menuCon(navController = navController, userID =userId )
             }
         }
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
-                .height(maxh)
+                .height(mhv)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
 
-            ){
-            encabezado()
+            tituloNoAtras(Titulo = "Viajes", navController = navController)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
-
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(30.dp)
             ) {
-                usuario?.let {
-                // Cargar y mostrar la imagen con Coil
-                CoilImage(
-                    url = usuario!!.usu_foto, modifier = Modifier
 
-                        .clip(CircleShape)
-                        .size(200.dp)
-                )
-
-
-                Text(
-                    text = "${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido} ${usuario!!.usu_segundo_apellido}",
-                    style = TextStyle(
-                        color = Color(71, 12, 107),
-                        fontSize = 28.sp,
-                        textAlign = TextAlign.Center
-
-                    )
-                )
-
-                //Botones del inicio
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(
@@ -112,18 +88,18 @@ menuCon(navController = navController, userID = userID)
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        navController.navigate(route = "perfil_conductor/$userID")
 
+                        navController.navigate(route = "registrar_viaje_conductor/$userId")
                     }) {
                     Icon(
-                        imageVector = Icons.Filled.AccountCircle,
+                        imageVector = Icons.Filled.Edit,
                         contentDescription = null,
                         modifier = Modifier
                             .size(50.dp),
                         tint = Color(137, 13, 88),
                     )
                     Text(
-                        text = "Mi perfil",
+                        text = "Registrar viaje",
                         textAlign = TextAlign.Left,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -135,7 +111,8 @@ menuCon(navController = navController, userID = userID)
                             )
                     )
                 }
-                //Notificaciones
+
+
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(
@@ -144,17 +121,18 @@ menuCon(navController = navController, userID = userID)
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        navController.navigate(route = "ver_notificaciones_conductor/$userID")
+                        //navController.navigate(route = "ver_itinerario_conductor/$userId")
+
                     }) {
                     Icon(
-                        imageVector = Icons.Filled.Notifications,
+                        imageVector = Icons.Filled.DateRange,
                         contentDescription = null,
                         modifier = Modifier
                             .size(50.dp),
                         tint = Color(137, 13, 88),
                     )
                     Text(
-                        text = "Notificaciones",
+                        text = "Visualizar itinerario",
                         textAlign = TextAlign.Left,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -162,7 +140,41 @@ menuCon(navController = navController, userID = userID)
                         style = TextStyle(
                             fontSize = 20.sp,
                             color = Color(137, 13, 88),
+
+                            )
+                    )
+                }
+
+                //Agregado 15/12/2023
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(
+                            238, 236, 239
                         )
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+
+                        //navController.navigate(route = "ver_solicitudes_conductor/$correo")
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.solicitud),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(50.dp),
+                        tint = Color(137, 13, 88),
+                    )
+                    Text(
+                        text = "Solicitudes",
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 30.dp),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            color = Color(137, 13, 88),
+
+                            )
                     )
                 }
 
@@ -174,19 +186,18 @@ menuCon(navController = navController, userID = userID)
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        viewModel.signOut()
-                        navController.navigate(route = "login")
-                        println("Se ha cerrado")
+
+                       // navController.navigate(route = "ver_pasajeros_conductor/$userId")
                     }) {
                     Icon(
-                        imageVector = Icons.Filled.ExitToApp,
+                        painter = painterResource(id = R.drawable.users),
                         contentDescription = null,
                         modifier = Modifier
                             .size(50.dp),
                         tint = Color(137, 13, 88),
                     )
                     Text(
-                        text = "Cerrar sesión",
+                        text = "Pasajeros",
                         textAlign = TextAlign.Left,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -194,16 +205,36 @@ menuCon(navController = navController, userID = userID)
                         style = TextStyle(
                             fontSize = 20.sp,
                             color = Color(137, 13, 88),
-                        )
-                    )
 
+                            )
+                    )
                 }
 
-                //Fin de botones inicio
-
-
-            }
             }
         }
     }
 }
+
+
+@Preview(showBackground = true)
+@Composable
+fun MyComposablePreviewHomeViaje() {
+    // Esta función se utiliza para la vista previa
+    var correo = "hplayasr1700@alumno.ipn.mx"
+    val navController = rememberNavController()
+ viajesInicio(navController = navController, userId =correo )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

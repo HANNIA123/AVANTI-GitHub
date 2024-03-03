@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,7 +61,7 @@ fun encabezado(){
 }
 
 @Composable
-fun TituloPantalla(Titulo: String,
+fun tituloAtras(Titulo: String,
                    navController: NavController
 ){
     Row {
@@ -99,59 +101,36 @@ fun TituloPantalla(Titulo: String,
         encabezado()
     }
 }
-
 @Composable
-fun menuCon(
-    navController: NavController,
-    userID:String
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround,
-    ) {
-        IconButton(onClick = {
+fun tituloNoAtras(Titulo: String,
+                navController: NavController
+){
+    Row {
+        Row (
+            modifier = Modifier
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){
 
-            navController.navigate(route = "home/$userID")
-        }) {
-            Icon(
-                modifier = Modifier
-                    .size(35.dp),
-                imageVector = Icons.Filled.Home,
-                contentDescription = "Icono Home- inicio de viajes",
-                tint = Color(137, 13, 88),
+
+
+            Text(
+                text= Titulo,  style = TextStyle(
+                    color= Color(71, 12, 107),
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+
+
 
                 )
-        }
-        IconButton(onClick = {
-
-            navController.navigate(route = "cuenta_conductor/$userID")
-        }) {
-            Icon(
-                modifier = Modifier
-                    .size(35.dp),
-
-                painter = painterResource(id = R.drawable.car),
-                contentDescription = "Icono Viajes",
-                tint = Color(137, 13, 88)
             )
+
         }
-        IconButton(onClick = {
-
-            navController.navigate(route = "cuenta_conductor/$userID")
-        }) {
-
-            Icon(
-                modifier = Modifier
-                    .size(35.dp),
-                painter = painterResource(id = R.drawable.btuser),
-                contentDescription = "Icono Usuario",
-                tint = Color(137, 13, 88),
-
-                )
-        }
+        encabezado()
     }
 }
+
 @Composable
 fun CoilImage(url: String, modifier: Modifier = Modifier) {
     Image(

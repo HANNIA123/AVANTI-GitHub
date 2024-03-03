@@ -106,9 +106,9 @@ fun Login(
                     email = it
                     nameError = false //2
                 },
-                label = { Text("Correo electónico",
+                label = { Text("Correo electrónico",
                     style = TextStyle(
-                        fontSize = 20.sp
+                        fontSize = 18.sp
                     )
                     ) },
                 isError = nameError, //3
@@ -150,7 +150,7 @@ fun Login(
                 },
                 label = { Text("Contraseña",
                     style = TextStyle(
-                        fontSize = 20.sp
+                        fontSize = 18.sp
                     )
                 )},
                 isError = nameError1, // 3

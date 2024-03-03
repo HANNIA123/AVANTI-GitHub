@@ -5,8 +5,10 @@ package com.example.avanti.Usuario.Conductor.Pantallas
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,10 +37,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.curdfirestore.R
 import com.example.avanti.ui.theme.Aplicacion.encabezado
-import com.example.avanti.ui.theme.Aplicacion.menuCon
 import com.example.avanti.ui.theme.Aplicacion.obtenerDiaDeLaSemanaActual
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
-
+import com.example.curdfirestore.Usuario.Conductor.menuCon
+import com.example.curdfirestore.Usuario.Conductor.tituloPantallaInicio
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -49,9 +52,6 @@ fun homePantallaConductor(
     ) {
     // Obtén el Painter desde la ruta específica
     val painter: Painter = painterResource(R.drawable.hecho)
-    var viajeVacio = true //variable para prueba
-    var diaActual = obtenerDiaDeLaSemanaActual()
-    var fechaHoy= obtenerFechaHoyCompleto()
 
     BoxWithConstraints {
         maxh = this.maxHeight - 55.dp
@@ -73,22 +73,14 @@ fun homePantallaConductor(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            encabezado()
+            tituloPantallaInicio()
             Column(
                 modifier = Modifier
                     .padding(20.dp, 0.dp)
 
             ) {
 
-                Text(
-                    text = fechaHoy,
-                    style = TextStyle(
-                        color = Color(71, 12, 107),
-                        fontSize = 28.sp,
-                        textAlign = TextAlign.Start
 
-                    )
-                )
 Spacer(modifier = Modifier.height(30.dp))
                 // Muestra la imagen usando el componente Image
                 Image(
@@ -102,7 +94,7 @@ Spacer(modifier = Modifier.height(30.dp))
                 Spacer(modifier = Modifier.height(30.dp))
 
                 Text(
-                    text = "Aquí aparecerán los viajes que estén proximos a comenzar",
+                    text = "Aquí aparecerán los viajes que estén próximos a comenzar",
                     style = TextStyle(
                         color = Color(71, 12, 107),
                         fontSize = 18.sp,
