@@ -17,7 +17,6 @@ fun conObtenerVehiculoId(correo: String): VehicleData? {
         mutableStateOf(false)
     }
     var vehiculo by remember { mutableStateOf<VehicleData?>(null) }
-
     LaunchedEffect(key1 = true) {
         try {
             val resultadoVehiculo = RetrofitClientUsuario.apiService.obtenerVehiculo(correo)

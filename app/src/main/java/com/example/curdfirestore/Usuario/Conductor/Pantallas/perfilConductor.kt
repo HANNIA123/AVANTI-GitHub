@@ -115,10 +115,10 @@ fun perfilConductor(
                             IconButton(
                                 modifier = Modifier.offset(y = -10.dp),
                                 onClick = {
-                                    navController.navigate(route = "cambiar_password_con/$userId")
+                                    navController.navigate(route = "modificar_password_conductor/$userId")
                                 }) {
                                 Icon(
-                                    modifier = Modifier.size(20.dp),
+                                    modifier = Modifier.size(30.dp),
                                     imageVector = Icons.Filled.KeyboardArrowRight,
                                     contentDescription = "Icono Usuario",
                                     tint = Color(104, 104, 104),
