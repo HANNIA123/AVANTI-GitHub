@@ -30,8 +30,6 @@ interface ApiServiceUsuario {
     @GET("$newUrl/api/usuario/obtener/{id}")
     suspend fun obtenerUsuario(@Path("id") usuarioId: String): UserData //Obtiene los datos de un id dado
 
-
-
-    @GET("$newUrl/api/vehiculo/{id}")
+    @GET("$newUrl/api/vehiculo/obtener/{id}")
     suspend fun obtenerVehiculo(@Path("id") vehiculoId: String): VehicleData //Obtiene los datos de un id dado
 }
