@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,10 +29,10 @@ fun InfTextos(Title: String, Inf: String ){
             .offset(x = 30.dp)
             .padding(2.dp),
         style = TextStyle(
-            color = Color(106, 106, 108),
+            color = Color(93, 93, 93),
             fontSize = 18.sp,
             textAlign = TextAlign.Start,
-            fontWeight = FontWeight.Light
+
         )
     )
 
