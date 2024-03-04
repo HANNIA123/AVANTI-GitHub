@@ -2,6 +2,7 @@ package com.example.avanti.ui.theme.Aplicacion
 
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -91,8 +92,10 @@ fun tituloAtras(Titulo: String,
             Text(
                 text= Titulo,  style = TextStyle(
                     color= Color(71, 12, 107),
-                    fontSize = 28.sp,
-                    textAlign = TextAlign.Center
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+
+
 
                 )
             )
@@ -140,3 +143,22 @@ fun CoilImage(url: String, modifier: Modifier = Modifier) {
     )
 }
 
+@Composable
+fun lineaGris(){
+    Box(
+        modifier = Modifier
+            .width(350.dp)
+            .height(1.dp)
+            //.align(Alignment.CenterHorizontally)
+            .background(Color(222, 222, 222))
+
+    )
+}
+
+
+@Composable
+fun nombreCompleto(nombre: String, apellidop: String, apellidom: String):String {
+    var fn: String
+    fn= nombre+" "+ apellidop+ " "+ apellidom
+    return  fn
+}

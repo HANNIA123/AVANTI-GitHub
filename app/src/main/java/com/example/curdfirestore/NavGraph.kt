@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
 import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
+import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
 import com.example.curdfirestore.Usuario.resetPassword
 import com.google.firebase.firestore.ktx.firestore
@@ -68,6 +69,18 @@ fun NavGraph(
 
         }
         composable("viaje_inicio/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            viajesInicio(navController = navController, userId = userId)
+
+        }
+
+        composable("perfil_conductor/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            perfilConductor(navController = navController, userId = userId)
+
+        }
+
+        composable("modificar_password_conductor/{userid}") {
             val userId = it.arguments?.getString("userid") ?: ""
             viajesInicio(navController = navController, userId = userId)
 
