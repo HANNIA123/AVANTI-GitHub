@@ -89,7 +89,7 @@ fun viajesInicio(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
 
-                        navController.navigate(route = "registrar_viaje_conductor/$userId")
+                        navController.navigate(route = "general_viaje_conductor/$userId")
                     }) {
                     Icon(
                         imageVector = Icons.Filled.Edit,

@@ -14,6 +14,8 @@ import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCo
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
 import com.example.curdfirestore.Usuario.resetPassword
+
+import com.example.curdfirestore.Viaje.generalViajeCon
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -86,6 +88,17 @@ fun NavGraph(
             modificarPasswordCon(navController = navController, userId = userId)
 
         }
+
+        //Agregado por Hannia
+        //04/03/2024
+        composable("general_viaje_conductor/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            generalViajeCon(navController = navController, userId = userId)
+
+        }
+
+
+        //fin Hannia
 
 
     }
