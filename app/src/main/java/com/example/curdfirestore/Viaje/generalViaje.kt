@@ -99,7 +99,7 @@ import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
 import com.example.avanti.Usuario.Conductor.Pantallas.maxh
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.Usuario.LoginViewModel
-import com.example.avanti.ui.theme.Aplicacion.encabezado
+import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.tituloNoAtras
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.mhv
@@ -124,28 +124,9 @@ fun generalViajeCon(
     var isDrawerVisible by remember { mutableStateOf(false) }
 
     Scaffold(
-        /*
-        topBar = {
-            TopAppBar(
-                title = {  },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { expanded = !expanded },
-                        modifier = Modifier.padding(start = 13.dp)
 
-                    ) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Open menu",
-                            tint = Color.White,
-                            modifier=Modifier.size(40.dp)
-                        )
-                    }
-                }
-            )
-        },
-        */
 
     ) {
-
 
         var selectedIndex by remember { mutableStateOf(0) }
 
@@ -513,7 +494,7 @@ fun generalViajeCon(
 
         // Diálogo para la selección de días
         if (showDialogTrayecto) {
-            trayectoSelectionDialog(
+            dialogoSeleccionTrayecto(
                 onDismiss = { showDialogTrayecto = false },
                 onDaysSelected = { selectedTrayecto = it }
             )
@@ -546,95 +527,6 @@ menuDesplegableCon(onDismiss = { expanded = false },
 
 
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun trayectoSelectionDialog(
-    onDismiss: () -> Unit,
-    onDaysSelected: (Set<Int>) -> Unit
-) {
-    var selectedDay by remember { mutableStateOf(0) }
-
-    Dialog(
-
-        onDismissRequest = { onDismiss() },
-
-        ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(15.dp)
-                .border(3.dp, Color.LightGray),
-            //.padding(16.dp)
-
-        ) {
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "Selecciona un tipo de trayecto",
-                textAlign = TextAlign.Left,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    color = Color.Black
-
-                )
-            )
-            Spacer(modifier = Modifier.height(30.dp))
-
-            // Lista de días de la semana
-            val daysOfWeek = listOf("UPIITA como origen", "UPIITA como destino")
-
-            // Botones para seleccionar/deseleccionar días
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(200.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                items(daysOfWeek.size) { index ->
-                    val isSelected = index + 1 == selectedDay
-                    DayButton(
-                        day = daysOfWeek[index],
-                        isSelected = isSelected,
-                        onToggle = {
-                            selectedDay = if (isSelected) 0 else index + 1
-                        }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(25.dp))
-            // Botón de confirmación
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(137, 13, 86)
-                    ),
-
-                    onClick = {
-                        onDaysSelected(if (selectedDay != 0) setOf(selectedDay) else emptySet())
-                        onDismiss()
-                    }
-
-                ) {
-
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        "Confirmar",
-                        style = TextStyle(Color.White)
-                    )
-                }
-            }
-        }
-    }
-}
 
 
 @Composable
@@ -669,35 +561,6 @@ fun DayButton(
     }
 }
 
-@Composable
-fun MenuDrawer(onClose: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .width(200.dp)
-            .fillMaxHeight()
-
-    ) {
-        // Drawer content
-        Text(
-            text = "Menu Item 1",
-
-            modifier = Modifier.padding(16.dp)
-        )
-        Text(
-            text = "Menu Item 2",
-
-            modifier = Modifier.padding(16.dp)
-        )
-        // Add more menu items as needed...
-
-        // Close the drawer when any part of the screen is clicked
-        DisposableEffect(Unit) {
-            onDispose {
-                onClose()
-            }
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,7 +20,6 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,16 +33,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.Usuario.LoginViewModel
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
-import com.example.avanti.ui.theme.Aplicacion.encabezado
+import com.example.avanti.ui.theme.Aplicacion.cabecera
+
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 
 
 var maxh=0.dp
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun cuentaPantallaCon(
@@ -74,27 +73,24 @@ menuCon(navController = navController, userID = userID)
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ){
-            encabezado()
+cabecera(titulo = "Cuenta")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
-
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 usuario?.let {
                 // Cargar y mostrar la imagen con Coil
                 CoilImage(
-                    url = usuario!!.usu_foto, modifier = Modifier
-
+                    url = usuario.usu_foto, modifier = Modifier
                         .clip(CircleShape)
                         .size(200.dp)
                 )
 
-
                 Text(
-                    text = "${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido} ${usuario!!.usu_segundo_apellido}",
+                    text = "${usuario.usu_nombre} ${usuario.usu_primer_apellido} ${usuario.usu_segundo_apellido}",
                     style = TextStyle(
                         color = Color(71, 12, 107),
                         fontSize = 28.sp,
@@ -102,6 +98,7 @@ menuCon(navController = navController, userID = userID)
 
                     )
                 )
+
 
                 //Botones del inicio
                 Button(
@@ -135,6 +132,7 @@ menuCon(navController = navController, userID = userID)
                             )
                     )
                 }
+                    Spacer(modifier=Modifier.height(10.dp))
                 //Notificaciones
                 Button(
                     colors = ButtonDefaults.buttonColors(
@@ -165,7 +163,7 @@ menuCon(navController = navController, userID = userID)
                         )
                     )
                 }
-
+                    Spacer(modifier=Modifier.height(10.dp))
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(

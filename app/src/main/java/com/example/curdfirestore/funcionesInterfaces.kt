@@ -34,30 +34,45 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.curdfirestore.R
 
 @Composable
-fun encabezado(){
+fun cabecera(titulo:String){
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp),
-        contentAlignment = Alignment.TopEnd
+            .fillMaxWidth(),
     )
     {
         Image(
             modifier = Modifier
-                .width(100.dp),
-            painter = painterResource(id = R.drawable.elipselado),
+                .fillMaxWidth()
+                .height(80.dp),
+            painter = painterResource(id = R.drawable.fondorec),
             contentDescription = "Fondo inicial",
-            contentScale = ContentScale.FillWidth
-
+            contentScale = ContentScale.FillBounds
         )
-        Image(
+        Row(
             modifier = Modifier
-                .width(75.dp)
-                .padding(5.dp, 5.dp, 10.dp, 5.dp),
-            painter = painterResource(id = R.drawable.logoavanti),
-            contentDescription = "Logo",
-            contentScale = ContentScale.FillWidth
-        )
+                .padding(18.dp, 10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = titulo,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.weight(1f)
+            )
+            Image(
+                modifier = Modifier.size(60.dp),
+                painter = painterResource(id = R.drawable.logoavanti),
+                contentDescription = "Logo de Avanti",
+                contentScale = ContentScale.FillBounds
+            )
+        }
+
+
     }
 }
 
@@ -101,7 +116,7 @@ fun tituloAtras(Titulo: String,
             )
 
         }
-        encabezado()
+        cabecera(Titulo)
     }
 }
 @Composable
@@ -130,7 +145,7 @@ fun tituloNoAtras(Titulo: String,
             )
 
         }
-        encabezado()
+        cabecera(Titulo)
     }
 }
 

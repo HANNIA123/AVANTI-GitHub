@@ -141,3 +141,116 @@ fun dialogSeleccionDia(
 
     }
 }
+
+@Composable
+fun dialogoSeleccionTrayecto(
+    onDismiss: () -> Unit,
+    onDaysSelected: (Set<Int>) -> Unit
+) {
+    var selectedTrayecto by remember { mutableStateOf(0) }
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f)),
+
+        ) {
+
+
+
+        Dialog(
+            onDismissRequest = {
+                onDismiss()
+
+                //expanded = false
+            }, // Cierra el diálogo al tocar fuera de él
+            content = {
+                // Contenido del diálogo
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(15.dp)
+
+
+
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = "Selecciona el trayecto",
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            color = Color.Black
+
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    // Lista de días de la semana
+                    val daysOfWeek =
+                        listOf("UPIITA como origen",
+                            "UPIITA como destino")
+
+                    // Botones para seleccionar/deseleccionar días
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(230.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        items(daysOfWeek.size) { index ->
+                            val isSelected = index + 1 == selectedTrayecto
+                            DayButton(
+                                day = daysOfWeek[index],
+                                isSelected = isSelected,
+                                onToggle = {
+                                    selectedTrayecto = if (isSelected) 0 else index + 1
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(25.dp))
+                    // Botón de confirmación
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color(137, 13, 86)
+                            ),
+
+                            onClick = {
+                                onDaysSelected(if (selectedTrayecto != 0) setOf(selectedTrayecto) else emptySet())
+                                onDismiss()
+                            }
+
+                        ) {
+
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                "Confirmar",
+                                style = TextStyle(
+                                    Color.White
+
+                                ),
+                                fontSize = 20.sp
+
+                            )
+                        }
+                    }
+                }
+            },
+
+            )
+
+    }
+}
