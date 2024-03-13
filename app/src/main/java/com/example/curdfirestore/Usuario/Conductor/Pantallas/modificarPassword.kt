@@ -95,6 +95,7 @@ fun modificarPasswordCon(
     var showDialog by remember { mutableStateOf(false) }
 
     // Función para actualizar la variable passwordsMatch
+
     fun actualizarPassword(password: String, confirm: String) {
         passwordsMatch = password == confirm
     }
@@ -406,7 +407,7 @@ fun modificarPasswordCon(
     currentUser: FirebaseUser?,
     newPassword: TextFieldValue,
     confirmPassword: TextFieldValue
-) {
+    ) {
     if (newPassword.text == confirmPassword.text) {
         currentUser?.updatePassword(newPassword.text)?.addOnCompleteListener { updatePasswordTask ->
             if (updatePasswordTask.isSuccessful) {
