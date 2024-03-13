@@ -1,11 +1,13 @@
-package com.example.curdfirestore.Viaje
+package com.example.curdfirestore.Viaje.Pantallas
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
+import android.os.Build
+
+import androidx.annotation.RequiresApi
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
 
@@ -15,228 +17,213 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 
 
-
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+
+
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.TextButton
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.BottomAppBar
+
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
+
+
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.DropdownMenu
+
+
+import androidx.compose.material3.ExperimentalMaterial3Api
+
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+
+
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.HorizontalAlignmentLine
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
+
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
+
 import com.example.avanti.Usuario.Conductor.Pantallas.maxh
-import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
-import com.example.avanti.Usuario.LoginViewModel
-import com.example.avanti.ui.theme.Aplicacion.cabecera
-import com.example.avanti.ui.theme.Aplicacion.tituloNoAtras
+import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
+
 import com.example.curdfirestore.R
-import com.example.curdfirestore.Usuario.Conductor.Pantallas.mhv
-import com.example.curdfirestore.Usuario.Conductor.menuCon
-import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
-import kotlinx.coroutines.launch
-import okhttp3.internal.wait
+
+import com.example.curdfirestore.Viaje.convertirADia
+import com.example.curdfirestore.Viaje.convertirATrayecto
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import java.time.LocalTime
 
 
 //Pantalla para agregar el formulario con la información general del viaje
-@OptIn(ExperimentalComposeUiApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun generalViajeCon(
     navController: NavController,
     userId: String
 ) {
+    
+
+    var selectedHoraInicio by remember {
+        mutableStateOf("")
+    }
+    var selectedHoraFin by remember {
+        mutableStateOf("")
+    }
+
+    var pickedTimeInicio by remember {
+        mutableStateOf(LocalTime.now())
+    }
+    var pickedTimeFin by remember {
+        mutableStateOf(LocalTime.now())
+    }
+    var isDialogOpenInicio by remember { mutableStateOf(false) }
+    var isDialogOpenFin by remember { mutableStateOf(false) }
+
+    val timeDialogStateInicio = rememberMaterialDialogState(isDialogOpenInicio)
+    val timeDialogStateFin = rememberMaterialDialogState(isDialogOpenFin)
+
+
+    var tamEspacio = 18.dp
+    var tamIcono = 55.dp
+
+    var showDialogDia by remember { mutableStateOf(false) }
+    var selectedDays by remember { mutableStateOf(emptySet<Int>()) }
+
+    var showDialogTrayecto by remember { mutableStateOf(false) }
+    var selectedTrayecto by remember { mutableStateOf(emptySet<Int>()) }
+
+
+    var showDialogTarifa by remember { mutableStateOf(false) }
+    var selectedTarifa by remember {
+        mutableStateOf("")
+    }
+
+    var showDialogLugares by remember {
+        mutableStateOf(false)
+    }
+    var selectedLugares by remember {
+        mutableStateOf("")
+    }
+
+
+
+
+
     var expanded by remember { mutableStateOf(false) }
     BoxWithConstraints {
         maxh = this.maxHeight
     }
-    var isDrawerVisible by remember { mutableStateOf(false) }
+    var tarifa by remember {
+        mutableStateOf("Tarifa del viaje")
+    }
+
+    var lugares by remember {
+        mutableStateOf("Lugares disponibles")
+    }
+    var dia by remember {
+        mutableStateOf("Día del viaje")
+    }
+    var trayecto by remember {
+        mutableStateOf("Tipo de trayecto")
+    }
+    var horaInicio by remember {
+        mutableStateOf("Hora de inicio del viaje")
+    }
+    var horaFin by remember {
+        mutableStateOf("Hora de termino del viaje")
+    }
+
+    if(selectedTarifa!=""){
+tarifa="Tarifa: $$selectedTarifa "
+    }
+    if(selectedLugares!=""){
+        lugares="Lugares: $selectedLugares "
+    }
+if(selectedHoraInicio!=""){
+    horaInicio="Inicio del viaje: $selectedHoraInicio hrs "
+}
+    if(selectedHoraFin!=""){
+        horaFin="Fin del viaje: $selectedHoraFin hrs"
+    }
 
     Scaffold(
 
 
     ) {
 
-        var selectedIndex by remember { mutableStateOf(0) }
-
-        var tamEspacio = 23.dp
-        var tamIcono = 55.dp
-
-        var showDialogDia by remember { mutableStateOf(false) }
-        var selectedDays by remember { mutableStateOf(emptySet<Int>()) }
-
-        var showDialogTrayecto by remember { mutableStateOf(false) }
-        var selectedTrayecto by remember { mutableStateOf(emptySet<Int>()) }
-
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-
-
                 .background(
-
-
-                    Color.White // Cambiar a tu color cuando la condición es falsa
-
-
+                    Color(239, 239, 239)
                 )
-
                 .height(maxh)
                 .verticalScroll(rememberScrollState()),
-
             horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
 
-            ) {
+            cabeceraConBotonAtras(titulo = "Regsitro de viaje", navController = navController)
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(maxh - 80.dp),
                 contentAlignment = Alignment.TopCenter
             )
             {
-
-
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    painter = painterResource(id = R.drawable.fondorec),
-                    contentDescription = "Fondo inicial",
-                    contentScale = ContentScale.FillBounds
-                )
-
-                IconButton(
-                    //  backgroundColor = Color.Black.copy(alpha = 0.0f),
-                    onClick = { expanded = !expanded },
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .offset(x = -165.dp)
-
-                ) {
-                    Icon(
-                        Icons.Filled.Menu, contentDescription = "Open menu",
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-
-
                 Column(
                     modifier = Modifier
-
-                        .padding(20.dp, 60.dp, 20.dp, 20.dp)
+                        .padding(20.dp)
                         .background(
-
-                            Color.White // Cambiar a tu color cuando la condición es falsa
-
-
+                            Color.White
                         )
-
                 )
                 {
-
-
-                    Column(modifier = Modifier.padding(10.dp)) {
-
-
-//Otro menu
-
-
-                        //
-
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-
-
-                            Text(
-                                text = "Registro de viaje",
-                                style = TextStyle(
-                                    color = Color(71, 12, 107),
-                                    fontSize = 30.sp,
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                modifier = Modifier.weight(1f) // El texto ocupará el espacio restante
-                            )
-
-
-                        }
+                    Column(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxHeight()
+                    ) {
 
                         Spacer(modifier = Modifier.height(tamEspacio))
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -251,6 +238,8 @@ fun generalViajeCon(
                                 }
 
                         ) {
+
+
                             Icon(
                                 imageVector = Icons.Filled.DateRange,
                                 contentDescription = "Icono días",
@@ -260,7 +249,7 @@ fun generalViajeCon(
                                 tint = Color(137, 13, 86)
                             )
                             Text(
-                                text = "Seleccionar día",
+                                text = dia,
                                 textAlign = TextAlign.Left,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -297,7 +286,7 @@ fun generalViajeCon(
                                 tint = Color(137, 13, 86)
                             )
                             Text(
-                                text = "Seleccionar trayecto",
+                                text = trayecto,
                                 textAlign = TextAlign.Left,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -311,7 +300,6 @@ fun generalViajeCon(
 
                         }
 
-
                         Spacer(modifier = Modifier.height(tamEspacio))
                         Row(
                             modifier = Modifier
@@ -321,7 +309,9 @@ fun generalViajeCon(
                                     Color.LightGray
                                 )
                                 .clickable {
-                                    showDialogTrayecto = true
+                                    timeDialogStateInicio.show()
+                                    //dialogReloj = true
+                                    isDialogOpenInicio = true
 
                                 }
 
@@ -336,7 +326,7 @@ fun generalViajeCon(
                                 tint = Color(137, 13, 86)
                             )
                             Text(
-                                text = "Seleccionar horario",
+                                text = horaInicio,
                                 textAlign = TextAlign.Left,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -350,6 +340,45 @@ fun generalViajeCon(
 
                         }
 
+                        Spacer(modifier = Modifier.height(tamEspacio))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(
+                                    1.dp,
+                                    Color.LightGray
+                                )
+                                .clickable {
+                                    timeDialogStateFin.show()
+                                    //dialogReloj = true
+                                    isDialogOpenFin = true
+
+                                }
+
+                        ) {
+                            Icon(
+
+                                painter = painterResource(id = R.drawable.clock),
+                                contentDescription = "Icono horario",
+                                modifier = Modifier
+                                    .size(tamIcono)
+                                    .padding(10.dp, 5.dp),
+                                tint = Color(137, 13, 86)
+                            )
+                            Text(
+                                text = horaFin,
+                                textAlign = TextAlign.Left,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(30.dp, 15.dp, 10.dp, 10.dp),
+                                style = TextStyle(
+                                    fontSize = 20.sp,
+                                    color = Color.Black
+
+                                )
+                            )
+
+                        }
 
                         Spacer(modifier = Modifier.height(tamEspacio))
                         Row(
@@ -360,7 +389,7 @@ fun generalViajeCon(
                                     Color.LightGray
                                 )
                                 .clickable {
-                                    showDialogTrayecto = true
+                                    showDialogLugares = true
 
                                 }
 
@@ -375,7 +404,7 @@ fun generalViajeCon(
                                 tint = Color(137, 13, 86)
                             )
                             Text(
-                                text = "Lugares disponibles",
+                                text = lugares,
                                 textAlign = TextAlign.Left,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -390,6 +419,7 @@ fun generalViajeCon(
                         }
 
                         Spacer(modifier = Modifier.height(tamEspacio))
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -398,9 +428,10 @@ fun generalViajeCon(
                                     Color.LightGray
                                 )
                                 .clickable {
-                                    showDialogTrayecto = true
+                                    showDialogTarifa = true
 
-                                }
+                                },
+
 
                         ) {
                             Icon(
@@ -412,7 +443,8 @@ fun generalViajeCon(
                                 tint = Color(137, 13, 86)
                             )
                             Text(
-                                text = "Tarifa del viaje",
+                                text = tarifa,
+
                                 textAlign = TextAlign.Left,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -428,55 +460,44 @@ fun generalViajeCon(
 
                         Spacer(modifier = Modifier.height(tamEspacio))
 
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(
-                                    137,
-                                    13,
-                                    88
-                                )
-                            ),
-                            onClick = {
-
-                            },
-                            modifier = Modifier.fillMaxWidth()
-
-                        ) {
-                            androidx.compose.material.Text(
-                                text = "Siguiente", style = TextStyle(
-                                    fontSize = 20.sp,
-                                    color = Color.White
-                                )
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(15.dp))
-                        //atras
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(
-                                    220,
-                                    219,
-                                    219
-                                )
-                            ),
-                            onClick = {
-
-                            },
-                            modifier = Modifier.fillMaxWidth()
-
-                        ) {
-                            Text(
-                                text = "Atrás", style = TextStyle(
-                                    fontSize = 20.sp,
-                                    color = Color(137, 13, 88)
-                                )
-                            )
-                        }
-
                     }
-
                 }
 
+
+
+                Column(
+                    modifier = Modifier
+                        .padding(40.dp,20.dp)
+                        .align(Alignment.BottomCenter)
+
+                ) {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(
+                                137,
+                                13,
+                                88
+                            )
+                        ),
+                        onClick = {
+
+                        },
+                        modifier = Modifier.fillMaxWidth()
+
+
+
+                    ) {
+                        androidx.compose.material.Text(
+                            text = "Siguiente", style = TextStyle(
+                                fontSize = 20.sp,
+                                color = Color.White
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                }
 
 
 
@@ -487,10 +508,7 @@ fun generalViajeCon(
 
         }
 
-        // Mostrar días seleccionados
-        if (selectedTrayecto.isNotEmpty()) {
-            Text("Trayecto seleccionados: ${selectedTrayecto.joinToString(", ")}")
-        }
+
 
         // Diálogo para la selección de días
         if (showDialogTrayecto) {
@@ -499,34 +517,126 @@ fun generalViajeCon(
                 onDaysSelected = { selectedTrayecto = it }
             )
         }
+
+        if (selectedTrayecto.isNotEmpty()) {
+            var trayectoCon= convertirATrayecto(numTrayecto = selectedTrayecto)
+            trayecto= "Trayecto: $trayectoCon"
+
+
+        }
         // Mostrar días seleccionados
         if (selectedDays.isNotEmpty()) {
-            Text("Días seleccionados: ${selectedDays.joinToString(", ")}")
+           var diaCon= convertirADia(numDia = selectedDays)
+            dia= "Día del viaje: $diaCon"
+
         }
+        
+
+
 
         // Diálogo para la selección de días
         if (showDialogDia) {
-            dialogSeleccionDia(
+           dialogSeleccionDia(
                 onDismiss = { showDialogDia = false },
                 onDaysSelected = { selectedDays = it }
+           )
+        }
+
+        if (showDialogLugares) {
+            dialogoSeleccionLugares(
+                onDismiss = { showDialogLugares = false },
+                numLugares = { nuevoLugares ->
+                    // Actualizar la variable de estado con el nuevo valor de la tarifa
+                    selectedLugares = nuevoLugares
+                }
+                )
+        }
+
+
+        // Diálogo para la tarifa
+        if (showDialogTarifa) {
+            dialogoTarifa(
+                onDismiss = {  showDialogTarifa = false },
+                newTarifia = { nuevaTarifa ->
+                    // Actualizar la variable de estado con el nuevo valor de la tarifa
+                    selectedTarifa = nuevaTarifa
+                }
             )
         }
 
 
-        // Contenido principal de la pantalla
-        if (expanded) {
-menuDesplegableCon(onDismiss = { expanded = false },
-    navController = navController, userID = userId)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    if (timeDialogStateInicio.showing) {
+                        Color.Black.copy(alpha = 0.5f)
+                    } else {
+                        Color.Black.copy(alpha = 0.0f)
+                    }
+                ) // Fondo oscuro con transparencia
+        ) {
+            MaterialDialog(
+                dialogState = timeDialogStateInicio,
+                buttons = {
+                    positiveButton(
+                        text = "Aceptar",
+                        )
+                    negativeButton(text = "Cancelar")
+                }
+            ) {
 
+                timepicker(
+                    initialTime = LocalTime.NOON,
+                    title = "Selecciona el horario de inicio del viaje",
+
+                    ) {
+                    pickedTimeInicio = it
+                    selectedHoraInicio=pickedTimeInicio.toString()
+                }
+            }
+        }
+
+        ///
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    if (timeDialogStateFin.showing) {
+                        Color.Black.copy(alpha = 0.5f)
+                    } else {
+                        Color.Black.copy(alpha = 0.0f)
+                    }
+                ) // Fondo oscuro con transparencia
+        ) {
+            MaterialDialog(
+                dialogState = timeDialogStateFin,
+                buttons = {
+                    positiveButton(
+                        text = "Aceptar",
+                    )
+                    negativeButton(text = "Cancelar")
+                }
+            ) {
+
+                timepicker(
+                    initialTime = LocalTime.NOON,
+                    title = "Selecciona el horario de fin del viaje",
+
+                    ) {
+                    pickedTimeFin = it
+                    selectedHoraFin=pickedTimeFin.toString()
+                }
+            }
         }
 
 
+
     }
+
+
 }
-
-
-
-
 
 
 @Composable
@@ -559,9 +669,12 @@ fun DayButton(
             )
         )
     }
+
+
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun Myviaje() {

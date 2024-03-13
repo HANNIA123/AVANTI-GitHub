@@ -149,6 +149,68 @@ fun tituloNoAtras(Titulo: String,
     }
 }
 
+
+
+@Composable
+fun cabeceraConBotonAtras(titulo:String,
+                          navController: NavController,
+
+){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+    )
+    {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp),
+            painter = painterResource(id = R.drawable.fondorec),
+            contentDescription = "Fondo inicial",
+            contentScale = ContentScale.FillBounds
+        )
+        Row(
+            modifier = Modifier
+                .padding(18.dp, 10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+
+                onClick = { navController.popBackStack()},
+                modifier = Modifier
+                    .padding(end = 16.dp) // Ajusta el espacio entre el icono y el texto
+            ) {
+                Icon(
+                    Icons.Filled.ArrowBack,
+                    contentDescription = "volver",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+
+            Text(
+                text = titulo,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+
+    }
+
+
+}
+
+
+
+
+
 @Composable
 fun CoilImage(url: String, modifier: Modifier = Modifier) {
     Image(
