@@ -12,6 +12,10 @@ import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
+import com.example.curdfirestore.Usuario.Pasajero.Pantallas.cuentaPantallaPas
+import com.example.curdfirestore.Usuario.Pasajero.Pantallas.horariosInicio
+import com.example.curdfirestore.Usuario.Pasajero.Pantallas.modificarPasswordPas
+import com.example.curdfirestore.Usuario.Pasajero.Pantallas.perfilPas
 import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Viaje.Pantallas.generalViajeCon
 
@@ -98,6 +102,37 @@ fun NavGraph(
 
 
         //fin Hannia
+
+
+
+
+        //Pantallas entrando con pasajero
+        composable(
+            "cuenta_pasajero/{userid}"
+        ) {
+            val userId = it.arguments?.getString("userid") ?: ""
+            cuentaPantallaPas(navController = navController, userID = userId)
+
+        }
+
+        composable("perfil_pasajero/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            perfilPas(navController = navController, userId = userId)
+
+        }
+
+        composable("modificar_password_pasajero/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            modificarPasswordPas(navController = navController, userId = userId)
+
+        }
+
+        composable("horario_inicio/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            horariosInicio(navController = navController, userId = userId)
+
+        }
+
 
 
     }
