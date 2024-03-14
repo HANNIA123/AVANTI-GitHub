@@ -18,6 +18,8 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.modificarPasswordPas
 import com.example.curdfirestore.Usuario.Pasajero.Pantallas.perfilPas
 import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Viaje.Pantallas.generalViajeCon
+import com.example.curdfirestore.Viaje.Pantallas.registrarDestinoConductor
+import com.example.curdfirestore.Viaje.Pantallas.registrarOrigenConductor
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -95,18 +97,50 @@ fun NavGraph(
         //Agregado por Hannia
         //04/03/2024
         composable("general_viaje_conductor/{userid}") {
+           /* val userId = "hannia"
+            val dia = "Lunes"
+            val horao = "14:30"
+            val horad = "15:30"
+            val lugares = "2"
+            val tarifa = "10"
+            registrarOrigenConductor(navController = navController, userId, dia, horao, horad, lugares, tarifa)
+*/
             val userId = it.arguments?.getString("userid") ?: ""
             generalViajeCon(navController = navController, userId = userId)
 
         }
 
 
-        //fin Hannia
+      //---------Viaje conductor--------------
+        composable("registrar_origen_conductor/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            val dia = it.arguments?.getString("dia") ?: ""
+            val horao = it.arguments?.getString("horao") ?: ""
+            val horad = it.arguments?.getString("horad") ?: ""
+            val lugares = it.arguments?.getString("lugares") ?: ""
+            val tarifa = it.arguments?.getString("tarifa") ?: ""
+
+            registrarOrigenConductor(navController = navController, userId, dia, horao, horad, lugares, tarifa)
+
+        }
+        composable("registrar_destino_conductor/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            val dia = it.arguments?.getString("dia") ?: ""
+            val horao = it.arguments?.getString("horao") ?: ""
+            val horad = it.arguments?.getString("horad") ?: ""
+            val lugares = it.arguments?.getString("lugares") ?: ""
+            val tarifa = it.arguments?.getString("tarifa") ?: ""
+
+            registrarDestinoConductor(navController = navController, userId, dia, horao, horad, lugares, tarifa)
+
+        }
 
 
 
 
-        //Pantallas entrando con pasajero
+
+
+        //--------------------Pantallas entrando con pasajero---------------------------
         composable(
             "cuenta_pasajero/{userid}"
         ) {

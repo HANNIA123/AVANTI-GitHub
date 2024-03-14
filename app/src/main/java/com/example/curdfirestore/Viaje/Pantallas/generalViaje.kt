@@ -52,6 +52,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -81,14 +82,20 @@ import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
 
 import com.example.curdfirestore.R
 
-import com.example.curdfirestore.Viaje.convertirADia
-import com.example.curdfirestore.Viaje.convertirATrayecto
+import com.example.curdfirestore.Viaje.Funciones.convertirADia
+import com.example.curdfirestore.Viaje.Funciones.convertirATrayecto
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalTime
 
 
+/*
+--------------------------------
+   setOf(1) -> "UPIITA como origen"
+        setOf(2) -> "UPIITA como destino"
+        ----------------------------
+*/
 //Pantalla para agregar el formulario con la información general del viaje
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -98,7 +105,7 @@ fun generalViajeCon(
     navController: NavController,
     userId: String
 ) {
-    
+
 
     var selectedHoraInicio by remember {
         mutableStateOf("")
@@ -120,7 +127,7 @@ fun generalViajeCon(
     val timeDialogStateFin = rememberMaterialDialogState(isDialogOpenFin)
 
 
-    var tamEspacio = 18.dp
+    var tamEspacio = 15.dp
     var tamIcono = 55.dp
 
     var showDialogDia by remember { mutableStateOf(false) }
@@ -143,13 +150,20 @@ fun generalViajeCon(
     }
 
 
-
-
-
-    var expanded by remember { mutableStateOf(false) }
+    var botonSiguiente by remember {
+        mutableStateOf(false)
+    }
     BoxWithConstraints {
         maxh = this.maxHeight
     }
+    var diaCon by remember {
+        mutableStateOf("")
+    }
+
+    var trayectoCon by remember {
+        mutableStateOf("")
+    }
+
     var tarifa by remember {
         mutableStateOf("Tarifa del viaje")
     }
@@ -170,17 +184,76 @@ fun generalViajeCon(
         mutableStateOf("Hora de termino del viaje")
     }
 
-    if(selectedTarifa!=""){
-tarifa="Tarifa: $$selectedTarifa "
+    if (selectedTarifa != "") {
+        tarifa = "Tarifa: $$selectedTarifa "
     }
-    if(selectedLugares!=""){
-        lugares="Lugares: $selectedLugares "
+    if (selectedLugares != "") {
+        lugares = "Lugares: $selectedLugares "
     }
-if(selectedHoraInicio!=""){
-    horaInicio="Inicio del viaje: $selectedHoraInicio hrs "
-}
-    if(selectedHoraFin!=""){
-        horaFin="Fin del viaje: $selectedHoraFin hrs"
+    if (selectedHoraInicio != "") {
+        horaInicio = "Inicio del viaje: $selectedHoraInicio hrs "
+    }
+    if (selectedHoraFin != "") {
+        horaFin = "Fin del viaje: $selectedHoraFin hrs"
+    }
+
+    if (selectedTrayecto.isNotEmpty()) {
+        trayectoCon = convertirATrayecto(numTrayecto = selectedTrayecto)
+        trayecto = "Trayecto: $trayectoCon"
+
+
+    }
+    // Mostrar días seleccionados
+    if (selectedDays.isNotEmpty()) {
+        diaCon = convertirADia(numDia = selectedDays)
+        dia = "Día del viaje: $diaCon"
+
+    }
+
+    //Variables para validar que los campos esten completos
+
+    var campoDia by remember {
+        mutableStateOf(false)
+    }
+
+    var campoTrayecto by remember {
+        mutableStateOf(false)
+    }
+
+    var campoHoraI by remember {
+        mutableStateOf(false)
+    }
+
+    var campoHoraF by remember {
+        mutableStateOf(false)
+    }
+
+    var campoLugares by remember {
+        mutableStateOf(false)
+    }
+
+    var campoTarifa by remember {
+        mutableStateOf(false)
+    }
+
+    var validador by remember {
+        mutableStateOf(0)
+    }
+/*
+    LaunchedEffect(validador) {
+
+        campoDia=false
+        campoTrayecto=false
+        campoHoraI=false
+        campoHoraF=false
+        campoLugares=false
+        campoTarifa=false
+
+    }
+    */
+
+    LaunchedEffect(validador) {
+botonSiguiente=false
     }
 
     Scaffold(
@@ -199,12 +272,12 @@ if(selectedHoraInicio!=""){
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            cabeceraConBotonAtras(titulo = "Regsitro de viaje", navController = navController)
+            cabeceraConBotonAtras(titulo = "Registro de viaje", navController = navController)
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(maxh - 80.dp),
+                    .fillMaxWidth(),
+
                 contentAlignment = Alignment.TopCenter
             )
             {
@@ -234,11 +307,8 @@ if(selectedHoraInicio!=""){
                                 .clickable {
                                     showDialogDia = true
                                     // show = true
-
                                 }
-
                         ) {
-
 
                             Icon(
                                 imageVector = Icons.Filled.DateRange,
@@ -262,6 +332,16 @@ if(selectedHoraInicio!=""){
                             )
 
                         }
+
+if(campoDia) {
+    Text(
+        text = "*Por favor ingresa el día",
+        style = TextStyle(
+            color = Color(86, 86, 86)
+        )
+
+    )
+}
 
                         Spacer(modifier = Modifier.height(tamEspacio))
                         Row(
@@ -298,6 +378,15 @@ if(selectedHoraInicio!=""){
                                 )
                             )
 
+                        }
+                        if(campoTrayecto) {
+                            Text(
+                                text = "*Por favor ingresa el trayecto",
+                                style = TextStyle(
+                                    color = Color(86, 86, 86)
+                                )
+
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(tamEspacio))
@@ -338,6 +427,15 @@ if(selectedHoraInicio!=""){
                                 )
                             )
 
+                        }
+                        if(campoHoraI) {
+                            Text(
+                                text = "*Por favor ingresa el horario de inicio",
+                                style = TextStyle(
+                                    color = Color(86, 86, 86)
+                                )
+
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(tamEspacio))
@@ -380,6 +478,15 @@ if(selectedHoraInicio!=""){
 
                         }
 
+                        if(campoHoraF) {
+                            Text(
+                                text = "*Por favor ingresa el horario de finalización",
+                                style = TextStyle(
+                                    color = Color(86, 86, 86)
+                                )
+
+                            )
+                        }
                         Spacer(modifier = Modifier.height(tamEspacio))
                         Row(
                             modifier = Modifier
@@ -418,6 +525,16 @@ if(selectedHoraInicio!=""){
 
                         }
 
+                        if(campoLugares) {
+                            Text(
+                                text = "*Por favor ingresa los lugares",
+                                style = TextStyle(
+                                    color = Color(86, 86, 86)
+                                )
+
+                            )
+                        }
+
                         Spacer(modifier = Modifier.height(tamEspacio))
 
                         Row(
@@ -433,7 +550,7 @@ if(selectedHoraInicio!=""){
                                 },
 
 
-                        ) {
+                            ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.tarifa),
                                 contentDescription = "Icono tarifa",
@@ -457,47 +574,57 @@ if(selectedHoraInicio!=""){
                             )
 
                         }
+                        if(campoTarifa) {
+                            Text(
+                                text = "*Por favor ingresa la tarifa, puede ser 0",
+                                style = TextStyle(
+                                    color = Color(86, 86, 86)
+                                )
 
-                        Spacer(modifier = Modifier.height(tamEspacio))
+                            )
+                        }
+
+
+                        Spacer(modifier = Modifier.height(50.dp))
+
+
+
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color(
+                                        137,
+                                        13,
+                                        88
+                                    )
+                                ),
+                                onClick = {
+                                    botonSiguiente = true
+
+
+                                    // navController.navigate(route = "perfil_conductor/$userID")
+                                },
+                                modifier = Modifier.fillMaxWidth()
+
+
+                            ) {
+                                androidx.compose.material.Text(
+                                    text = "Siguiente", style = TextStyle(
+                                        fontSize = 20.sp,
+                                        color = Color.White
+                                    )
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(15.dp))
+
+
+
+
+
 
                     }
                 }
 
-
-
-                Column(
-                    modifier = Modifier
-                        .padding(40.dp,20.dp)
-                        .align(Alignment.BottomCenter)
-
-                ) {
-                    Button(
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color(
-                                137,
-                                13,
-                                88
-                            )
-                        ),
-                        onClick = {
-
-                        },
-                        modifier = Modifier.fillMaxWidth()
-
-
-
-                    ) {
-                        androidx.compose.material.Text(
-                            text = "Siguiente", style = TextStyle(
-                                fontSize = 20.sp,
-                                color = Color.White
-                            )
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(15.dp))
-
-                }
 
 
 
@@ -509,7 +636,6 @@ if(selectedHoraInicio!=""){
         }
 
 
-
         // Diálogo para la selección de días
         if (showDialogTrayecto) {
             dialogoSeleccionTrayecto(
@@ -518,28 +644,13 @@ if(selectedHoraInicio!=""){
             )
         }
 
-        if (selectedTrayecto.isNotEmpty()) {
-            var trayectoCon= convertirATrayecto(numTrayecto = selectedTrayecto)
-            trayecto= "Trayecto: $trayectoCon"
-
-
-        }
-        // Mostrar días seleccionados
-        if (selectedDays.isNotEmpty()) {
-           var diaCon= convertirADia(numDia = selectedDays)
-            dia= "Día del viaje: $diaCon"
-
-        }
-        
-
-
 
         // Diálogo para la selección de días
         if (showDialogDia) {
-           dialogSeleccionDia(
+            dialogSeleccionDia(
                 onDismiss = { showDialogDia = false },
                 onDaysSelected = { selectedDays = it }
-           )
+            )
         }
 
         if (showDialogLugares) {
@@ -549,14 +660,14 @@ if(selectedHoraInicio!=""){
                     // Actualizar la variable de estado con el nuevo valor de la tarifa
                     selectedLugares = nuevoLugares
                 }
-                )
+            )
         }
 
 
         // Diálogo para la tarifa
         if (showDialogTarifa) {
             dialogoTarifa(
-                onDismiss = {  showDialogTarifa = false },
+                onDismiss = { showDialogTarifa = false },
                 newTarifia = { nuevaTarifa ->
                     // Actualizar la variable de estado con el nuevo valor de la tarifa
                     selectedTarifa = nuevaTarifa
@@ -581,7 +692,7 @@ if(selectedHoraInicio!=""){
                 buttons = {
                     positiveButton(
                         text = "Aceptar",
-                        )
+                    )
                     negativeButton(text = "Cancelar")
                 }
             ) {
@@ -592,7 +703,7 @@ if(selectedHoraInicio!=""){
 
                     ) {
                     pickedTimeInicio = it
-                    selectedHoraInicio=pickedTimeInicio.toString()
+                    selectedHoraInicio = pickedTimeInicio.toString()
                 }
             }
         }
@@ -626,12 +737,85 @@ if(selectedHoraInicio!=""){
 
                     ) {
                     pickedTimeFin = it
-                    selectedHoraFin=pickedTimeFin.toString()
+                    selectedHoraFin = pickedTimeFin.toString()
                 }
             }
         }
 
 
+    }
+
+
+
+    LaunchedEffect(dia){
+        campoDia=false
+    }
+    LaunchedEffect(trayecto){
+        campoTrayecto=false
+    }
+
+    LaunchedEffect(horaInicio){
+        campoHoraI=false
+    }
+
+    LaunchedEffect(horaFin){
+        campoHoraF=false
+    }
+    LaunchedEffect(lugares){
+        campoLugares=false
+    }
+    LaunchedEffect(tarifa){
+        campoTarifa=false
+    }
+
+
+
+
+    if (botonSiguiente) {
+
+        //Validar que haya llenado todos los campos
+
+
+        if (diaCon == "" || trayectoCon == "" || selectedHoraInicio == "" || selectedHoraFin == "" || selectedLugares == "" || selectedTarifa == "") {
+            if (diaCon == "") {
+                campoDia = true
+            }
+            if (trayectoCon == "") {
+                campoTrayecto = true
+            }
+            if (selectedHoraInicio == "") {
+                campoHoraI = true
+            }
+            if (selectedHoraFin == "") {
+                campoHoraF = true
+            }
+            if (selectedLugares == "") {
+                campoLugares = true
+            }
+            if (selectedTarifa == "") {
+                campoTarifa = true
+            }
+        } else {
+            var tra=selectedTrayecto.toString()
+            println("selectedTrayecto $tra")
+            //Definir si elegirá origen o destino
+            if(selectedTrayecto.toString()=="[1]"){ //UPIITA como origen
+//Pantalla de seleccionar destino
+             //   composable("registrar_origen_conductor/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}")
+
+                navController.navigate(route = "registrar_destino_conductor/$userId/$diaCon/$selectedHoraInicio/$selectedHoraFin/$selectedLugares/$selectedTarifa")
+            }
+            if(selectedTrayecto.toString()=="[2]"){// //UPIITA como destino
+                navController.navigate(route = "registrar_origen_conductor/$userId/$diaCon/$selectedHoraInicio/$selectedHoraFin/$selectedLugares/$selectedTarifa")
+
+
+            }
+
+
+            println("Campos completos")
+        }
+
+botonSiguiente=false
 
     }
 
