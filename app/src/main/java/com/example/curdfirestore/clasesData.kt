@@ -1,7 +1,5 @@
 package com.example.avanti
 
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 data class UserData(
@@ -37,6 +35,7 @@ data class ViajeData(
     var viaje_status:String="",
     var viaje_paradas:String="",
     var viaje_iniciado:String="",
+    var viaje_tarifa:String=""
 
 
 
@@ -54,7 +53,8 @@ data class ViajeDataReturn(
     var viaje_num_lugares:String="",
     var viaje_status:String="",
     var viaje_paradas:String="",
-    var viaje_iniciado:String=""
+    var viaje_iniciado:String="",
+    var viaje_tarifa:String=""
 )
 
 

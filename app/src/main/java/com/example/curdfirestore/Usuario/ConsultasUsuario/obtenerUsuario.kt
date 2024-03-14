@@ -11,7 +11,7 @@ import com.example.avanti.Usuario.RetrofitClientUsuario
 
 
 //unicamente lauched effect para las consultas, funciones unicamente.
-//inicuar con la palabra con las funciones de consulta, con de consulta
+//inicuar con la palabra "con" las funciones de consulta, con de consulta
 @Composable
 fun conObtenerUsuarioId(correo: String): UserData? {
     var fin by remember {

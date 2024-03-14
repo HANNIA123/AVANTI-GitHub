@@ -3,10 +3,10 @@ package com.example.curdfirestore.Usuario.Pasajero.Pantallas
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,19 +26,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+
 import com.example.avanti.Usuario.Conductor.Pantallas.maxh
+import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.curdfirestore.R
-import com.example.avanti.ui.theme.Aplicacion.encabezado
+
 import com.example.avanti.ui.theme.Aplicacion.obtenerDiaDeLaSemanaActual
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
-import com.example.curdfirestore.Usuario.Conductor.tituloPantallaInicio
+
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
 
 
@@ -72,7 +73,7 @@ fun homePantallaPasajero(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            tituloPantallaInicio()
+            cabecera("Inicio de viaje")
             Column(
                 modifier = Modifier
                     .padding(20.dp, 0.dp)
