@@ -239,18 +239,7 @@ fun generalViajeCon(
     var validador by remember {
         mutableStateOf(0)
     }
-/*
-    LaunchedEffect(validador) {
 
-        campoDia=false
-        campoTrayecto=false
-        campoHoraI=false
-        campoHoraF=false
-        campoLugares=false
-        campoTarifa=false
-
-    }
-    */
 
     LaunchedEffect(validador) {
 botonSiguiente=false
@@ -857,7 +846,7 @@ fun DayButton(
 
 }
 
-
+/*
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
@@ -867,3 +856,4 @@ fun Myviaje() {
     generalViajeCon(navController = navController, userId = "hannia")
 }
 
+*/

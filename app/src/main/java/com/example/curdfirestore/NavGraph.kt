@@ -17,6 +17,8 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.horariosInicio
 import com.example.curdfirestore.Usuario.Pasajero.Pantallas.modificarPasswordPas
 import com.example.curdfirestore.Usuario.Pasajero.Pantallas.perfilPas
 import com.example.curdfirestore.Usuario.resetPassword
+import com.example.curdfirestore.Parada.Pantallas.generalParada
+import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Viaje.Pantallas.generalViajeCon
 import com.example.curdfirestore.Viaje.Pantallas.registrarDestinoConductor
 import com.example.curdfirestore.Viaje.Pantallas.registrarOrigenConductor
@@ -97,14 +99,6 @@ fun NavGraph(
         //Agregado por Hannia
         //04/03/2024
         composable("general_viaje_conductor/{userid}") {
-           /* val userId = "hannia"
-            val dia = "Lunes"
-            val horao = "14:30"
-            val horad = "15:30"
-            val lugares = "2"
-            val tarifa = "10"
-            registrarOrigenConductor(navController = navController, userId, dia, horao, horad, lugares, tarifa)
-*/
             val userId = it.arguments?.getString("userid") ?: ""
             generalViajeCon(navController = navController, userId = userId)
 
@@ -135,6 +129,25 @@ fun NavGraph(
 
         }
 
+
+
+//Formulario parada
+        composable("general_parada/{viajeid}/{userid}/{compantalla}") {
+            val viajeId = it.arguments?.getString("viajeid") ?: ""
+            val userId = it.arguments?.getString("userid") ?: ""
+            val comPantalla = it.arguments?.getString("compantalla") ?: ""
+            generalParada(navController, viajeId, userId, comPantalla)
+        }
+
+
+
+        composable("registrar_parada_barra/{userid}/{viajeid}/{nombrep}/{horap}") {
+            val viajeId = it.arguments?.getString("viajeid") ?: ""
+            val userId = it.arguments?.getString("userid") ?: ""
+            val nombreP = it.arguments?.getString("compantalla") ?: ""
+            val horaP = it.arguments?.getString("compantalla") ?: ""
+            registrarParadaBarra(navController,userId,viajeId, nombreP, horaP)
+        }
 
 
 

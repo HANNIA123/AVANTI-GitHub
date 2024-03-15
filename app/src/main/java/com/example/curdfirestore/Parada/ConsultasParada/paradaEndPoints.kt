@@ -1,5 +1,6 @@
 package com.example.avanti.Usuario
 
+import com.example.avanti.ParadaData
 import com.example.avanti.UserData
 import com.example.avanti.VehicleData
 import com.example.avanti.ViajeData
@@ -14,32 +15,31 @@ import retrofit2.http.Path
 
 
 //public var BASE_URL = "https://us-central1-avanti-c4ba7.cloudfunctions.net/app/"
-data class RespuestaApiViaje(
+data class RespuestaApiParada(
     val success: Boolean,
     val message: String,
-    val viajeId: String
+    val paradaId: String
 )
 
 
-object RetrofitClientViaje {
-    val apiService: ApiServiceViaje by lazy {
+object RetrofitClientParada{
+    val apiService: ApiServiceParada by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ApiServiceViaje::class.java)
+            .create(ApiServiceParada::class.java)
     }
 }
 
 
 
-interface ApiServiceViaje{
+
+interface ApiServiceParada{
 
     //Agregado 13/03/2024 - hannia
-    @POST("$newUrl/api/viaje/registrarviaje") // Reemplaza con la ruta de tu endpoint
-    fun registrarViaje(@Body viajeData: ViajeData): Call<RespuestaApiViaje>
+    @POST("$newUrl/api/parada/registrarparada") // Reemplaza con la ruta de tu endpoint
+    fun registrarParada(@Body paradaData: ParadaData): Call<RespuestaApiParada>
 
-    @GET("$newUrl/api/viaje/obtenerviaje/{id}")
-    suspend fun obtenerViaje(@Path("id") viajeId: String): ViajeData //Obtiene los datos de un id dado
 
 }
