@@ -680,9 +680,9 @@ if(campoDia) {
                 dialogState = timeDialogStateInicio,
                 buttons = {
                     positiveButton(
-                        text = "Aceptar",
+                        text = "ACEPTAR",
                     )
-                    negativeButton(text = "Cancelar")
+                    negativeButton(text = "CANCELAR")
                 }
             ) {
 
@@ -714,9 +714,9 @@ if(campoDia) {
                 dialogState = timeDialogStateFin,
                 buttons = {
                     positiveButton(
-                        text = "Aceptar",
+                        text = "ACEPTAR",
                     )
-                    negativeButton(text = "Cancelar")
+                    negativeButton(text = "CANCELAR")
                 }
             ) {
 

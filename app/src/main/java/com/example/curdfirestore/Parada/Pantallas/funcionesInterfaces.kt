@@ -7,7 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.example.avanti.ParadaData
+import com.example.curdfirestore.Parada.ConsultasParada.actualizarNumParadas
+import com.example.curdfirestore.Parada.ConsultasParada.conRegistrarParada
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -72,4 +76,3 @@ fun mapaMarkerParada(ubicacionMarker: String): String {
     println("Coordenadas del marker $latitud,$longitud --------")
     return "$latitud,$longitud"
 }
-

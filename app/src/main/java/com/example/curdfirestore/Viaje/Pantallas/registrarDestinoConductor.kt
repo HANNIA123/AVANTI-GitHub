@@ -317,7 +317,7 @@ fun registrarDestinoConductor(
 
                 Button(
                     modifier = Modifier
-                        .width(160.dp)
+                        .width(200.dp)
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 20.dp)
                     ,
@@ -330,7 +330,7 @@ fun registrarDestinoConductor(
                     }) {
                     Text(text = "Siguiente",
                         style = TextStyle(
-                            fontSize = 18.sp
+                            fontSize = 20.sp
                         )
                     )
                 }
