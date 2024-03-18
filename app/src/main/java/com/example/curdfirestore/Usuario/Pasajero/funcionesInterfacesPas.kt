@@ -37,7 +37,6 @@ fun menuPas(
                 imageVector = Icons.Filled.Home,
                 contentDescription = "Icono Home- inicio de viajes",
                 tint = Color(137, 13, 88),
-
                 )
         }
         IconButton(onClick = {
