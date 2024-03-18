@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.tituloNoAtras
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.mhv
@@ -62,7 +63,7 @@ fun horariosInicio(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            tituloNoAtras(Titulo = "Viajes", navController = navController)
+            cabecera(titulo = "Viajes")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

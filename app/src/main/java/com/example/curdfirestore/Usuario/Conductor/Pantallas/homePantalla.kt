@@ -5,17 +5,24 @@ package com.example.avanti.Usuario.Conductor.Pantallas
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.border
+
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -24,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -35,12 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.curdfirestore.R
-import com.example.avanti.ui.theme.Aplicacion.encabezado
-import com.example.avanti.ui.theme.Aplicacion.obtenerDiaDeLaSemanaActual
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
 import com.example.curdfirestore.Usuario.Conductor.menuCon
-import com.example.curdfirestore.Usuario.Conductor.tituloPantallaInicio
+
+import com.example.curdfirestore.recuadroTitulos
+import com.example.curdfirestore.textoHoraViaje
+import com.example.curdfirestore.textoInformacionViaje
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -49,12 +59,10 @@ import com.example.curdfirestore.Usuario.Conductor.tituloPantallaInicio
 fun homePantallaConductor(
     navController: NavController,
     userid: String,
-    ) {
-    // Obtén el Painter desde la ruta específica
-    val painter: Painter = painterResource(R.drawable.hecho)
+) {
 
     BoxWithConstraints {
-        maxh = this.maxHeight - 55.dp
+        maxh = this.maxHeight - 50.dp
     }
 
     Scaffold(
@@ -67,46 +75,117 @@ fun homePantallaConductor(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(
+                    Color(239, 239, 239)
+                )
                 .height(maxh)
-                .background(Color.White)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            tituloPantallaInicio()
+            cabecera("Inicio de viaje")
+//Contenido
             Column(
                 modifier = Modifier
-                    .padding(20.dp, 0.dp)
-
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp)
             ) {
-
-
-Spacer(modifier = Modifier.height(30.dp))
-                // Muestra la imagen usando el componente Image
-                Image(
-                    painter = painter,
-                    contentDescription = "Viajes vacios",
+                Spacer(modifier = Modifier.height(15.dp))
+                recuadroTitulos(titulo = obtenerFechaHoyCompleto())
+                Spacer(modifier = Modifier.height(10.dp))
+                Box(
                     modifier = Modifier
-                        .width(200.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(2.dp, Color.White)
+                        .background(Color.White)
+                        .fillMaxWidth()
+                        .padding(15.dp)
+                ) {
+                    Column() {
+                        Text(
+                            text = "Próximos viajes",
+                            style = TextStyle(
+                                color = Color.Black,
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Start,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            modifier = Modifier
+                        )
 
-                Spacer(modifier = Modifier.height(30.dp))
+                        Text(
+                            text = "Solamente te mostramos los viajes " +
+                                    "programados para los próximos 30 minutos",
+                            style = TextStyle(
+                                color = Color(86, 86, 86),
+                                fontSize = 18.sp,
+                                textAlign = TextAlign.Justify,
+                            ),
 
-                Text(
-                    text = "Aquí aparecerán los viajes que estén próximos a comenzar",
-                    style = TextStyle(
-                        color = Color(71, 12, 107),
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start
+                            )
+                    }
+                }
 
-                    )
-                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(2.dp, Color.White)
+                        .background(Color.White)
+                        .fillMaxWidth()
+                        .padding(15.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            textoHoraViaje(hora = "14:30 hrs")
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
+                            ) {
+                                textoInformacionViaje(
+                                    etiqueta = "Trayecto",
+                                    contenido = "UPIITA como origen"
+                                )
+                                textoInformacionViaje(etiqueta = "Pasajeros", contenido = "3")
+
+                            }
+                        }
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color(
+                                    137,
+                                    13,
+                                    88
+                                )
+                            ),
+                            onClick = {
+                                //Accion del boton
+                            },
+                            modifier = Modifier.width(180.dp)
+                        ) {
+                            Text(
+                                text = "Iniciar viaje", style = TextStyle(
+                                    fontSize = 18.sp,
+                                    color = Color.White
+                                )
+                            )
+                        }
+                    }
+
+                }
 
             }
 
 
         }
+
     }
 }
 
@@ -114,7 +193,6 @@ Spacer(modifier = Modifier.height(30.dp))
 @Composable
 fun MyScaffoldContentPreview() {
     val navController = rememberNavController()
-
     homePantallaConductor(navController = navController, userid = "hannia")
 }
 

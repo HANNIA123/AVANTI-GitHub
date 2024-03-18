@@ -34,11 +34,11 @@ import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.VehicleData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
+import com.example.avanti.ui.theme.Aplicacion.cabecera
 
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.nombreCompleto
-import com.example.avanti.ui.theme.Aplicacion.tituloAtras
-import com.example.avanti.ui.theme.Aplicacion.tituloNoAtras
+
 import com.example.curdfirestore.InfTextos
 import com.example.curdfirestore.Usuario.Conductor.ConsultasConductor.conObtenerVehiculoId
 import com.example.curdfirestore.Usuario.Conductor.menuCon
@@ -75,13 +75,13 @@ fun perfilConductor(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                tituloAtras(Titulo = "Mi perfil", navController =navController )
+               cabecera(titulo = "Mi perfil")
 
                 //importante, agregar esta condición
                 usuario?.let {
                     vehiculo?.let {
                         // Cargar y mostrar la imagen con Coil
-                        CoilImage(url = usuario!!.usu_foto, modifier = Modifier
+                        CoilImage(url = usuario.usu_foto, modifier = Modifier
                             .size(130.dp)
                             .clip(CircleShape)
                             .align(Alignment.CenterHorizontally),

@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.avanti.ui.theme.Aplicacion.cabecera
 
-import com.example.avanti.ui.theme.Aplicacion.encabezado
 
 import com.example.avanti.ui.theme.Aplicacion.tituloNoAtras
 
@@ -71,7 +71,7 @@ fun viajesInicio(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            tituloNoAtras(Titulo = "Viajes", navController = navController)
+cabecera(titulo = "Viajes")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

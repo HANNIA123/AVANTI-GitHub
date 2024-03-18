@@ -1,7 +1,6 @@
 package com.example.avanti
 
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.google.android.gms.maps.model.LatLng
 
 
 data class UserData(
@@ -38,6 +37,7 @@ data class ViajeData(
     var viaje_status:String="",
     var viaje_paradas:String="",
     var viaje_iniciado:String="",
+    var viaje_tarifa:String=""
 
 
 
@@ -55,7 +55,8 @@ data class ViajeDataReturn(
     var viaje_num_lugares:String="",
     var viaje_status:String="",
     var viaje_paradas:String="",
-    var viaje_iniciado:String=""
+    var viaje_iniciado:String="",
+    var viaje_tarifa:String=""
 )
 
 
@@ -109,3 +110,10 @@ data class ParadaData(
 
     )
 
+/*Comienza nuevo codigo 16/12/2023*/
+data class MarkerItiData(
+    var marker_ubicacion: LatLng,
+    var marker_titulo: String="",
+    var marker_hora: String="",
+    var marker_id:String="" //id de la parada o el viaje
+)

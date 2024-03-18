@@ -37,7 +37,7 @@ import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.Usuario.LoginViewModel
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
-import com.example.avanti.ui.theme.Aplicacion.encabezado
+import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
 
 
@@ -74,7 +74,8 @@ fun cuentaPantallaPas(
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ){
-            encabezado()
+            cabecera(titulo = "Cuenta")
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
