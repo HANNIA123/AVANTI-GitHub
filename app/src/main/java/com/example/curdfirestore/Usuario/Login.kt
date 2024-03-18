@@ -1,5 +1,7 @@
 package com.example.avanti.Usuario
 
+import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,6 +17,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,9 +39,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.curdfirestore.R
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 
 fun Login(
@@ -57,6 +62,20 @@ fun Login(
     var hidden by remember { mutableStateOf(true) } //1
     var nameError by remember { mutableStateOf(false) } // 1 -- Field obligatorio
     var nameError1 by remember { mutableStateOf(false) } // 1 -- Field obligatorio
+
+    var ejecutado by remember { mutableStateOf(false) }
+    var boton by remember { mutableStateOf(false) }
+    var loginAttempts by remember { mutableStateOf(0) }
+    val maxLoginAttempts = 3
+    var prueba by remember { mutableStateOf(false) } // 1 -- Field obligatorio
+
+    LaunchedEffect(ejecutado) {
+        if (ejecutado == true) {
+            boton = false
+            ejecutado = false
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -106,11 +125,14 @@ fun Login(
                     email = it
                     nameError = false //2
                 },
-                label = { Text("Correo electrónico",
-                    style = TextStyle(
-                        fontSize = 18.sp
+                label = {
+                    Text(
+                        "Correo electrónico",
+                        style = TextStyle(
+                            fontSize = 18.sp
+                        )
                     )
-                    ) },
+                },
                 isError = nameError, //3
                 singleLine = true,
                 trailingIcon = {// 4
@@ -148,11 +170,14 @@ fun Login(
                     password = it
                     nameError1 = false
                 },
-                label = { Text("Contraseña",
-                    style = TextStyle(
-                        fontSize = 18.sp
+                label = {
+                    Text(
+                        "Contraseña",
+                        style = TextStyle(
+                            fontSize = 18.sp
+                        )
                     )
-                )},
+                },
                 isError = nameError1, // 3
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),//2
                 singleLine = true,
@@ -219,11 +244,14 @@ fun Login(
                 onClick = {
                     nameError = email.isBlank()
                     nameError1 = password.isBlank()
-                    viewModel.signInWithEmailAndPassword(email, password, context = context) {
-                        onButtonClick(email)
+                    if (!nameError && !nameError1) {
+                        boton = true
+
                     }
                 },
-                modifier = Modifier.width(300.dp).width(80.dp)
+                modifier = Modifier
+                    .width(300.dp)
+                    .width(80.dp)
             ) {
                 Text(
                     text = "Iniciar sesión", style = TextStyle(
@@ -232,8 +260,64 @@ fun Login(
                     )
                 )
             }
+            /*if (prueba == true) {
+                Text("Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}")
+            }*/
         }
-
-
     }
-}
+
+
+    if (boton == true) {
+
+        var usuario = conObtenerUsuarioId(correo = email)
+        usuario?.let {
+            if (usuario!!.usu_status == "Activo") {
+                if(!ejecutado){
+
+                    println("USUARIO ACTIVO")
+                    if (loginAttempts < maxLoginAttempts) {
+
+                        viewModel.signInWithEmailAndPassword(email, password, context = context,
+                            home = {
+                                loginAttempts = 0
+                                onButtonClick(email)
+                            },
+                            errorCallback = {
+
+                                loginAttempts++
+                                println("loginAttempts++ $loginAttempts++")
+
+
+                                Toast.makeText(
+                                    context,
+                                    "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                ejecutado = true
+                                //println("EJECUTADOOOOOOO $ejecutado")
+                                prueba = true
+
+                            })
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "El sistema se ha bloqueado. Inténtelo nuevamente después de 15 minutos.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        //viewModel.startLockTimer()
+                        ejecutado=true
+                    }
+
+                }
+            } else {
+                println("USUARIO NO ACTIVO")
+                ejecutado = true
+                Toast.makeText(
+                    context,
+                    "Usuario dado de baja. No es posible iniciar sesión. ",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+    }

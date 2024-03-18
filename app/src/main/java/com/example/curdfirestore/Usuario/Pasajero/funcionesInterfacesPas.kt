@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.curdfirestore.R
 
 @Composable

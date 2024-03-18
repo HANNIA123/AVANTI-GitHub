@@ -15,7 +15,8 @@ data class UserData(
     var usu_nombre_usuario: String = "",
     var usu_tipo: String = "",
     var usu_foto:String="",
-    var usu_token:String=""
+    var usu_token:String="",
+    var usu_status: String=""
 )
 data class VehicleData(
     var vehi_color: String="",
