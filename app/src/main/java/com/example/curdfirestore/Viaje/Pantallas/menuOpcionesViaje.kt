@@ -1,5 +1,6 @@
 package com.example.curdfirestore.Viaje.Pantallas
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
@@ -24,7 +25,7 @@ fun menuViajeOpciones(
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
-        modifier = Modifier.padding(top = 8.dp),
+        modifier = Modifier.padding(top = 8.dp).background(Color.White),
         offset = DpOffset((-8).dp, offset)
     ) {
         DropdownMenuItem(onClick = {

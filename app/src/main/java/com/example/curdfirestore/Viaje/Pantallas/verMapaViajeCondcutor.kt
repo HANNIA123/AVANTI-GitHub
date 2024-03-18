@@ -162,6 +162,8 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
             }
 
 
+            Box {
+
 
             Column(
                 modifier = Modifier
@@ -378,53 +380,7 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                             {})
                     }
 
-                    Row(verticalAlignment = Alignment.Top) {
-                        Column(
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.Start,
-                            modifier = Modifier
-                                .padding(15.dp)
-                                .offset(x = 20.dp, y = 25.dp)
 
-                        ) {
-                            IconButton(
-                                onClick = {
-
-                                    if (pantalla == "itinerario") {
-                                        navController.navigate(route = "ver_itinerario_conductor/$correo")
-
-                                    } else {
-                                        navController.navigate(route = "home_viaje_conductor/$correo")
-
-                                    }
-
-                                },
-                                modifier = Modifier
-                                    .size(25.dp) // Tamaño del botón
-                                    .background(Color(137, 13, 88), shape = CircleShape)
-
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(23.dp),
-                                    imageVector = Icons.Filled.ArrowBack,
-                                    contentDescription = "Icono Cerrar",
-                                    tint = Color.White
-
-                                )
-                            }
-                        }
-
-
-                    }
-
-                    if (boton) {
-                        menuDesplegableCon(
-                            onDismiss = { boton = false },
-                            navController,
-                            userID = correo
-                        )
-                    }
 
                     menuViajeOpciones(
                         expanded = expanded,
@@ -432,7 +388,7 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                         offset = (-48).dp,
                         onOption1Click = {
                             var conpantalla = "nomuestra"
-                            var regresa= "vermapa"
+                            var regresa = "vermapa"
                             navController.navigate("general_parada/$viajeId/$correo/$conpantalla/$regresa")
                             // ruta nueva parada
                         },
@@ -443,7 +399,6 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                             // Opcion para ekiminar el viaje
                         }
                     )
-
 
 
                 }
@@ -490,6 +445,14 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                 }
 
             }
+                if (boton) {
+                    menuDesplegableCon(
+                        onDismiss = { boton = false },
+                        navController,
+                        userID = correo
+                    )
+                }
+        }
         }
 
     }

@@ -183,6 +183,7 @@ fun generalParada(
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
+
 cabeceraAtrasParada(titulo = "Registro de parada",
     navController = navController, userid =userId , regresar =pantallaRegresa , viajeid =viajeId )
 

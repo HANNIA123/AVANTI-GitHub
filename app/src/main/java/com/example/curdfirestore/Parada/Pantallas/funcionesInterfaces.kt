@@ -143,7 +143,7 @@ fun cabeceraAtrasParada(titulo:String,
                     .padding(end = 16.dp) // Ajusta el espacio entre el icono y el texto
             ) {
                 Icon(
-                    Icons.Filled.ArrowBack,
+                    Icons.Filled.Close,
                     contentDescription = "volver",
                     tint = Color.White,
                     modifier = Modifier.size(35.dp)
