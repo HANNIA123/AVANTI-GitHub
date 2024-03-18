@@ -38,9 +38,7 @@ class LoginViewModel: ViewModel () {
                 Log.d("Logueo", "SignInWithEmailandPassword: ${ex.message}")
             }
         }
-
-
-
+    
 
     fun signOut() = viewModelScope.launch {
         auth.signOut()
