@@ -22,6 +22,7 @@ import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Viaje.Pantallas.generalViajeCon
 import com.example.curdfirestore.Viaje.Pantallas.registrarDestinoConductor
 import com.example.curdfirestore.Viaje.Pantallas.registrarOrigenConductor
+import com.example.curdfirestore.Viaje.Pantallas.verMapaViajeConductor
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -99,6 +100,18 @@ fun NavGraph(
         //Agregado por Hannia
         //04/03/2024
         composable("general_viaje_conductor/{userid}") {
+/*
+            val viajeID= "DxH2AhHYRVHMRcHjc6bC"
+            val userID= it.arguments?.getString("userid")?:""
+            val pantalla="pantalla"
+            verMapaViajeConductor(
+                navController = navController,
+                correo = userID,
+
+                pantalla = pantalla,
+                viajeId = viajeID
+            )
+*/
             val userId = it.arguments?.getString("userid") ?: ""
             generalViajeCon(navController = navController, userId = userId)
 
@@ -132,11 +145,12 @@ fun NavGraph(
 
 
 //Formulario parada
-        composable("general_parada/{viajeid}/{userid}/{compantalla}") {
+        composable("general_parada/{viajeid}/{userid}/{compantalla}/{repantalla}") {
             val viajeId = it.arguments?.getString("viajeid") ?: ""
             val userId = it.arguments?.getString("userid") ?: ""
             val comPantalla = it.arguments?.getString("compantalla") ?: ""
-            generalParada(navController, viajeId, userId, comPantalla)
+            val pantallaRegresa = it.arguments?.getString("repantalla") ?: ""
+            generalParada(navController, viajeId, userId, comPantalla,pantallaRegresa)
         }
 
 
@@ -144,13 +158,28 @@ fun NavGraph(
         composable("registrar_parada_barra/{userid}/{viajeid}/{nombrep}/{horap}") {
             val viajeId = it.arguments?.getString("viajeid") ?: ""
             val userId = it.arguments?.getString("userid") ?: ""
-            val nombreP = it.arguments?.getString("compantalla") ?: ""
-            val horaP = it.arguments?.getString("compantalla") ?: ""
+            val nombreP = it.arguments?.getString("nombrep") ?: ""
+            val horaP = it.arguments?.getString("horap") ?: ""
             registrarParadaBarra(navController,userId,viajeId, nombreP, horaP)
         }
 
 
+        //Ver viaje, desde el itinerario o desde el registro
+        composable( "ver_mapa_viaje/{viajeid}/{email}/{pantalla}"
+        ) {
+            val viajeID= it.arguments?.getString("viajeid")?:""
+            val userID= it.arguments?.getString("email")?:""
+            val pantalla=it.arguments?.getString("pantalla")?:""
+            verMapaViajeConductor(
+                navController = navController,
+                correo = userID,
 
+                pantalla = pantalla,
+                viajeId = viajeID
+            )
+
+
+        }
 
 
         //--------------------Pantallas entrando con pasajero---------------------------

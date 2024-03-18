@@ -1,5 +1,6 @@
 package com.example.avanti
 
+import com.google.android.gms.maps.model.LatLng
 
 
 data class UserData(
@@ -108,3 +109,10 @@ data class ParadaData(
 
     )
 
+/*Comienza nuevo codigo 16/12/2023*/
+data class MarkerItiData(
+    var marker_ubicacion: LatLng,
+    var marker_titulo: String="",
+    var marker_hora: String="",
+    var marker_id:String="" //id de la parada o el viaje
+)

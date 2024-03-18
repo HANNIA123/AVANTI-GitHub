@@ -268,7 +268,7 @@ fun myDiaologExitosa(
                         TextButton(onClick = {
 
                             val pantalla = "viaje"
-                            navController.navigate("ver_viaje/$idViaje/$email/$pantalla")
+                            navController.navigate("ver_mapa_viaje/$idViaje/$email/$pantalla")
                         }) {
                             Text(text = "Ver viaje",
                                 style = TextStyle(
@@ -284,7 +284,8 @@ fun myDiaologExitosa(
                         TextButton(onClick = {
                             // Acción para el segundo botón
                             var conpantalla = "nomuestra"
-                            navController.navigate("general_parada/$idViaje/$email/$conpantalla")
+                            var regresa= "inicioviaje"
+                            navController.navigate("general_parada/$idViaje/$email/$conpantalla/$regresa")
                         }) {
 
 

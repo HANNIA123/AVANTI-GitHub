@@ -3,6 +3,7 @@ package com.example.curdfirestore
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -88,6 +89,18 @@ fun textoInformacionViaje(etiqueta: String, contenido: String) {
 
 
 @Composable
+fun textoGris(Texto:String, tamTexto: Float){
+
+    Text(
+        text = Texto,
+        style = TextStyle(
+            color = Color(86,86,86),
+            fontSize =tamTexto.sp,
+            textAlign = TextAlign.Start,
+            )
+    )
+}
+@Composable
 fun recuadroContenido(contenido:String){
     Box(
         modifier = Modifier
@@ -144,4 +157,72 @@ fun InfTextos(Title: String, Inf: String ){
             )
     )
 
+}
+@Composable
+fun textInMarker(Label:String, Text:String){
+    Text(
+        buildAnnotatedString {
+            withStyle(style = SpanStyle(     fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )) {
+                append(Label)
+            }
+
+
+            withStyle(style = SpanStyle(
+                fontSize = 15.sp
+            )) {
+                append(Text)
+            }
+        }
+    )
+}
+
+@Composable
+fun texItinerario(Label:String, Text:String) {
+    Row {
+        Text(
+            text = Label,
+            style = TextStyle(
+
+                fontSize = 18.sp
+            ),
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Start
+
+        )
+        Text(
+            text = Text,
+            style = TextStyle(
+
+                color= Color(104, 104, 104),
+                fontSize = 18.sp
+            ),
+
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Start
+        )
+    }
+}
+
+@Composable
+fun textoMarker(Label:String, Text:String) {
+    Row {
+        Text(
+            text = Label,
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            ),
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center
+
+        )
+        Text(
+            text = Text,
+            fontSize = 15.sp,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center
+        )
+    }
 }

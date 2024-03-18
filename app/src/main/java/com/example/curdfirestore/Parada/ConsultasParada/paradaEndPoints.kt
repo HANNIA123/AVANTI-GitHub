@@ -41,5 +41,9 @@ interface ApiServiceParada{
     @POST("$newUrl/api/parada/registrarparada") // Reemplaza con la ruta de tu endpoint
     fun registrarParada(@Body paradaData: ParadaData): Call<RespuestaApiParada>
 
+    @GET("$newUrl/api/parada/obtenerlistaparadas/{id}")
+    suspend fun obtenerListaParadas(@Path("id") viajeId: String): List<ParadaData> // Obtener una lista de paradas para el viaje con el ID dado
+
+
 
 }

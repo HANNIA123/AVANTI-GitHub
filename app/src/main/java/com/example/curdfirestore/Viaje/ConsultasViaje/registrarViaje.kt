@@ -40,7 +40,8 @@ fun conRegistrarViaje(
                 val idViaje = response.body()?.viajeId.toString()
                 resp = respuesta
 println("Este es el id $idViaje")
-                navController.navigate(route = "general_parada/$idViaje/$userId/$comPantalla")
+                val regresa="inicioviaje"
+                navController.navigate(route = "general_parada/$idViaje/$userId/$comPantalla/$regresa")
 
             } else {
                 resp = "Entro al else"

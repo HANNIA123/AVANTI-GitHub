@@ -91,6 +91,7 @@ import com.example.curdfirestore.Parada.ConsultasParada.conRegistrarParada
 import com.example.curdfirestore.Parada.Funciones.agregarComoParada
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
+import com.example.curdfirestore.Viaje.Pantallas.cabeceraConBotonCerrarViaje
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -105,7 +106,9 @@ fun generalParada(
     navController: NavController,
     viajeId: String,
     userId: String,
-    comPantalla:String
+    comPantalla:String,
+    pantallaRegresa:String
+
 ) {
 
     var showPar by remember {
@@ -180,9 +183,10 @@ fun generalParada(
                 horizontalAlignment = Alignment.CenterHorizontally,
 
                 ) {
+cabeceraAtrasParada(titulo = "Registro de parada",
+    navController = navController, userid =userId , regresar =pantallaRegresa , viajeid =viajeId )
 
 
-                cabeceraConBotonAtras(titulo = "Registro de parada", navController = navController)
 
                 Box(
                     modifier = Modifier
@@ -239,12 +243,10 @@ fun generalParada(
 
                                 OutlinedTextField(
                                     value = nombre,
-
-
                                     onValueChange = { newText -> nombre = newText },
                                     modifier = Modifier
-                                        .background(Color.White).fillMaxWidth(),
-
+                                        .background(Color.White)
+                                        .fillMaxWidth(),
 
                                     textStyle = TextStyle(
                                         fontSize = 20.sp,
@@ -259,7 +261,9 @@ fun generalParada(
                                         ),
                                     trailingIcon = {// 4
                                         androidx.compose.material.Icon(
-                                            modifier = Modifier.size(tamIcono).padding(10.dp),
+                                            modifier = Modifier
+                                                .size(tamIcono)
+                                                .padding(10.dp),
                                             imageVector = Icons.Filled.Edit,
                                             contentDescription = "Icono nombre",
                                             tint = Color(137, 13, 88)
@@ -455,6 +459,6 @@ fun generalParada(
 fun MyviajeParada() {
     val navController = rememberNavController()
 
-    generalParada(navController = navController, "123", userId = "hannia", "muestra")
+    generalParada(navController = navController, "123", userId = "hannia", "muestra", "viaje")
 }
 

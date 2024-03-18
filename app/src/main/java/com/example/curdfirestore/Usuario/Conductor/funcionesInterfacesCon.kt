@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,6 +52,7 @@ import androidx.navigation.NavController
 
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Viaje.Pantallas.dialogoSeleccionLugares
 
 
 @Composable
@@ -60,7 +62,10 @@ fun menuCon(
 ) {
 
     Column {
-        Spacer(modifier = Modifier.fillMaxWidth().height(2.dp).background(Color(126,60,127)))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(2.dp)
+            .background(Color(126, 60, 127)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,6 +131,7 @@ fun menuDesplegableCon(
     navController: NavController,
     userID: String,
 ) {
+
     val maxWidth =
         LocalConfiguration.current.screenWidthDp.dp / 2 // La mitad del ancho de la pantalla
 
@@ -152,7 +158,7 @@ fun menuDesplegableCon(
             Spacer(modifier = Modifier.height(40.dp))
 
 
-            Button(
+            TextButton(
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.White,
                     contentColor = Color.LightGray
@@ -185,7 +191,7 @@ fun menuDesplegableCon(
             Spacer(modifier = Modifier.height(20.dp))
 
 
-            Button(
+            TextButton(
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.White,
                     contentColor = Color.LightGray
@@ -248,14 +254,18 @@ fun menuDesplegableCon(
 
 
         }
-
-
     }
-
-
 }
+
 @Composable
-fun cabeceraConMenuCon(titulo:String){
+fun cabeceraConMenuCon(titulo:String
+,
+                       navController: NavController,
+                       userID: String,
+                       boton: (Boolean) -> Unit
+
+                       ){
+
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -264,7 +274,7 @@ fun cabeceraConMenuCon(titulo:String){
         Image(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp),
+                .height(70.dp),
             painter = painterResource(id = R.drawable.fondorec),
             contentDescription = "Fondo inicial",
             contentScale = ContentScale.FillBounds
@@ -277,7 +287,9 @@ fun cabeceraConMenuCon(titulo:String){
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { /* Acción al hacer clic en el botón */ },
+                onClick = {
+                    boton (true)
+                          },
                 modifier = Modifier
                     .padding(end = 16.dp) // Ajusta el espacio entre el icono y el texto
             ) {
@@ -299,9 +311,6 @@ fun cabeceraConMenuCon(titulo:String){
                 modifier = Modifier.weight(1f)
             )
         }
-
-
     }
-
 
 }

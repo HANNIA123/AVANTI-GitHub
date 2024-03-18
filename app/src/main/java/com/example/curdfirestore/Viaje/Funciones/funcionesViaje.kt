@@ -21,6 +21,11 @@ import androidx.navigation.NavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.JsonObject
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
 import java.util.Locale
 
 
@@ -184,6 +189,39 @@ fun convertCoordinatesToAddress(coordenadas:LatLng): String {
 
     } else {
         "No se encontraron direcciones para las coordenadas dadas"
+    }
+}
+
+// La función getDistance debe obtener la distancia entre dos puntos utilizando la API de Google Maps.
+// Implementa esta función según tus necesidades y utiliza el apiKey proporcionado.
+// Devuelve el resultado en formato JSON.
+fun getDistanceA(origin: String, destination: String, apiKey: String): JsonObject? {
+    // Implementa la lógica para llamar a la API de Google Maps para obtener la distancia
+    // y devuelve el resultado en formato JSON.
+    // Puedes utilizar bibliotecas como Retrofit o HttpClient para realizar la solicitud HTTP.
+    // Aquí un ejemplo ficticio:
+    val url = "https://maps.googleapis.com/maps/api/directions/json?" +
+            "origin=$origin&destination=$destination&key=$apiKey"
+    val response = /* Lógica para realizar la solicitud HTTP */ null
+    return /* Lógica para analizar la respuesta y devolver el resultado en formato JSON */ null
+}
+
+
+fun calculateDistance(origin: String, destination: String, apiKey: String): Float {
+    // Llama a la función correspondiente para obtener la distancia
+    val distanceResult = getDistanceA(origin, destination, apiKey)
+    // Analiza la respuesta y extrae la distancia
+    val distance = distanceResult?.get("routes")?.asJsonArray?.get(0)?.asJsonObject
+        ?.get("legs")?.asJsonArray?.get(0)?.asJsonObject
+        ?.get("distance")?.asJsonObject?.get("value")?.asFloat ?: 0f
+
+    return distance
+}
+fun convertirTrayecto(tipoTrayecto: String): String {
+    return if (tipoTrayecto == "1") {
+        "UPIITA como destino"
+    } else {
+        "UPIITA como origen"
     }
 }
 
