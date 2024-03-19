@@ -1,6 +1,10 @@
 package com.example.avanti.ui.theme.Aplicacion
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
@@ -24,4 +28,10 @@ fun obtenerFechaHoyCompleto(): String {
 
     // Convierte la primera letra a mayúscula
     return fechaFormateada.replaceFirstChar { it.uppercase() }
+}
+@RequiresApi(Build.VERSION_CODES.O)
+fun obtenerMesAnio(): String {
+    val currentDate = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale("es", "ES"))
+    return currentDate.format(formatter)
 }
