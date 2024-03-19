@@ -18,7 +18,6 @@ fun conObtenerUsuarioId(correo: String): UserData? {
         mutableStateOf(false)
     }
     var usuario by remember { mutableStateOf<UserData?>(null) }
-
     LaunchedEffect(key1 = true) {
         try {
             val resultadoUsuario = RetrofitClientUsuario.apiService.obtenerUsuario(correo)
@@ -32,6 +31,7 @@ fun conObtenerUsuarioId(correo: String): UserData? {
         }
     }
 
+
     // Puedes retornar el usuario directamente
     return if (fin) {
         usuario
@@ -39,4 +39,7 @@ fun conObtenerUsuarioId(correo: String): UserData? {
         null
     }
 }
+
+
+
 

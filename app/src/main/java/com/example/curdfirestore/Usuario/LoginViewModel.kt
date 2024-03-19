@@ -10,6 +10,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class LoginViewModel: ViewModel () {
@@ -19,7 +20,8 @@ class LoginViewModel: ViewModel () {
         email: String,
         password: String,
         context: Context,
-        home: () -> Unit
+        home: () -> Unit,
+        errorCallback: () -> Unit
     ) =
         viewModelScope.launch {
             try {
@@ -29,17 +31,14 @@ class LoginViewModel: ViewModel () {
                         home()
 
                     } else {
-                        println("elseee")
-                        Toast.makeText(context, "Datos incorrectos", Toast.LENGTH_SHORT).show()
+                        errorCallback()
                     }
-
-
                 }
             } catch (ex: Exception) {
                 Log.d("Logueo", "SignInWithEmailandPassword: ${ex.message}")
             }
         }
-
+    
 
     fun signOut() = viewModelScope.launch {
         auth.signOut()
@@ -54,20 +53,25 @@ class LoginViewModel: ViewModel () {
         navController: NavController,
     )
     {
- try{
-    auth.sendPasswordResetEmail(email).addOnCompleteListener() { task ->
-        if (task.isSuccessful) {
-            Log.d("ResetPassword", "Se ha enviado el correo de restablecimiento!!")
-            Toast.makeText(context, "Se ha enviado el correo de restablecimiento", Toast.LENGTH_SHORT).show()
-            navController.navigate(route = "login")
-        } else {
-            Toast.makeText(context, "Correo electrónico no registrado", Toast.LENGTH_SHORT).show()
+        try{
+            auth.sendPasswordResetEmail(email).addOnCompleteListener() { task ->
+                if (task.isSuccessful) {
+                    Log.d("ResetPassword", "Se ha enviado el correo de restablecimiento!!")
+                    Toast.makeText(context, "Se ha enviado el correo de restablecimiento", Toast.LENGTH_SHORT).show()
+                    navController.navigate(route = "login")
+                } else {
+                    Toast.makeText(context, "Correo electrónico no registrado", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        catch (e:Exception){
+
+            Log.d("ResetPassword","Error al restablcer la contraseña ${e.message}")
         }
     }
-}
-       catch (e:Exception){
 
-           Log.d("ResetPassword","Error al restablcer la contraseña ${e.message}")
-       }
-    }
+
+
+
+
 }
