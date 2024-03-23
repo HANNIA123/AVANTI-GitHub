@@ -46,8 +46,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.obtenerDiaDeLaSemanaActual
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
 import com.example.curdfirestore.Usuario.Conductor.menuCon
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
+import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.recuadroTitulos
 import com.example.curdfirestore.textoHoraItinerario
 import com.example.curdfirestore.textoHoraViaje
@@ -62,6 +65,8 @@ fun verItinerarioCon(
     userId:String
 ){
 
+    var diaActual= obtenerDiaDeLaSemanaActual()
+    var viajes= conObtenerItinerarioCon(userId = userId)
 var mhv by remember {
     mutableStateOf(0.dp)
 }
@@ -72,7 +77,7 @@ var mhv by remember {
     }
     Scaffold(
     bottomBar = {
-        BottomAppBar(modifier = Modifier.height(45.dp)) {
+        BottomAppBar(modifier = Modifier.height(50.dp)) {
             menuCon(navController = navController, userID =userId )
         }
     }
@@ -85,9 +90,7 @@ var mhv by remember {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             cabecera(titulo = "Itinerario")
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,7 +111,6 @@ var mhv by remember {
                     WeeklyCalendar(selectedDate = selectedDate) { date ->
                         selectedDate = date
                     }
-
                 }
 
 
@@ -158,43 +160,60 @@ var mhv by remember {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        //Esta es la fila para cada viaje
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                ,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            textoHoraItinerario(hora = "14:30 hrs")
+                        viajes?.let {
+                            // Filtrar la lista por el nombre buscado
+                            val viajesPorDia = viajes.filter { it.viaje_dia == diaActual }
+                            val viajesOrdenados = viajesPorDia.sortedBy { it.viaje_hora_partida }
 
-                            Spacer(modifier = Modifier.width(20.dp)) // Agrega un espacio entre el texto y la columna
+                            viajesOrdenados.forEach {
 
-                            Column(
+                            Row(
                                 modifier = Modifier
-                                    .weight(1f) // Utiliza el peso para que la columna ocupe el espacio restante
-                                    .padding(start = 0.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                textoInformacionViaje(
-                                    etiqueta = "Trayecto",
-                                    contenido = "UPIITA como origen"
-                                )
-                                textoInformacionViaje(etiqueta = "Pasajeros", contenido = "3")
-                                textoInformacionViaje(etiqueta = "Status", contenido = "Disponible")
 
-                            }
-                            Spacer(modifier = Modifier.width(10.dp)) // Agrega un espacio entre el texto y la columna
 
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(
-                                    imageVector = Icons.Filled.KeyboardArrowRight,
-                                    contentDescription = "Ver viaje",
-                                    modifier = Modifier.size(50.dp),
-                                    tint = Color(137, 13, 86)
-                                )
+                                textoHoraItinerario(hora = "${it.viaje_hora_partida} hrs")
+
+                                Spacer(modifier = Modifier.width(20.dp)) // Agrega un espacio entre el texto y la columna
+
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f) // Utiliza el peso para que la columna ocupe el espacio restante
+                                        .padding(start = 0.dp)
+                                ) {
+                                    var trayectoTexto= convertirTrayecto(  it.viaje_trayecto)
+
+                                    textoInformacionViaje(
+                                        etiqueta = "Trayecto",
+                                        contenido = trayectoTexto
+                                    )
+
+                                    textoInformacionViaje(etiqueta = "Pasajeros", contenido = it.viaje_num_pasajeros)
+                                    textoInformacionViaje(
+                                        etiqueta = "Status",
+                                        contenido = it.viaje_status
+                                    )
+
+                                }
+                                Spacer(modifier = Modifier.width(10.dp)) // Agrega un espacio entre el texto y la columna
+
+                                IconButton(onClick = { /*TODO*/ }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.KeyboardArrowRight,
+                                        contentDescription = "Ver viaje",
+                                        modifier = Modifier.size(50.dp),
+                                        tint = Color(137, 13, 86)
+                                    )
+                                }
                             }
                         }
-                        //fin columana por viaje
+                            //fin columana por viaje
+
+                    }
+                        //Esta es la fila para cada viaje
 
                     }
 

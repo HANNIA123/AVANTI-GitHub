@@ -1,38 +1,28 @@
 package com.example.curdfirestore.Viaje.Pantallas
-
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.avanti.ui.theme.Aplicacion.obtenerMesAnio
-import java.time.LocalDate
-import java.time.format.TextStyle
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -58,7 +48,7 @@ fun WeeklyCalendar(selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit)
 
             Text(
                 text = obtenerMesAnio(),
-                style = androidx.compose.ui.text.TextStyle(
+                style = TextStyle(
                     color = Color.Black,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
@@ -79,16 +69,12 @@ fun WeeklyCalendar(selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit)
         }
 
         // Row for days of the week
-        // Row for days of the week
-
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(top = 16.dp, start = 15.dp, end=15.dp).fillMaxWidth()
         ) {
-            val daysOfWeek = listOf("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb")
+            val daysOfWeek = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
             for (day in daysOfWeek) {
-
-
                 Text(
                     text = day,
                     color = Color.Black,
@@ -98,41 +84,46 @@ fun WeeklyCalendar(selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit)
             }
         }
 
-        // Row for dates of the week starting from Sunday
-        Row(   horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(start = 15.dp, end=15.dp).fillMaxWidth()
+        // Row for dates of the week starting from Monday of the current week
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(start = 14.dp, end=18.dp).fillMaxWidth()
         ) {
-            val firstDayOfWeek = selectedDate.with(DayOfWeek.SUNDAY)
+            val currentWeekMonday = LocalDate.now().with(DayOfWeek.MONDAY)
             for (i in 0 until 7) {
-                val date = firstDayOfWeek.plusDays(i.toLong())
+                val date = currentWeekMonday.plusDays(i.toLong())
                 DateItem(
                     date = date,
                     isSelected = date == selectedDate,
-                    isCurrentDay = date == LocalDate.now(), // Agrega esta condición para detectar el día actual
+                    isCurrentDay = date == LocalDate.now(),
                     onDateSelected = { onDateSelected(date) }
                 )
             }
         }
     }
 }
+
 @RequiresApi(Build.VERSION_CODES.O)
 fun onWeekChangeClicked(selectedDate: LocalDate, weekOffset: Int, onDateSelected: (LocalDate) -> Unit) {
     val newDate = selectedDate.plusWeeks(weekOffset.toLong())
     onDateSelected(newDate)
 }
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateItem(date: LocalDate, isSelected: Boolean,
              isCurrentDay: Boolean,
              onDateSelected: () -> Unit) {
-    val textColor = if (isSelected) Color.Blue else if (isCurrentDay) Color.Gray else Color.Black
+    val textColor = if (isSelected) Color(72,12,107) else if (isCurrentDay) Color.Blue else Color.Black
 
     Text(
         text = date.dayOfMonth.toString(),
         modifier = Modifier
             .padding(8.dp)
             .clickable { onDateSelected() },
-        color = if (isSelected) Color.Blue else Color.Black,
+        color = textColor,
         fontSize = 20.sp
     )
 }
+
+
