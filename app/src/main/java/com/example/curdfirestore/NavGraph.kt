@@ -9,6 +9,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
+import com.example.curdfirestore.Horario.Pantallas.generalViajePas
+import com.example.curdfirestore.Horario.Pantallas.registrarDestinoPasajero
+import com.example.curdfirestore.Horario.Pantallas.registrarOrigenPasajero
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
@@ -208,6 +211,29 @@ fun NavGraph(
             horariosInicio(navController = navController, userId = userId)
 
         }
+
+        composable("general_viaje_pasajero/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            generalViajePas(navController = navController, userId = userId)
+        }
+
+        //---------Horario pasajero--------------
+        composable("registrar_origen_pasajero/{userid}/{dia}/{horao}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            val dia = it.arguments?.getString("dia") ?: ""
+            val horao = it.arguments?.getString("horao") ?: ""
+
+            registrarOrigenPasajero(navController = navController, userId, dia, horao)
+        }
+
+        composable("registrar_destino_pasajero/{userid}/{dia}/{horao}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            val dia = it.arguments?.getString("dia") ?: ""
+            val horao = it.arguments?.getString("horao") ?: ""
+
+            registrarDestinoPasajero(navController = navController, userId, dia, horao)
+        }
+
 
 
 
