@@ -37,7 +37,9 @@ data class ViajeData(
     var viaje_status:String="",
     var viaje_paradas:String="",
     var viaje_iniciado:String="",
-    var viaje_tarifa:String=""
+    var viaje_tarifa:String="",
+    var viaje_num_pasajeros:String="",
+    var viaje_num_pasajeros_con:String=""
 
 
 
@@ -56,7 +58,9 @@ data class ViajeDataReturn(
     var viaje_status:String="",
     var viaje_paradas:String="",
     var viaje_iniciado:String="",
-    var viaje_tarifa:String=""
+    var viaje_tarifa:String="",
+    var viaje_num_pasajeros:String="",
+    var viaje_num_pasajeros_con:String=""
 )
 
 
