@@ -357,6 +357,7 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                         offset = (-48).dp,
                         onOption1Click = {
                             var conpantalla = "nomuestra"
+
                             var regresa = "vermapa"
                             navController.navigate("general_parada/$viajeId/$correo/$conpantalla/$regresa")
                             // ruta nueva parada

@@ -131,12 +131,13 @@ fun cabeceraAtrasParada(titulo:String,
 
                 onClick = {
                     if (regresar == "vermapa") {
-                        val pantalla = "nomuestra"
-                        navController.navigate("ver_mapa_viaje/$viajeid/$userid/$pantalla")
+
+                        navController.navigate("ver_itinerario_conductor/$userid")
                     } else if (regresar == "inicioviaje") {
                         navController.navigate("general_viaje_conductor/$userid")
 
                     }
+
                 },
 
                 modifier = Modifier
