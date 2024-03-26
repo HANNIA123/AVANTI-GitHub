@@ -81,7 +81,7 @@ fun horariosInicio(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
 
-                        navController.navigate(route = "registrar_viaje_pasajero/$userId")
+                        navController.navigate(route = "general_horario_pasajero/$userId")
                     }) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
