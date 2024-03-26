@@ -238,7 +238,7 @@ fun NavGraph(
             horariosInicio(navController = navController, userId = userId)
 
         }
-        composable("general_viaje_pasajero/{userid}") {
+        composable("general_horario_pasajero/{userid}") {
             val userId = it.arguments?.getString("userid") ?: ""
             generalViajePas(navController = navController, userId = userId)
         }
