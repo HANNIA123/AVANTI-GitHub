@@ -24,6 +24,7 @@ import com.example.curdfirestore.Viaje.Pantallas.registrarDestinoConductor
 import com.example.curdfirestore.Viaje.Pantallas.registrarOrigenConductor
 import com.example.curdfirestore.Viaje.Pantallas.verItinerarioCon
 import com.example.curdfirestore.Viaje.Pantallas.verMapaViajeConductor
+import com.example.curdfirestore.Viaje.Pantallas.verMapaViajeConductorSinPar
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -188,7 +189,7 @@ fun NavGraph(
             val viajeID= it.arguments?.getString("viajeid")?:""
             val userID= it.arguments?.getString("email")?:""
             val pantalla=it.arguments?.getString("pantalla")?:""
-            verMapaViajeConductor(
+            verMapaViajeConductorSinPar(
                 navController = navController,
                 correo = userID,
 
