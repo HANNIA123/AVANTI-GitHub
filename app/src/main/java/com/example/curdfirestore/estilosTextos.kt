@@ -71,6 +71,20 @@ fun textoHoraViaje(hora:String){
 
 }
 @Composable
+fun textoHoraItinerario(hora:String){
+    Text(
+        text = hora,
+        style = TextStyle(
+            color = Color.Black,
+            fontSize = 17.sp,
+            textAlign = TextAlign.Start,
+            fontWeight = FontWeight.Bold
+        ),
+
+    )
+
+}
+@Composable
 fun textoInformacionViaje(etiqueta: String, contenido: String) {
     Text(
         text = buildAnnotatedString {

@@ -57,7 +57,7 @@ fun viajesInicio(
     }
     Scaffold(
         bottomBar = {
-            BottomAppBar(modifier = Modifier.height(45.dp)) {
+            BottomAppBar(modifier = Modifier.height(50.dp)) {
                 menuCon(navController = navController, userID =userId )
             }
         }
@@ -121,7 +121,8 @@ cabecera(titulo = "Viajes")
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        //navController.navigate(route = "ver_itinerario_conductor/$userId")
+
+                        navController.navigate(route = "ver_itinerario_conductor/$userId")
 
                     }) {
                     Icon(

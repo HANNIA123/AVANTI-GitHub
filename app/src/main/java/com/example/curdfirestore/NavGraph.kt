@@ -22,7 +22,9 @@ import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Viaje.Pantallas.generalViajeCon
 import com.example.curdfirestore.Viaje.Pantallas.registrarDestinoConductor
 import com.example.curdfirestore.Viaje.Pantallas.registrarOrigenConductor
+import com.example.curdfirestore.Viaje.Pantallas.verItinerarioCon
 import com.example.curdfirestore.Viaje.Pantallas.verMapaViajeConductor
+import com.example.curdfirestore.Viaje.Pantallas.verMapaViajeConductorSinPar
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -181,6 +183,31 @@ fun NavGraph(
 
         }
 
+        //Ver viaje sin paradas
+        composable( "ver_mapa_viaje_sin/{viajeid}/{email}/{pantalla}"
+        ) {
+            val viajeID= it.arguments?.getString("viajeid")?:""
+            val userID= it.arguments?.getString("email")?:""
+            val pantalla=it.arguments?.getString("pantalla")?:""
+            verMapaViajeConductorSinPar(
+                navController = navController,
+                correo = userID,
+
+                pantalla = pantalla,
+                viajeId = viajeID
+            )
+
+
+        }
+
+        //Ver itinerario
+        composable( "ver_itinerario_conductor/{userid}"
+        ) {
+            val userId= it.arguments?.getString("userid")?:""
+       verItinerarioCon(navController = navController, userId = userId)
+
+
+        }
 
         //--------------------Pantallas entrando con pasajero---------------------------
         composable(

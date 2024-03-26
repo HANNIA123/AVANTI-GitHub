@@ -3,6 +3,7 @@ package com.example.avanti.Usuario
 import com.example.avanti.UserData
 import com.example.avanti.VehicleData
 import com.example.avanti.ViajeData
+import com.example.avanti.ViajeDataReturn
 import retrofit2.Call
 
 import retrofit2.Retrofit
@@ -41,5 +42,8 @@ interface ApiServiceViaje{
 
     @GET("$newUrl/api/viaje/obtenerviaje/{id}")
     suspend fun obtenerViaje(@Path("id") viajeId: String): ViajeData //Obtiene los datos de un id dado
+
+    @GET("$newUrl/api/viaje/itinerarioviajes/{id}")
+    suspend fun obtenerItinerarioCon(@Path("id") userId: String): List<ViajeDataReturn> // Obtener una lista de viajes para el viaje con el ID dado
 
 }
