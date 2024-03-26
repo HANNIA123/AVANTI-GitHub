@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
+import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.nombreCompleto
 import com.example.avanti.ui.theme.Aplicacion.tituloAtras
@@ -72,7 +73,7 @@ fun perfilPas(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                tituloAtras(Titulo = "Mi perfil", navController =navController )
+                cabecera(titulo = "Mi perfil")
 
                 //importante, agregar esta condición
                 usuario?.let {
