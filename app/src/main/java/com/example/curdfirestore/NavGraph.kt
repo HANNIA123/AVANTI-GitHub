@@ -239,27 +239,6 @@ fun NavGraph(
 
         }
 
-        composable("general_viaje_pasajero/{userid}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            generalViajePas(navController = navController, userId = userId)
-        }
-
-        //---------Horario pasajero--------------
-        composable("registrar_origen_pasajero/{userid}/{dia}/{horao}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            val dia = it.arguments?.getString("dia") ?: ""
-            val horao = it.arguments?.getString("horao") ?: ""
-
-            registrarOrigenPasajero(navController = navController, userId, dia, horao)
-        }
-
-        composable("registrar_destino_pasajero/{userid}/{dia}/{horao}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            val dia = it.arguments?.getString("dia") ?: ""
-            val horao = it.arguments?.getString("horao") ?: ""
-
-            registrarDestinoPasajero(navController = navController, userId, dia, horao)
-        }
 
 
 
