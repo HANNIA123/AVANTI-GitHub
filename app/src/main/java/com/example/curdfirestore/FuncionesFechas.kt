@@ -2,9 +2,12 @@ package com.example.avanti.ui.theme.Aplicacion
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Locale
 
@@ -14,6 +17,20 @@ fun obtenerDiaDeLaSemanaActual(): String {
     val diasSemana = arrayOf("Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado")
     val diaDeLaSemana = calendar.get(Calendar.DAY_OF_WEEK)
     return diasSemana[diaDeLaSemana - 1]
+}
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun obtenerNombreDiaEnEspanol(dia: DayOfWeek): String {
+    return when (dia) {
+        DayOfWeek.MONDAY -> "Lunes"
+        DayOfWeek.TUESDAY -> "Martes"
+        DayOfWeek.WEDNESDAY -> "Miércoles"
+        DayOfWeek.THURSDAY -> "Jueves"
+        DayOfWeek.FRIDAY -> "Viernes"
+        DayOfWeek.SATURDAY -> "Sábado"
+        DayOfWeek.SUNDAY -> "Domingo"
+    }
 }
 
 fun obtenerFechaHoyCompleto(): String {

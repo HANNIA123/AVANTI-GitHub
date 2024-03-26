@@ -182,6 +182,23 @@ fun NavGraph(
 
         }
 
+        //Ver viaje sin paradas
+        composable( "ver_mapa_viaje_sin/{viajeid}/{email}/{pantalla}"
+        ) {
+            val viajeID= it.arguments?.getString("viajeid")?:""
+            val userID= it.arguments?.getString("email")?:""
+            val pantalla=it.arguments?.getString("pantalla")?:""
+            verMapaViajeConductor(
+                navController = navController,
+                correo = userID,
+
+                pantalla = pantalla,
+                viajeId = viajeID
+            )
+
+
+        }
+
         //Ver itinerario
         composable( "ver_itinerario_conductor/{userid}"
         ) {
