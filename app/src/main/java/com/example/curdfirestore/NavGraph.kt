@@ -22,6 +22,7 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.perfilPas
 import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Parada.Pantallas.generalParada
 import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
+import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
 import com.example.curdfirestore.Viaje.Pantallas.generalViajeCon
 import com.example.curdfirestore.Viaje.Pantallas.registrarDestinoConductor
 import com.example.curdfirestore.Viaje.Pantallas.registrarOrigenConductor
@@ -209,7 +210,13 @@ fun NavGraph(
             val userId= it.arguments?.getString("userid")?:""
        verItinerarioCon(navController = navController, userId = userId)
 
+        }
 
+        //Editar viaje
+        composable("general_viaje_conductor_editar/{userid}/{viajeid}"){
+            val userId= it.arguments?.getString("userid")?:""
+            val viajeId= it.arguments?.getString("viajeid")?:""
+            generalViajeConEditar(navController = navController, userId =userId , viajeId =viajeId )
         }
 
         //--------------------Pantallas entrando con pasajero---------------------------

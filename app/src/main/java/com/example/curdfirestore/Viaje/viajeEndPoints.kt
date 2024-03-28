@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 
@@ -18,8 +19,10 @@ import retrofit2.http.Path
 data class RespuestaApiViaje(
     val success: Boolean,
     val message: String,
-    val viajeId: String
+    val viajeId: String,
+    val viaje_paradas: String
 )
+
 
 
 object RetrofitClientViaje {
@@ -45,5 +48,12 @@ interface ApiServiceViaje{
 
     @GET("$newUrl/api/viaje/itinerarioviajes/{id}")
     suspend fun obtenerItinerarioCon(@Path("id") userId: String): List<ViajeDataReturn> // Obtener una lista de viajes para el viaje con el ID dado
+
+    @PUT("$newUrl/api/viaje/actualizarstatus/{id}/{status}")
+    fun actualizarStatusViaje(
+        @Path("id") viajeId: String,
+        @Path("status") nuevoStatus: String
+    ): Call<RespuestaApiViaje>
+
 
 }

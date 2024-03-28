@@ -69,6 +69,7 @@ import com.example.curdfirestore.Viaje.Funciones.calculateDistance
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Funciones.getDirections
+import com.example.curdfirestore.lineaCargando
 import com.example.curdfirestore.textoGris
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -102,13 +103,16 @@ fun verMapaViajeConductorSinPar(
         maxh = this.maxHeight
     }
 
-var viajeData= conObtenerViajeId(viajeId = viajeId)
+    var viajeData = conObtenerViajeId(viajeId = viajeId)
 
     var paradas by remember {
         mutableStateOf<List<ParadaData>>(emptyList())
     }
 
 
+    var viajeStatusF by remember {
+        mutableStateOf("")
+    }
 
 
     //Para la ventana de carga
@@ -121,51 +125,53 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
     val paradasPorMarcador = mutableMapOf<String, MarkerItiData>()
 
     var infparadas by remember { mutableStateOf<MarkerItiData?>(null) }
+    //dialogos
     var show by rememberSaveable { mutableStateOf(false) }
+    var showCancelar by rememberSaveable { mutableStateOf(false) }
+    var showEliminar by rememberSaveable { mutableStateOf(false) }
 
 
     //Para el menú de opciones de viaje
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf("") }
 
     viajeData?.let {
 
-            //Convertir String a coordenadas  -- origen
+        //Convertir String a coordenadas  -- origen
 
-            var markerLatO by remember { mutableStateOf(0.0) }
-            var markerLonO by remember { mutableStateOf(0.0) }
+        var markerLatO by remember { mutableStateOf(0.0) }
+        var markerLonO by remember { mutableStateOf(0.0) }
 
-            val markerCoordenadasLatLngO = convertirStringALatLng(viajeData.viaje_origen)
+        val markerCoordenadasLatLngO = convertirStringALatLng(viajeData.viaje_origen)
 
-            if (markerCoordenadasLatLngO != null) {
-                markerLatO = markerCoordenadasLatLngO.latitude
-                markerLonO = markerCoordenadasLatLngO.longitude
-                // Hacer algo con las coordenadas LatLng
-                println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-            } else {
-                // La conversión falló
-                println("Error al convertir la cadena a LatLng")
-            }
+        if (markerCoordenadasLatLngO != null) {
+            markerLatO = markerCoordenadasLatLngO.latitude
+            markerLonO = markerCoordenadasLatLngO.longitude
+            // Hacer algo con las coordenadas LatLng
+            println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
+        } else {
+            // La conversión falló
+            println("Error al convertir la cadena a LatLng")
+        }
 
 //Destino
-            var markerLatD by remember { mutableStateOf(0.0) }
-            var markerLonD by remember { mutableStateOf(0.0) }
-            val markerCoordenadasLatLngD = convertirStringALatLng(viajeData.viaje_destino)
+        var markerLatD by remember { mutableStateOf(0.0) }
+        var markerLonD by remember { mutableStateOf(0.0) }
+        val markerCoordenadasLatLngD = convertirStringALatLng(viajeData.viaje_destino)
 
-            if (markerCoordenadasLatLngD != null) {
-                markerLatD = markerCoordenadasLatLngD.latitude
-                markerLonD = markerCoordenadasLatLngD.longitude
-                // Hacer algo con las coordenadas LatLng
-                //  println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-            } else {
-                // La conversión falló
-                println("Error al convertir la cadena a LatLng")
-            }
-
-
+        if (markerCoordenadasLatLngD != null) {
+            markerLatD = markerCoordenadasLatLngD.latitude
+            markerLonD = markerCoordenadasLatLngD.longitude
+            // Hacer algo con las coordenadas LatLng
+            //  println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
+        } else {
+            // La conversión falló
+            println("Error al convertir la cadena a LatLng")
+        }
 
 
-            Box {
+
+
+        Box {
 
 
             Column(
@@ -253,6 +259,11 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                     }
                     val context = LocalContext.current
                     // Antes de cargar el mapa, muestra la ventana de carga
+
+
+                    if (isLoading) {
+                        lineaCargando(text = "Cargando mapa")
+                    }
 
 
 
@@ -348,13 +359,18 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                             { show = false },
                             {})
                     }
-
+                    var texBot = if (viajeData.viaje_status == "Disponible") {
+                        "Cancelar viaje"
+                    } else {
+                        "Activar viaje"
+                    }
 
 
                     menuViajeOpciones(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
                         offset = (-48).dp,
+                        txtBoton = texBot,
                         onOption1Click = {
                             var conpantalla = "nomuestra"
 
@@ -363,9 +379,17 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                             // ruta nueva parada
                         },
                         onOption2Click = {
+                            viajeStatusF = viajeData.viaje_status
+                            showCancelar = true
+
                             // dialogo de cancelacion
                         },
                         onOption3Click = {
+                            navController.navigate("general_viaje_conductor_editar/$correo/$viajeId")
+                            // Opcion para editar el viaje
+                        },
+                                onOption4Click = {
+                            showEliminar = true
                             // Opcion para ekiminar el viaje
                         }
                     )
@@ -397,9 +421,6 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
 
                     }
 
-
-
-
                     IconButton(
                         onClick = {
                             expanded = true
@@ -415,13 +436,30 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
                 }
 
             }
-                if (boton) {
-                    menuDesplegableCon(
-                        onDismiss = { boton = false },
-                        navController,
-                        userID = correo
-                    )
-                }
+            if (boton) {
+                menuDesplegableCon(
+                    onDismiss = { boton = false },
+                    navController,
+                    userID = correo
+                )
+            }
+            if (showCancelar) {
+                dialogoConfirmarCancelacion(
+                    onDismiss = { showCancelar = false },
+                    viajeId, correo, viajeStatusF,
+                    navController
+
+
+                )
+            }
+
+            if (showEliminar) {
+                dialogoConfirmarEliminarViaje(
+                    onDismiss = { showEliminar = false },
+                    viajeId, correo,
+                    navController
+                )
+            }
         }
 
 
@@ -429,7 +467,6 @@ var viajeData= conObtenerViajeId(viajeId = viajeId)
 
 
 }
-
 
 
 @Preview(showBackground = true)
