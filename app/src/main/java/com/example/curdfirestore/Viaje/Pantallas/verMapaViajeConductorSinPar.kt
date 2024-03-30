@@ -87,7 +87,6 @@ import kotlinx.coroutines.launch
 fun verMapaViajeConductorSinPar(
     navController: NavController,
     correo: String,
-    pantalla: String,
     viajeId: String
 
 ) {
@@ -485,8 +484,6 @@ fun PreViajeConductorPres() {
     verMapaViajeConductorSinPar(
         navController = navController,
         correo = correo,
-
-        pantalla = "itinerario",
         viajeId = "123"
     )
 }

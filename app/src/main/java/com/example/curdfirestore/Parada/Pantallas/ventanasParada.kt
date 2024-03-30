@@ -267,8 +267,7 @@ fun myDiaologExitosa(
                         // Primer botón para "Ver viaje"
                         TextButton(onClick = {
 
-                            val pantalla = "viaje"
-                            navController.navigate("ver_mapa_viaje/$idViaje/$email/$pantalla")
+                            navController.navigate("ver_mapa_viaje/$idViaje/$email")
                         }) {
                             Text(text = "Ver viaje",
                                 style = TextStyle(

@@ -358,7 +358,9 @@ fun registrarDestinoConductor(
             viaje_num_lugares = lugares,
             viaje_paradas = "0",
             viaje_iniciado = "no",
-            viaje_tarifa = tarifa
+            viaje_tarifa = tarifa,
+            viaje_num_pasajeros = "0",
+            viaje_num_pasajeros_con = "0"
         )
         //GuardarViaje(navController, userid, viajeData,conPantall)
         //GuardarCoordenadas(navController, userid,viajeData)

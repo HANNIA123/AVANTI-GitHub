@@ -127,8 +127,36 @@ fun ventanaMarkerItinerario(
                             .fillMaxWidth()
                             .padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color(
+                                    137,
+                                    13,
+                                    88
+                                )
+                            ),
+                            onClick = {
+
+                                if(marker.marker_titulo=="Origen" || marker.marker_titulo=="Destino" ){
+                                    navController.navigate("general_viaje_conductor_editar/$email/$viajeId")
+                                }
+                                else{
+
+                                    //Editar parada
+
+                                }
+                                // Cerrar el diálogo cuando se hace clic en "Cerrar"
+                                onDismiss()
+                            }) {
+                            Text(
+                                text = "Editar", style = TextStyle(
+                                    fontSize = 15.sp,
+                                    color = Color.White
+                                )
+                            )
+                        }
                         Button(
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color(

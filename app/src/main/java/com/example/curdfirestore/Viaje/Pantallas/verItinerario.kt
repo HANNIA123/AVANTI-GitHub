@@ -290,9 +290,9 @@ fun verItinerarioCon(
                                     IconButton(onClick = {
                                        // navController.navigate("ver_mapa_viaje/${it.viaje_id}/$userId/$pantalla")
                                         if (it.viaje_paradas != "0") {
-                                            navController.navigate("ver_mapa_viaje/${it.viaje_id}/$userId/$pantalla")
+                                            navController.navigate("ver_mapa_viaje/${it.viaje_id}/$userId")
                                         } else {
-                                            navController.navigate("ver_mapa_viaje_sin/${it.viaje_id}/$userId/$pantalla")
+                                            navController.navigate("ver_mapa_viaje_sin/${it.viaje_id}/$userId")
                                         }
 
                                     }) {

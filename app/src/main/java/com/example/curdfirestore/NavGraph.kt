@@ -23,6 +23,8 @@ import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Parada.Pantallas.generalParada
 import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
+import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarDestinoConductorEditar
+import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarOrigenConductorEditar
 import com.example.curdfirestore.Viaje.Pantallas.generalViajeCon
 import com.example.curdfirestore.Viaje.Pantallas.registrarDestinoConductor
 import com.example.curdfirestore.Viaje.Pantallas.registrarOrigenConductor
@@ -171,16 +173,16 @@ fun NavGraph(
 
 
         //Ver viaje, desde el itinerario o desde el registro
-        composable( "ver_mapa_viaje/{viajeid}/{email}/{pantalla}"
+        composable( "ver_mapa_viaje/{viajeid}/{email}"
         ) {
             val viajeID= it.arguments?.getString("viajeid")?:""
             val userID= it.arguments?.getString("email")?:""
-            val pantalla=it.arguments?.getString("pantalla")?:""
+
             verMapaViajeConductor(
                 navController = navController,
                 correo = userID,
 
-                pantalla = pantalla,
+
                 viajeId = viajeID
             )
 
@@ -188,16 +190,14 @@ fun NavGraph(
         }
 
         //Ver viaje sin paradas
-        composable( "ver_mapa_viaje_sin/{viajeid}/{email}/{pantalla}"
+        composable( "ver_mapa_viaje_sin/{viajeid}/{email}"
         ) {
             val viajeID= it.arguments?.getString("viajeid")?:""
             val userID= it.arguments?.getString("email")?:""
-            val pantalla=it.arguments?.getString("pantalla")?:""
             verMapaViajeConductorSinPar(
                 navController = navController,
                 correo = userID,
 
-                pantalla = pantalla,
                 viajeId = viajeID
             )
 
@@ -218,6 +218,41 @@ fun NavGraph(
             val viajeId= it.arguments?.getString("viajeid")?:""
             generalViajeConEditar(navController = navController, userId =userId , viajeId =viajeId )
         }
+        composable("registrar_origen_conductor_editar/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}/{origen}/{viajeid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            val dia = it.arguments?.getString("dia") ?: ""
+            val horao = it.arguments?.getString("horao") ?: ""
+            val horad = it.arguments?.getString("horad") ?: ""
+            val lugares = it.arguments?.getString("lugares") ?: ""
+            val tarifa = it.arguments?.getString("tarifa") ?: ""
+            val origen = it.arguments?.getString("origen") ?: ""
+
+            val viajeId = it.arguments?.getString("viajeid") ?: ""
+            registrarOrigenConductorEditar(navController = navController, userId, dia, horao, horad, lugares, tarifa, origen, viajeId)
+
+        }
+        composable("registrar_destino_conductor_editar/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}/{destino}/{viajeid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            val dia = it.arguments?.getString("dia") ?: ""
+            val horao = it.arguments?.getString("horao") ?: ""
+            val horad = it.arguments?.getString("horad") ?: ""
+            val lugares = it.arguments?.getString("lugares") ?: ""
+            val tarifa = it.arguments?.getString("tarifa") ?: ""
+            val destino = it.arguments?.getString("destino") ?: ""
+            val viajeId = it.arguments?.getString("viajeid") ?: ""
+            registrarDestinoConductorEditar(navController = navController, userId, dia, horao, horad, lugares, tarifa,destino, viajeId)
+
+        }
+
+
+
+
+
+
+
+
+
+
 
         //--------------------Pantallas entrando con pasajero---------------------------
         composable(

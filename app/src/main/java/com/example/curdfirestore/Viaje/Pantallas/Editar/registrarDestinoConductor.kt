@@ -1,5 +1,4 @@
-package com.example.curdfirestore.Viaje.Pantallas
-
+package com.example.curdfirestore.Viaje.Pantallas.Editar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,19 +7,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,26 +28,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-
 import androidx.compose.ui.platform.LocalContext
-
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ViajeData
-
-
+import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
 import com.example.curdfirestore.NivelAplicacion.SearchBar
 import com.example.curdfirestore.NivelAplicacion.searchPlaces
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Viaje.ConsultasViaje.conActualizarViaje
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.ConsultasViaje.conRegistrarViaje
-
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
+import com.example.curdfirestore.Viaje.Pantallas.cabeceraConBotonCerrarViaje
+import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
+import com.example.curdfirestore.Viaje.Pantallas.mapaMarkerDestino
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -64,36 +59,30 @@ import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun registrarOrigenConductor(
+fun registrarDestinoConductorEditar(
     navController: NavController,
-   userid: String,
+    userid: String,
     dia: String,
     horao: String,
     horad: String,
     lugares: String,
-    tarifa:String
+    tarifa: String,
+    destino: String,
+    viajeId: String
 ) {
     var maxh by remember {
         mutableStateOf(0.dp)
     }
 
-
     BoxWithConstraints {
         maxh = this.maxHeight
     }
-
-
-
-    var showPar by remember {
-        mutableStateOf(false)
-    }
-
     var ubicacion by remember {
         mutableStateOf("")
     }
-
 
     var latitud by remember {
         mutableStateOf("")
@@ -101,18 +90,12 @@ fun registrarOrigenConductor(
     var longitud by remember {
         mutableStateOf("")
     }
-
     var pasarlatitud by remember {
         mutableStateOf("")
     }
     var pasarlongitud by remember {
         mutableStateOf("")
     }
-
-    var ubicacionpasar by remember { //agregado
-        mutableStateOf("")
-    }
-
     var valorMapa: String by remember { mutableStateOf("barra") } //El que regresa
     var TipoBusqueda: String by remember { mutableStateOf("barra") } //El que paso
     var ubiMarker by remember { mutableStateOf("19.3898164,-99.11023") }
@@ -121,36 +104,38 @@ fun registrarOrigenConductor(
     var primeraVez by remember {
         mutableStateOf(0)
     }
+    var ubicacionpasar by remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(maxh)
     ) {
+        //  navController.navigate(route="general_viaje_conductor_editar/$userId/$viajeId")
 
-        cabeceraConBotonCerrarViaje("Registrar origen", navController, userid)
+        val ruta="general_viaje_conductor_editar/$userid/$viajeId"
+        cabeceraEditarAtras(
+            "Registrar destino",
+            navController,
+            ruta
+        )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(maxh - 70.dp),
+                    .height(maxh - 70.dp)
             ) {
-
-
                 if (valorMapa == "barra") {
-
                     var searchResults = remember { mutableStateOf(emptyList<Place>()) }
                     val context = LocalContext.current
                     var searchQuery = remember { mutableStateOf("") }
                     var selectedPlace by remember { mutableStateOf<Place?>(null) }
-
-
                     LaunchedEffect(searchQuery.value) {
                         // Lanzar un bloque coroutine para ejecutar la búsqueda de lugares
                         try {
@@ -158,34 +143,25 @@ fun registrarOrigenConductor(
                                 searchPlaces(searchQuery.value, context)
                             }
                             searchResults.value = results
-
                         } catch (e: Exception) {
                             // Manejar cualquier error que pueda ocurrir durante la búsqueda
                             e.printStackTrace()
                         }
                     }
+                    println("YA cambiando a barra")
+                    println("Variable primer $primeraVez ---------")
                     if (primeraVez == 0) {
-                        obtenerUbicacionInicial(
-                            navController = navController,
-                            userId = userid,
-                            onUbicacionObtenida =
-                            { nuevaUbicacion ->
-                                ubicacion = nuevaUbicacion
-                            }
-                        )
-
+                        ubicacion = destino
                     } else {
                         ubicacion = ubiMarker
-
                     }
-                    ubicacionpasar=ubicacion //aqui
 
+                    ubicacionpasar = ubicacion
                     if (ubicacion != "") {
                         val markerCoordenadasLatLng = convertirStringALatLng(ubicacion)
                         var miUbic by remember {
                             mutableStateOf(LatLng(0.0, 0.0))
                         }
-                        println("Coordenadas Location----- $ubicacion")
 
                         if (markerCoordenadasLatLng != null) {
                             var markerLat = markerCoordenadasLatLng.latitude
@@ -198,9 +174,13 @@ fun registrarOrigenConductor(
                             println("Error al convertir la cadena a LatLng")
                         }
 
+
+                        //miUbic = LatLng(markerLat, markerLon)
+
                         var direccion by remember {
                             mutableStateOf("")
                         }
+                        //var miUbic = LatLng(19.389816, -99.110234)
                         var markerState = rememberMarkerState(position = miUbic)
                         direccion = convertCoordinatesToAddress(coordenadas = miUbic)
                         var cameraPositionState = rememberCameraPositionState {
@@ -219,7 +199,7 @@ fun registrarOrigenConductor(
                             )
                             pasarlatitud = place.latLng.latitude.toString()
                             pasarlongitud = place.latLng.longitude.toString()
-                            ubicacionpasar = "$pasarlatitud,$pasarlongitud" //Esto
+                            ubicacionpasar = "$pasarlatitud,$pasarlongitud"
 
                             cameraPositionState.position = CameraPosition.fromLatLngZoom(
                                 LatLng(
@@ -237,18 +217,15 @@ fun registrarOrigenConductor(
                         GoogleMap(
                             modifier = Modifier
                                 .fillMaxSize(),
-
                             cameraPositionState = cameraPositionState
                         ) {
-
                             if (selectedPlace == null) {
                                 Marker(
                                     state = markerState,
-                                    title = "Origen",
+                                    title = "Destino",
                                     snippet = "Ubicación: $direccion",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.marcador),
                                 )
-
                             } else {
                                 selectedPlace?.let { place ->
                                     Marker(
@@ -258,18 +235,15 @@ fun registrarOrigenConductor(
                                                 place.latLng.longitude
                                             )
                                         ),
-                                        title = "Origen",
+                                        title = "Destino",
                                         snippet = "Ubicación: $direccion",
                                         icon = BitmapDescriptorFactory.fromResource(R.drawable.marcador),
                                     )
                                 }
                             }
                         }
-
                     }
-
-
-                    val TextoBarra = "¿De dónde sales?"
+                    val TextoBarra = "¿A dónde vas?"
                     Column(
                         modifier = Modifier
                             .align(Alignment.TopStart)
@@ -288,6 +262,7 @@ fun registrarOrigenConductor(
                             TextoBarra
                         )
                     }
+
                 } else {
                     var newUbi by remember {
                         mutableStateOf("")
@@ -298,13 +273,12 @@ fun registrarOrigenConductor(
                         newUbi = "$pasarlatitud,$pasarlongitud"
                     }
 
-                    ubiMarker = mapaMarker(ubicacionMarker = "$newUbi")
+                    ubiMarker = mapaMarkerDestino(ubicacionMarker = "$newUbi")
                     TipoBusqueda = "marker"
-                    ubicacionpasar=ubiMarker //Esto
+                    ubicacionpasar = ubiMarker //Esto
 
                 }
                 if (valorMapa == "marker") {
-
                     //Boton para regresar a la barra
                     Column(
                         modifier = Modifier
@@ -337,7 +311,6 @@ fun registrarOrigenConductor(
                                 modifier = Modifier.padding(5.dp)
 
                             )
-
                             Text(
                                 text = "Buscar por dirección",
                                 style = TextStyle(
@@ -347,86 +320,76 @@ fun registrarOrigenConductor(
                                 modifier = Modifier
                                     .align(Alignment.CenterVertically)
                             )
-
                         }
-
-
                     }
-
                 }
 
                 Button(
                     modifier = Modifier
                         .width(200.dp)
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp)
-                    ,
+                        .padding(bottom = 20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(137, 13, 88),
                     ),
                     onClick = {
+                        var ubicacionF = "$pasarlatitud,$pasarlongitud"
                         boton = true
-                        showPar=true
                     }) {
-                    Text(text = "Siguiente",
+                    Text(
+                        text = "Siguiente",
                         style = TextStyle(
                             fontSize = 20.sp
                         )
                     )
                 }
 
-            }
 
+            }
+        }
+
+    }
+    if (boton == true && ejecutado == false) {
+
+
+        val conViaje = conObtenerViajeId(viajeId = viajeId)
+
+        conViaje?.let {
+
+            var comPantalla = "muestra"
+            val origen = "19.5114059,-99.1265259" //Coordenadas de UPIITA
+            val viajeData = ViajeData(
+                usu_id = userid,
+                viaje_dia = dia,
+                viaje_hora_partida = horao,
+                viaje_origen = origen,
+                viaje_hora_llegada = horad,
+                viaje_destino = ubicacionpasar,
+                viaje_trayecto = "0",
+                viaje_status = conViaje.viaje_status,
+                viaje_num_lugares = lugares,
+                viaje_paradas = conViaje.viaje_paradas,
+                viaje_iniciado = conViaje.viaje_iniciado,
+                viaje_tarifa = tarifa,
+                viaje_num_pasajeros = conViaje.viaje_num_pasajeros,
+                viaje_num_pasajeros_con = conViaje.viaje_num_pasajeros_con
+            )
+            //GuardarViaje(navController, userid, viajeData,conPantall)
+            //GuardarCoordenadas(navController, userid,viajeData)
+            conActualizarViaje(
+                navController = navController,
+                userId = userid,
+                viajeId = viajeId,
+                viajeData = viajeData
+            )
+            //  conRegistrarViaje(navController, userid,viajeData, comPantalla)
+
+            ejecutado = true
         }
 
     }
 
-    if (boton == true && ejecutado == false) {
-        val comPantalla="muestra"
-
-        val destino = "19.5114059,-99.1265259" //Coordenadas de UPIITA
-        val viajeData = ViajeData(
-            usu_id = userid,
-            viaje_dia = dia,
-            viaje_hora_partida = horao,
-            viaje_origen = ubicacionpasar,
-            viaje_hora_llegada = horad,
-            viaje_destino = destino,
-            viaje_trayecto = "1",
-            viaje_status = "Disponible",
-            viaje_num_lugares = lugares,
-            viaje_paradas = "0",
-            viaje_iniciado = "no",
-            viaje_tarifa = tarifa,
-            viaje_num_pasajeros = "0",
-            viaje_num_pasajeros_con = "0"
-        )
-
-conRegistrarViaje(navController, userid,viajeData, comPantalla)
-
-
-
-        //GuardarViaje(navController, userid, viajeData,comPantalla)
-        ejecutado = true
-    }
 }
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Preview(showBackground = true)
-@Composable
-fun RegistrarOrigenConductorPreview() {
-    // Esta función se utiliza para la vista previa
-    var correo = "hplayasr1700@alumno.ipn.mx"
-    val navController = rememberNavController()
-    registrarOrigenConductor(
-        navController = navController, correo,
-        dia = "Lunes", horao = "7:00", horad = "8:00", lugares = "2", tarifa = "10"
-    )
-
-}
-
-
-
 
 
 

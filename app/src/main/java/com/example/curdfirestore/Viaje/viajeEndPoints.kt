@@ -56,4 +56,11 @@ interface ApiServiceViaje{
     ): Call<RespuestaApiViaje>
 
 
+    @PUT("$newUrl/api/viaje/editarviaje/{id}")
+    fun actualizarViaje(
+        @Path("id") viajeId: String,
+        @Body viajeData: ViajeData
+    ): Call<RespuestaApiViaje>
+
+
 }

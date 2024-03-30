@@ -71,7 +71,6 @@ import kotlinx.coroutines.launch
 fun verMapaViajeConductor(
     navController: NavController,
     correo: String,
-    pantalla: String,
     viajeId: String
 
 ) {
@@ -111,6 +110,7 @@ fun verMapaViajeConductor(
     var show by rememberSaveable { mutableStateOf(false) }
     var showCancelar by rememberSaveable { mutableStateOf(false) }
     var showEliminar by rememberSaveable { mutableStateOf(false) }
+    var showEditar by rememberSaveable { mutableStateOf(false) }
 
     //Convertir String a coordenadas  -- origen
 
@@ -371,8 +371,10 @@ fun verMapaViajeConductor(
                                 // dialogo de cancelacion
                             },
                             onOption3Click = {
-                                navController.navigate("general_viaje_conductor_editar/$correo/$viajeId")
-                                // ruta nueva parada
+
+                                    navController.navigate("general_viaje_conductor_editar/$correo/$viajeId")
+
+
                                 // Opcion para editar el viaje
                             },
                             onOption4Click = {
@@ -449,6 +451,8 @@ fun verMapaViajeConductor(
                         navController
                     )
                 }
+
+
             }
         }
 
@@ -497,8 +501,6 @@ fun PreViajeConductorPre() {
     verMapaViajeConductor(
         navController = navController,
         correo = correo,
-
-        pantalla = "itinerario",
         viajeId = "123"
     )
 }

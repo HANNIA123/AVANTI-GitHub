@@ -1,4 +1,4 @@
-package com.example.curdfirestore.Viaje.Pantallas
+package com.example.curdfirestore.Viaje.Pantallas.Editar
 
 
 import androidx.compose.foundation.background
@@ -47,11 +47,16 @@ import com.example.avanti.ViajeData
 import com.example.curdfirestore.NivelAplicacion.SearchBar
 import com.example.curdfirestore.NivelAplicacion.searchPlaces
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Viaje.ConsultasViaje.conActualizarViaje
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.ConsultasViaje.conRegistrarViaje
 
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
+import com.example.curdfirestore.Viaje.Pantallas.cabeceraConBotonCerrarViaje
+import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
+import com.example.curdfirestore.Viaje.Pantallas.mapaMarker
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -66,14 +71,16 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun registrarOrigenConductor(
+fun registrarOrigenConductorEditar(
     navController: NavController,
-   userid: String,
+    userid: String,
     dia: String,
     horao: String,
     horad: String,
     lugares: String,
-    tarifa:String
+    tarifa: String,
+    origen: String,
+    viajeId: String
 ) {
     var maxh by remember {
         mutableStateOf(0.dp)
@@ -83,7 +90,6 @@ fun registrarOrigenConductor(
     BoxWithConstraints {
         maxh = this.maxHeight
     }
-
 
 
     var showPar by remember {
@@ -128,8 +134,12 @@ fun registrarOrigenConductor(
             .height(maxh)
     ) {
 
-        cabeceraConBotonCerrarViaje("Registrar origen", navController, userid)
-
+        val ruta="general_viaje_conductor_editar/$userid/$viajeId"
+        cabeceraEditarAtras(
+            "Registrar destino",
+            navController,
+            ruta
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -165,20 +175,13 @@ fun registrarOrigenConductor(
                         }
                     }
                     if (primeraVez == 0) {
-                        obtenerUbicacionInicial(
-                            navController = navController,
-                            userId = userid,
-                            onUbicacionObtenida =
-                            { nuevaUbicacion ->
-                                ubicacion = nuevaUbicacion
-                            }
-                        )
+                        ubicacion = origen
 
                     } else {
                         ubicacion = ubiMarker
 
                     }
-                    ubicacionpasar=ubicacion //aqui
+                    ubicacionpasar = ubicacion //aqui
 
                     if (ubicacion != "") {
                         val markerCoordenadasLatLng = convertirStringALatLng(ubicacion)
@@ -300,7 +303,7 @@ fun registrarOrigenConductor(
 
                     ubiMarker = mapaMarker(ubicacionMarker = "$newUbi")
                     TipoBusqueda = "marker"
-                    ubicacionpasar=ubiMarker //Esto
+                    ubicacionpasar = ubiMarker //Esto
 
                 }
                 if (valorMapa == "marker") {
@@ -359,16 +362,16 @@ fun registrarOrigenConductor(
                     modifier = Modifier
                         .width(200.dp)
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp)
-                    ,
+                        .padding(bottom = 20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(137, 13, 88),
                     ),
                     onClick = {
                         boton = true
-                        showPar=true
+                        showPar = true
                     }) {
-                    Text(text = "Siguiente",
+                    Text(
+                        text = "Siguiente",
                         style = TextStyle(
                             fontSize = 20.sp
                         )
@@ -382,48 +385,49 @@ fun registrarOrigenConductor(
     }
 
     if (boton == true && ejecutado == false) {
-        val comPantalla="muestra"
 
-        val destino = "19.5114059,-99.1265259" //Coordenadas de UPIITA
-        val viajeData = ViajeData(
-            usu_id = userid,
-            viaje_dia = dia,
-            viaje_hora_partida = horao,
-            viaje_origen = ubicacionpasar,
-            viaje_hora_llegada = horad,
-            viaje_destino = destino,
-            viaje_trayecto = "1",
-            viaje_status = "Disponible",
-            viaje_num_lugares = lugares,
-            viaje_paradas = "0",
-            viaje_iniciado = "no",
-            viaje_tarifa = tarifa,
-            viaje_num_pasajeros = "0",
-            viaje_num_pasajeros_con = "0"
-        )
+        val conViaje= conObtenerViajeId(viajeId = viajeId)
 
-conRegistrarViaje(navController, userid,viajeData, comPantalla)
+        conViaje?.let {
+            val comPantalla = "muestra"
+
+            val destino = "19.5114059,-99.1265259" //Coordenadas de UPIITA
+            val viajeData = ViajeData(
+                usu_id = userid,
+                viaje_dia = dia,
+                viaje_hora_partida = horao,
+                viaje_origen = ubicacionpasar,
+                viaje_hora_llegada = horad,
+                viaje_destino = destino,
+                viaje_trayecto = "1",
+                viaje_status = conViaje.viaje_status,
+                viaje_num_lugares = lugares,
+                viaje_paradas = conViaje.viaje_paradas,
+                viaje_iniciado = conViaje.viaje_iniciado,
+                viaje_tarifa = tarifa,
+                viaje_num_pasajeros = conViaje.viaje_num_pasajeros,
+                viaje_num_pasajeros_con = conViaje.viaje_num_pasajeros_con
+            )
 
 
+            conActualizarViaje(
+                navController = navController,
+                userId = userid,
+                viajeId = viajeId,
+                viajeData = viajeData
+            )
 
-        //GuardarViaje(navController, userid, viajeData,comPantalla)
-        ejecutado = true
+//conRegistrarViaje(navController, userid,viajeData, comPantalla)
+
+
+            //GuardarViaje(navController, userid, viajeData,comPantalla)
+            ejecutado = true
+
+        }
+
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Preview(showBackground = true)
-@Composable
-fun RegistrarOrigenConductorPreview() {
-    // Esta función se utiliza para la vista previa
-    var correo = "hplayasr1700@alumno.ipn.mx"
-    val navController = rememberNavController()
-    registrarOrigenConductor(
-        navController = navController, correo,
-        dia = "Lunes", horao = "7:00", horad = "8:00", lugares = "2", tarifa = "10"
-    )
-
-}
 
 
 
