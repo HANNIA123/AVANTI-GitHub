@@ -9,7 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 
-public var BASE_URL = "http://192.168.1.70:3000/"
+public var BASE_URL = "http://192.168.1.10:3000/"
 //public var BASE_URL = "https://us-central1-avanti-c4ba7.cloudfunctions.net/app/"
 
 object RetrofitClientUsuario {

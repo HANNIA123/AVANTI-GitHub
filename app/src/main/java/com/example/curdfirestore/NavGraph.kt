@@ -12,6 +12,8 @@ import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
 import com.example.curdfirestore.Horario.Pantallas.generalViajePas
 import com.example.curdfirestore.Horario.Pantallas.registrarDestinoPasajero
 import com.example.curdfirestore.Horario.Pantallas.registrarOrigenPasajero
+import com.example.curdfirestore.Parada.Pantallas.Editar.generalParadaEditar
+import com.example.curdfirestore.Parada.Pantallas.Editar.registrarParadaBarraEditar
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
@@ -243,7 +245,38 @@ fun NavGraph(
             registrarDestinoConductorEditar(navController = navController, userId, dia, horao, horad, lugares, tarifa,destino, viajeId)
 
         }
+        composable("general_parada_editar/{viajeid}/{userid}/{paradaid}") {
+            val viajeId = it.arguments?.getString("viajeid") ?: ""
+            val userId = it.arguments?.getString("userid") ?: ""
+            val paradaid = it.arguments?.getString("paradaid") ?: ""
+            println("Variables rutaaa $viajeId $userId $paradaid")
+            generalParadaEditar(
+                navController = navController,
+                viajeId = viajeId,
+                userId = userId,
+                paradaId = paradaid
+            )
+        }
 
+
+        composable("registrar_parada_barra_editar/{userid}/{viajeid}/{nombrep}/{horap}/{ubicacionp}/{paradaid}") {
+            val viajeId = it.arguments?.getString("viajeid") ?: ""
+            val userId = it.arguments?.getString("userid") ?: ""
+            val nombreP = it.arguments?.getString("nombrep") ?: ""
+            val horaP = it.arguments?.getString("horap") ?: ""
+            val ubicacionP = it.arguments?.getString("ubicacionp") ?: ""
+            val paradaId = it.arguments?.getString("paradaid") ?: ""
+            registrarParadaBarraEditar(
+                navController = navController,
+                userid = userId,
+                viajeid = viajeId,
+                nombrep = nombreP,
+                horap = horaP,
+                ubicacionP = ubicacionP,
+                paradaId =paradaId
+            )
+           // registrarParadaBarra(navController,userId,viajeId, nombreP, horaP)
+        }
 
 
 

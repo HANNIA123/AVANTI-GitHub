@@ -1,5 +1,6 @@
 package com.example.curdfirestore.Viaje.ConsultasViaje
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +34,8 @@ fun conActualizarViaje(
                 resp = respuesta
                 if(viajeData.viaje_paradas=="0"){
                     navController.navigate(route = "ver_mapa_viaje_sin/$viajeId/$userId")
+                    Toast.makeText(navController.context, "Viaje actualizado ", Toast.LENGTH_SHORT).show()
+
                 }
                 else{
                     navController.navigate(route = "ver_mapa_viaje/$viajeId/$userId")

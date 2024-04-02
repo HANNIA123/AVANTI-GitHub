@@ -402,11 +402,11 @@ fun registrarOrigenConductorEditar(
                 viaje_trayecto = "1",
                 viaje_status = conViaje.viaje_status,
                 viaje_num_lugares = lugares,
-                viaje_paradas = conViaje.viaje_paradas,
-                viaje_iniciado = conViaje.viaje_iniciado,
+                viaje_paradas = "0",
+                viaje_iniciado = "no",
                 viaje_tarifa = tarifa,
-                viaje_num_pasajeros = conViaje.viaje_num_pasajeros,
-                viaje_num_pasajeros_con = conViaje.viaje_num_pasajeros_con
+                viaje_num_pasajeros = "0",
+                viaje_num_pasajeros_con = "0"
             )
 
 

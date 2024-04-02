@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import androidx.navigation.compose.composable
 import com.example.avanti.MarkerItiData
 import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
@@ -139,11 +140,14 @@ fun ventanaMarkerItinerario(
                             ),
                             onClick = {
 
-                                if(marker.marker_titulo=="Origen" || marker.marker_titulo=="Destino" ){
+                                if (marker.marker_titulo == "Origen" || marker.marker_titulo == "Destino") {
                                     navController.navigate("general_viaje_conductor_editar/$email/$viajeId")
-                                }
-                                else{
+                                } else {
 
+//                                    composable("general_parada_editar/{viajeid}/{userid}/{paradaid}") {
+
+                                   // println("-------------- general_parada_editar/$viajeId/$email/${marker.marker_id}----------")
+                                    navController.navigate("general_parada_editar/$viajeId/$email/${marker.marker_id}")
                                     //Editar parada
 
                                 }

@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 
@@ -18,7 +19,8 @@ import retrofit2.http.Path
 data class RespuestaApiParada(
     val success: Boolean,
     val message: String,
-    val paradaId: String
+    val paradaId: String,
+    val paradaData:String
 )
 
 
@@ -43,7 +45,14 @@ interface ApiServiceParada{
 
     @GET("$newUrl/api/parada/obtenerlistaparadas/{id}")
     suspend fun obtenerListaParadas(@Path("id") viajeId: String): List<ParadaData> // Obtener una lista de paradas para el viaje con el ID dado
+    @GET("$newUrl/api/parada/obtenerparada/{id}")
+    suspend fun obtenerParada(@Path("id") paradaId: String): ParadaData //Obtiene los datos de un id dado
 
+    @PUT("$newUrl/api/parada/editarparada/{id}")
+    fun actualizarParada(
+        @Path("id") paradaId: String,
+        @Body paradaData: ParadaData
+    ): Call<RespuestaApiParada>
 
 
 }
