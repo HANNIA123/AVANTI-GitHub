@@ -1,6 +1,7 @@
 package com.example.curdfirestore.Horario
 
 import com.example.avanti.HorarioData
+import com.example.avanti.HorarioDataReturn
 import com.example.avanti.Usuario.BASE_URL
 import com.example.avanti.Usuario.RespuestaApiViaje
 import com.example.avanti.Usuario.newUrl
@@ -40,5 +41,9 @@ interface ApiServiceHorario{
     @POST("$newUrl/api/horario/registrarhorario") // Reemplaza con la ruta de tu endpoint
     fun registrarHorario(@Body horarioData: HorarioData): Call<RespuestaApiHorario>
 
+    @GET("$newUrl/api/horario/itinerarioviajespasajero/{id}")
+    suspend fun obtenerItinerarioPas(@Path("id") userId: String): List<HorarioDataReturn>
 
+    @GET("$newUrl/api/horario/obtenerhorario/{id}")
+    suspend fun obtenerHorario(@Path("id") horarioId: String): HorarioData //Obtiene los datos de un id dado
 }
