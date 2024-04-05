@@ -1,4 +1,4 @@
-package com.example.curdfirestore.Parada.ConsultasParada
+package com.example.curdfirestore.Solicitud.ConsultasSolicitud
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -6,48 +6,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.example.avanti.ParadaData
+import com.example.avanti.SolicitudData
 
-import com.example.avanti.Usuario.RetrofitClientParada
-import com.example.avanti.Usuario.RetrofitClientViaje
-import com.example.avanti.ViajeData
 
 @Composable
-fun conObtenerParada(paradaId: String): ParadaData? {
-
+fun conObtenerSolicitud(horarioId: String): SolicitudData? {
     var fin by remember {
         mutableStateOf(false)
     }
-    var parada by remember { mutableStateOf<ParadaData?>(null) }
+    var solicitud by remember { mutableStateOf<SolicitudData?>(null) }
     LaunchedEffect(key1 = true) {
         try {
-            val resultadoParada = RetrofitClientParada.apiService.obtenerParada(paradaId)
-            parada = resultadoParada
-
-
-
-
+            val resultadoParada = RetrofitClientSolicitud.apiService.obtenerSolicitud(horarioId)
+            solicitud = resultadoParada
             // Haz algo con el objeto Usuario
-            println("Parada obtenida: $parada")
-
+            println("Solicitud solicitud: $solicitud")
         } catch (e: Exception) {
-            println("Error al obtener parada: $e")
+            println("Error al obtener la solicitud: $e")
         } finally {
             fin = true
         }
     }
 
 
-
-
     // Puedes retornar el usuario directamente
     return if (fin) {
-        parada
+        solicitud
     } else {
         null
     }
-
 }
-
-
-
