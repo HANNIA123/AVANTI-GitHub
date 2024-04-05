@@ -13,7 +13,7 @@ import com.example.avanti.Usuario.RetrofitClientViaje
 import com.example.avanti.ViajeData
 
 @Composable
-fun conObtenerParada(paradaId: String): ParadaData? {
+fun conObtenerParadaId(paradaId: String): ParadaData? {
 
     var fin by remember {
         mutableStateOf(false)

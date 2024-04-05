@@ -1,6 +1,7 @@
 package com.example.avanti.Usuario
 
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -9,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
+import com.example.curdfirestore.Horario.ConsultasHorario.conBuscarViajePas
 import com.example.curdfirestore.Horario.Pantallas.generalViajePas
 import com.example.curdfirestore.Horario.Pantallas.registrarDestinoPasajero
 import com.example.curdfirestore.Horario.Pantallas.registrarOrigenPasajero
@@ -41,6 +43,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 
+@SuppressLint("ComposableDestinationInComposeScope")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(
@@ -193,219 +196,256 @@ fun NavGraph(
 
 
         //Ver viaje, desde el itinerario o desde el registro
-        composable( "ver_mapa_viaje/{viajeid}/{email}"
-        ) {
-            val viajeID= it.arguments?.getString("viajeid")?:""
-            val userID= it.arguments?.getString("email")?:""
-
-
         composable(
-            "ver_mapa_viaje/{viajeid}/{email}/{pantalla}"
+            "ver_mapa_viaje/{viajeid}/{email}"
         ) {
             val viajeID = it.arguments?.getString("viajeid") ?: ""
             val userID = it.arguments?.getString("email") ?: ""
-            val pantalla = it.arguments?.getString("pantalla") ?: ""
-
-            verMapaViajeConductor(
-                navController = navController,
-                correo = userID,
 
 
-                viajeId = viajeID
-            )
+            composable(
+                "ver_mapa_viaje/{viajeid}/{email}/{pantalla}"
+            ) {
+                val viajeID = it.arguments?.getString("viajeid") ?: ""
+                val userID = it.arguments?.getString("email") ?: ""
+                val pantalla = it.arguments?.getString("pantalla") ?: ""
+
+                verMapaViajeConductor(
+                    navController = navController,
+                    correo = userID,
 
 
+                    viajeId = viajeID
+                )
+
+
+            }
+
+            //Ver viaje sin paradas
+
+            composable(
+                "ver_mapa_viaje_sin/{viajeid}/{email}"
+            ) {
+                val viajeID = it.arguments?.getString("viajeid") ?: ""
+                val userID = it.arguments?.getString("email") ?: ""
+
+                composable(
+                    "ver_mapa_viaje_sin/{viajeid}/{email}/{pantalla}"
+                ) {
+                    val viajeID = it.arguments?.getString("viajeid") ?: ""
+                    val userID = it.arguments?.getString("email") ?: ""
+                    val pantalla = it.arguments?.getString("pantalla") ?: ""
+
+                    verMapaViajeConductorSinPar(
+                        navController = navController,
+                        correo = userID,
+
+                        viajeId = viajeID
+                    )
+
+
+                }
+
+                //Ver itinerario
+                composable(
+                    "ver_itinerario_conductor/{userid}"
+                ) {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    verItinerarioCon(navController = navController, userId = userId)
+
+                }
+
+                //Editar viaje
+                composable("general_viaje_conductor_editar/{userid}/{viajeid}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    val viajeId = it.arguments?.getString("viajeid") ?: ""
+                    generalViajeConEditar(
+                        navController = navController,
+                        userId = userId,
+                        viajeId = viajeId
+                    )
+                }
+                composable("registrar_origen_conductor_editar/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}/{origen}/{viajeid}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    val dia = it.arguments?.getString("dia") ?: ""
+                    val horao = it.arguments?.getString("horao") ?: ""
+                    val horad = it.arguments?.getString("horad") ?: ""
+                    val lugares = it.arguments?.getString("lugares") ?: ""
+                    val tarifa = it.arguments?.getString("tarifa") ?: ""
+                    val origen = it.arguments?.getString("origen") ?: ""
+
+                    val viajeId = it.arguments?.getString("viajeid") ?: ""
+                    registrarOrigenConductorEditar(
+                        navController = navController,
+                        userId,
+                        dia,
+                        horao,
+                        horad,
+                        lugares,
+                        tarifa,
+                        origen,
+                        viajeId
+                    )
+
+                }
+                composable("registrar_destino_conductor_editar/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}/{destino}/{viajeid}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    val dia = it.arguments?.getString("dia") ?: ""
+                    val horao = it.arguments?.getString("horao") ?: ""
+                    val horad = it.arguments?.getString("horad") ?: ""
+                    val lugares = it.arguments?.getString("lugares") ?: ""
+                    val tarifa = it.arguments?.getString("tarifa") ?: ""
+                    val destino = it.arguments?.getString("destino") ?: ""
+                    val viajeId = it.arguments?.getString("viajeid") ?: ""
+                    registrarDestinoConductorEditar(
+                        navController = navController,
+                        userId,
+                        dia,
+                        horao,
+                        horad,
+                        lugares,
+                        tarifa,
+                        destino,
+                        viajeId
+                    )
+
+                }
+                composable("general_parada_editar/{viajeid}/{userid}/{paradaid}") {
+                    val viajeId = it.arguments?.getString("viajeid") ?: ""
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    val paradaid = it.arguments?.getString("paradaid") ?: ""
+                    println("Variables rutaaa $viajeId $userId $paradaid")
+                    generalParadaEditar(
+                        navController = navController,
+                        viajeId = viajeId,
+                        userId = userId,
+                        paradaId = paradaid
+                    )
+                }
+
+
+                composable("registrar_parada_barra_editar/{userid}/{viajeid}/{nombrep}/{horap}/{ubicacionp}/{paradaid}") {
+                    val viajeId = it.arguments?.getString("viajeid") ?: ""
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    val nombreP = it.arguments?.getString("nombrep") ?: ""
+                    val horaP = it.arguments?.getString("horap") ?: ""
+                    val ubicacionP = it.arguments?.getString("ubicacionp") ?: ""
+                    val paradaId = it.arguments?.getString("paradaid") ?: ""
+                    registrarParadaBarraEditar(
+                        navController = navController,
+                        userid = userId,
+                        viajeid = viajeId,
+                        nombrep = nombreP,
+                        horap = horaP,
+                        ubicacionP = ubicacionP,
+                        paradaId = paradaId
+                    )
+                    // registrarParadaBarra(navController,userId,viajeId, nombreP, horaP)
+                }
+
+
+                //Busqueda de paradas
+                composable(
+                    "ver_paradas_pasajero/{correo}/{idhorario}"
+                ) {
+
+                    val correo = it.arguments?.getString("correo") ?: ""
+                    val idhorario = it.arguments?.getString("idhorario") ?: ""
+
+                    //Consulta a ConsultasBD
+                    conBuscarViajePas(
+                        navController = navController, correo =
+                        correo, horarioId = idhorario
+                    )
+                }
+
+
+                //--------------------Pantallas entrando con pasajero---------------------------
+                composable(
+                    "cuenta_pasajero/{userid}"
+                ) {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    cuentaPantallaPas(navController = navController, userID = userId)
+
+                }
+
+                composable("perfil_pasajero/{userid}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    perfilPas(navController = navController, userId = userId)
+
+                }
+
+                composable("modificar_password_pasajero/{userid}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    modificarPasswordPas(navController = navController, userId = userId)
+
+                }
+
+                composable("horario_inicio/{userid}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    horariosInicio(navController = navController, userId = userId)
+
+                }
+                composable("general_horario_pasajero/{userid}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    generalViajePas(navController = navController, userId = userId)
+                }
+
+                //---------Horario pasajero--------------
+                composable("registrar_origen_pasajero/{userid}/{dia}/{horao}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    val dia = it.arguments?.getString("dia") ?: ""
+                    val horao = it.arguments?.getString("horao") ?: ""
+
+                    registrarOrigenPasajero(navController = navController, userId, dia, horao)
+                }
+
+                composable("registrar_destino_pasajero/{userid}/{dia}/{horao}") {
+                    val userId = it.arguments?.getString("userid") ?: ""
+                    val dia = it.arguments?.getString("dia") ?: ""
+                    val horao = it.arguments?.getString("horao") ?: ""
+
+                    registrarDestinoPasajero(navController = navController, userId, dia, horao)
+                }
+
+                composable(
+                    "ver_itinerario_pasajero/{userid}"
+                ) {
+                    val userid = it.arguments?.getString("userid") ?: ""
+                    verItinerarioPas(navController = navController, userid)
+                }
+
+                composable(
+                    "ver_mapa_viaje_pas/{horarioid}/{email}/{pantalla}"
+                ) {
+                    val horarioId = it.arguments?.getString("horarioid") ?: ""
+                    val userId = it.arguments?.getString("email") ?: ""
+                    val pantalla = it.arguments?.getString("pantalla") ?: ""
+                    verMapaViajePasajero(
+                        navController = navController,
+                        horarioId = horarioId,
+                        correo = userId,
+                        pantalla = pantalla
+                    )
+                }
+
+                composable(
+                    "ver_mapa_viaje_pas_sin/{horarioid}/{email}/{pantalla}"
+                ) {
+                    val horarioId = it.arguments?.getString("horarioid") ?: ""
+                    val userId = it.arguments?.getString("email") ?: ""
+                    val pantalla = it.arguments?.getString("pantalla") ?: ""
+                    verMapaViajePasajeroSinPar(
+                        navController = navController,
+                        horarioId = horarioId,
+                        correo = userId,
+                        pantalla = pantalla
+                    )
+                }
+
+
+            }
         }
-
-        //Ver viaje sin paradas
-
-        composable( "ver_mapa_viaje_sin/{viajeid}/{email}"
-        ) {
-            val viajeID= it.arguments?.getString("viajeid")?:""
-            val userID= it.arguments?.getString("email")?:""
-
-        composable(
-            "ver_mapa_viaje_sin/{viajeid}/{email}/{pantalla}"
-        ) {
-            val viajeID = it.arguments?.getString("viajeid") ?: ""
-            val userID = it.arguments?.getString("email") ?: ""
-            val pantalla = it.arguments?.getString("pantalla") ?: ""
-
-            verMapaViajeConductorSinPar(
-                navController = navController,
-                correo = userID,
-
-                viajeId = viajeID
-            )
-
-
-        }
-
-        //Ver itinerario
-        composable(
-            "ver_itinerario_conductor/{userid}"
-        ) {
-            val userId = it.arguments?.getString("userid") ?: ""
-            verItinerarioCon(navController = navController, userId = userId)
-
-        }
-
-        //Editar viaje
-        composable("general_viaje_conductor_editar/{userid}/{viajeid}"){
-            val userId= it.arguments?.getString("userid")?:""
-            val viajeId= it.arguments?.getString("viajeid")?:""
-            generalViajeConEditar(navController = navController, userId =userId , viajeId =viajeId )
-        }
-        composable("registrar_origen_conductor_editar/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}/{origen}/{viajeid}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            val dia = it.arguments?.getString("dia") ?: ""
-            val horao = it.arguments?.getString("horao") ?: ""
-            val horad = it.arguments?.getString("horad") ?: ""
-            val lugares = it.arguments?.getString("lugares") ?: ""
-            val tarifa = it.arguments?.getString("tarifa") ?: ""
-            val origen = it.arguments?.getString("origen") ?: ""
-
-            val viajeId = it.arguments?.getString("viajeid") ?: ""
-            registrarOrigenConductorEditar(navController = navController, userId, dia, horao, horad, lugares, tarifa, origen, viajeId)
-
-        }
-        composable("registrar_destino_conductor_editar/{userid}/{dia}/{horao}/{horad}/{lugares}/{tarifa}/{destino}/{viajeid}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            val dia = it.arguments?.getString("dia") ?: ""
-            val horao = it.arguments?.getString("horao") ?: ""
-            val horad = it.arguments?.getString("horad") ?: ""
-            val lugares = it.arguments?.getString("lugares") ?: ""
-            val tarifa = it.arguments?.getString("tarifa") ?: ""
-            val destino = it.arguments?.getString("destino") ?: ""
-            val viajeId = it.arguments?.getString("viajeid") ?: ""
-            registrarDestinoConductorEditar(navController = navController, userId, dia, horao, horad, lugares, tarifa,destino, viajeId)
-
-        }
-        composable("general_parada_editar/{viajeid}/{userid}/{paradaid}") {
-            val viajeId = it.arguments?.getString("viajeid") ?: ""
-            val userId = it.arguments?.getString("userid") ?: ""
-            val paradaid = it.arguments?.getString("paradaid") ?: ""
-            println("Variables rutaaa $viajeId $userId $paradaid")
-            generalParadaEditar(
-                navController = navController,
-                viajeId = viajeId,
-                userId = userId,
-                paradaId = paradaid
-            )
-        }
-
-
-        composable("registrar_parada_barra_editar/{userid}/{viajeid}/{nombrep}/{horap}/{ubicacionp}/{paradaid}") {
-            val viajeId = it.arguments?.getString("viajeid") ?: ""
-            val userId = it.arguments?.getString("userid") ?: ""
-            val nombreP = it.arguments?.getString("nombrep") ?: ""
-            val horaP = it.arguments?.getString("horap") ?: ""
-            val ubicacionP = it.arguments?.getString("ubicacionp") ?: ""
-            val paradaId = it.arguments?.getString("paradaid") ?: ""
-            registrarParadaBarraEditar(
-                navController = navController,
-                userid = userId,
-                viajeid = viajeId,
-                nombrep = nombreP,
-                horap = horaP,
-                ubicacionP = ubicacionP,
-                paradaId =paradaId
-            )
-           // registrarParadaBarra(navController,userId,viajeId, nombreP, horaP)
-        }
-
-
-
-
-
-
-
-
-
-
-        //--------------------Pantallas entrando con pasajero---------------------------
-        composable(
-            "cuenta_pasajero/{userid}"
-        ) {
-            val userId = it.arguments?.getString("userid") ?: ""
-            cuentaPantallaPas(navController = navController, userID = userId)
-
-        }
-
-        composable("perfil_pasajero/{userid}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            perfilPas(navController = navController, userId = userId)
-
-        }
-
-        composable("modificar_password_pasajero/{userid}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            modificarPasswordPas(navController = navController, userId = userId)
-
-        }
-
-        composable("horario_inicio/{userid}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            horariosInicio(navController = navController, userId = userId)
-
-        }
-        composable("general_horario_pasajero/{userid}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            generalViajePas(navController = navController, userId = userId)
-        }
-
-        //---------Horario pasajero--------------
-        composable("registrar_origen_pasajero/{userid}/{dia}/{horao}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            val dia = it.arguments?.getString("dia") ?: ""
-            val horao = it.arguments?.getString("horao") ?: ""
-
-            registrarOrigenPasajero(navController = navController, userId, dia, horao)
-        }
-
-        composable("registrar_destino_pasajero/{userid}/{dia}/{horao}") {
-            val userId = it.arguments?.getString("userid") ?: ""
-            val dia = it.arguments?.getString("dia") ?: ""
-            val horao = it.arguments?.getString("horao") ?: ""
-
-            registrarDestinoPasajero(navController = navController, userId, dia, horao)
-        }
-
-        composable(
-            "ver_itinerario_pasajero/{userid}"
-        ) {
-            val userid = it.arguments?.getString("userid") ?: ""
-            verItinerarioPas(navController = navController, userid)
-        }
-
-        composable( "ver_mapa_viaje_pas/{horarioid}/{email}/{pantalla}"
-        ) {
-            val horarioId= it.arguments?.getString("horarioid")?:""
-            val userId= it.arguments?.getString("email")?:""
-            val pantalla=it.arguments?.getString("pantalla")?:""
-            verMapaViajePasajero(
-                navController = navController,
-                horarioId = horarioId,
-                correo = userId,
-                pantalla = pantalla
-            )
-        }
-
-        composable(
-            "ver_mapa_viaje_pas_sin/{horarioid}/{email}/{pantalla}"
-        ) {
-            val horarioId = it.arguments?.getString("horarioid") ?: ""
-            val userId = it.arguments?.getString("email") ?: ""
-            val pantalla = it.arguments?.getString("pantalla") ?: ""
-            verMapaViajePasajeroSinPar(
-                navController = navController,
-                horarioId = horarioId,
-                correo = userId,
-                pantalla = pantalla
-            )
-        }
-
-
     }
 }
 

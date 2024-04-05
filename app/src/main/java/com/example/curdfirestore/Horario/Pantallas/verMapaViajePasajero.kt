@@ -61,7 +61,7 @@ import com.example.avanti.ParadaData
 import com.example.avanti.ViajeData
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadas
-import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParada
+import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitud
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
@@ -117,7 +117,7 @@ fun verMapaViajePasajero(
 
     val paradaId = solicitud?.parada_id
     println("La parada es: $paradaId")
-    var paradas = if (paradaId != null) conObtenerParada(paradaId) else null
+    var paradas = if (paradaId != null) conObtenerParadaId(paradaId) else null
     println("PARDADAAAS: $paradas")
 
 
@@ -410,9 +410,7 @@ fun verMapaViajePasajero(
                             onOption2Click = {
                                 // dialogo de cancelacion
                             },
-                            onOption3Click = {
-                                // Opcion para ekiminar el viaje
-                            }
+
                         )
 
 
