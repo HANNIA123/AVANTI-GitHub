@@ -48,11 +48,13 @@ interface ApiServiceParada{
     @GET("$newUrl/api/parada/obtenerparada/{id}")
     suspend fun obtenerParada(@Path("id") paradaId: String): ParadaData //Obtiene los datos de un id dado
 
+
     @PUT("$newUrl/api/parada/editarparada/{id}")
     fun actualizarParada(
         @Path("id") paradaId: String,
         @Body paradaData: ParadaData
     ): Call<RespuestaApiParada>
+
 
 
 }

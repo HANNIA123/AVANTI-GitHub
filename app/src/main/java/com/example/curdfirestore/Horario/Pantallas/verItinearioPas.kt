@@ -256,6 +256,15 @@ fun verItinerarioPas(
                                                 contenido = it.horario_status
                                             )
 
+                                            textoInformacionViaje(
+                                                etiqueta = "Solicitud",
+                                                contenido = if (it.horario_solicitud == "No") {
+                                                    "Sin solicitud"
+                                                } else {
+                                                    "Solicitud enviada"
+                                                }
+                                            )
+
                                         }
                                         Spacer(modifier = Modifier.width(10.dp)) // Agrega un espacio entre el texto y la columna
 
