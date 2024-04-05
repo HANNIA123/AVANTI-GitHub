@@ -44,6 +44,8 @@ interface ApiServiceParada{
     @GET("$newUrl/api/parada/obtenerlistaparadas/{id}")
     suspend fun obtenerListaParadas(@Path("id") viajeId: String): List<ParadaData> // Obtener una lista de paradas para el viaje con el ID dado
 
+    @GET("$newUrl/api/parada/obtenerparada/{id}")
+    suspend fun obtenerParada(@Path("id") paradaId: String): ParadaData
 
 
 }
