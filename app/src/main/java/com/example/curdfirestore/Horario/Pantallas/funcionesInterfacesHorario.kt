@@ -54,7 +54,7 @@ fun cabeceraConBotonCerrarHorario(titulo:String,
         ) {
             IconButton(
 
-                onClick = { navController.navigate("general_viaje_pasajero/$userid")},
+                onClick = { navController.navigate("general_horario_pasajero/$userid")},
                 modifier = Modifier
                     .padding(end = 16.dp) // Ajusta el espacio entre el icono y el texto
             ) {

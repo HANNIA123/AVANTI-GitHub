@@ -19,8 +19,7 @@ fun menuHorarioOpciones(
     onDismissRequest: () -> Unit,
     offset: Dp,
     onOption1Click: () -> Unit,
-    onOption2Click: () -> Unit,
-    onOption3Click: () -> Unit
+    onOption2Click: () -> Unit
 ) {
     DropdownMenu(
         expanded = expanded,
@@ -38,7 +37,7 @@ fun menuHorarioOpciones(
             )
         }
         DropdownMenuItem(onClick = {
-            onOption3Click()
+            onOption2Click()
             onDismissRequest()
         }) {
             Text(
