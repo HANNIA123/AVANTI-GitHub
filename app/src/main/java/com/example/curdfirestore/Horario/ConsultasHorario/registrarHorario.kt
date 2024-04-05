@@ -22,7 +22,7 @@ fun conRegistrarHorario(
     navController: NavController,
     userId: String,
     horarioData: HorarioData,
-    comPantalla:String
+    comPantalla: String
 ) {
     var resp by remember { mutableStateOf("") }
     val retrofit = Retrofit.Builder()
@@ -31,15 +31,16 @@ fun conRegistrarHorario(
     val apiService = retrofit.create(ApiServiceHorario::class.java)
     val call: Call<RespuestaApiHorario> = apiService.registrarHorario(horarioData)
     call.enqueue(object : Callback<RespuestaApiHorario> {
-        override fun onResponse(call: Call<RespuestaApiHorario>, response: Response<RespuestaApiHorario>) {
+        override fun onResponse(
+            call: Call<RespuestaApiHorario>,
+            response: Response<RespuestaApiHorario>
+        ) {
             if (response.isSuccessful) {
                 val respuesta = response.body()?.message ?: "Mensaje nulo"
                 val idHorario = response.body()?.horarioId.toString()
                 resp = respuesta
+                navController.navigate("ver_paradas_pasajero/$userId/$idHorario")
 
-                val regresa="iniciohorario"
-                //navController.navigate(route = "general_parada/$idHorario/$userId/$comPantalla/$regresa")
-                //navController.navigate(route = "ver_paradas_pasajero/$userId/$idHorario")
             } else {
                 resp = "Entro al else"
             }

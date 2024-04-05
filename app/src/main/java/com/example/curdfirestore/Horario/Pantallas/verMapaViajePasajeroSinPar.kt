@@ -365,9 +365,6 @@ fun verMapaViajePasajeroSinPar(
                         onOption2Click = {
                             // dialogo de cancelacion
                         },
-                        onOption3Click = {
-                            // Opcion para ekiminar el viaje
-                        }
                     )
 
 
