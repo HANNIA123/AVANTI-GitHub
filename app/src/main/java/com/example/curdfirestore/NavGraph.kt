@@ -201,7 +201,7 @@ fun NavGraph(
         ) {
             val viajeID = it.arguments?.getString("viajeid") ?: ""
             val userID = it.arguments?.getString("email") ?: ""
-
+        }
 
             composable(
                 "ver_mapa_viaje/{viajeid}/{email}/{pantalla}"
@@ -228,7 +228,7 @@ fun NavGraph(
             ) {
                 val viajeID = it.arguments?.getString("viajeid") ?: ""
                 val userID = it.arguments?.getString("email") ?: ""
-
+            }
                 composable(
                     "ver_mapa_viaje_sin/{viajeid}/{email}/{pantalla}"
                 ) {
@@ -446,8 +446,8 @@ fun NavGraph(
 
             }
         }
-    }
-}
+
+
 
 
 //FCM
