@@ -44,51 +44,59 @@ fun menuPas(
     navController: NavController,
     userID:String
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround,
-    ) {
-        IconButton(onClick = {
+    Column {
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(2.dp)
+            .background(Color(126, 60, 127)))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White),
+            horizontalArrangement = Arrangement.SpaceAround,
+        ) {
+            IconButton(onClick = {
 
-            navController.navigate(route = "home/$userID")
-        }) {
-            Icon(
-                modifier = Modifier
-                    .size(35.dp),
-                imageVector = Icons.Filled.Home,
-                contentDescription = "Icono Home- inicio de viajes",
-                tint = Color(137, 13, 88),
+                navController.navigate(route = "home/$userID")
+            }) {
+                Icon(
+                    modifier = Modifier
+                        .size(35.dp),
+                    imageVector = Icons.Filled.Home,
+                    contentDescription = "Icono Home- inicio de viajes",
+                    tint = Color(137, 13, 88),
                 )
-        }
-        IconButton(onClick = {
+            }
+            IconButton(onClick = {
 
-            navController.navigate(route = "horario_inicio/$userID")
-        }) {
-            Icon(
-                modifier = Modifier
-                    .size(35.dp),
+                navController.navigate(route = "horario_inicio/$userID")
+            }) {
+                Icon(
+                    modifier = Modifier
+                        .size(35.dp),
 
-                painter = painterResource(id = R.drawable.car),
-                contentDescription = "Icono Viajes",
-                tint = Color(137, 13, 88)
-            )
-        }
-        IconButton(onClick = {
-
-            navController.navigate(route = "cuenta_pasajero/$userID")
-        }) {
-
-            Icon(
-                modifier = Modifier
-                    .size(35.dp),
-                painter = painterResource(id = R.drawable.btuser),
-                contentDescription = "Icono Usuario",
-                tint = Color(137, 13, 88),
-
+                    painter = painterResource(id = R.drawable.car),
+                    contentDescription = "Icono Viajes",
+                    tint = Color(137, 13, 88)
                 )
+            }
+            IconButton(onClick = {
+
+                navController.navigate(route = "cuenta_pasajero/$userID")
+            }) {
+
+                Icon(
+                    modifier = Modifier
+                        .size(35.dp),
+                    painter = painterResource(id = R.drawable.btuser),
+                    contentDescription = "Icono Usuario",
+                    tint = Color(137, 13, 88),
+
+                    )
+            }
         }
     }
+
 }
 
 @Composable
