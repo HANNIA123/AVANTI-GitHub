@@ -39,6 +39,7 @@ fun conRegistrarHorario(
                 val respuesta = response.body()?.message ?: "Mensaje nulo"
                 val idHorario = response.body()?.horarioId.toString()
                 resp = respuesta
+                println("horario $idHorario")
                 navController.navigate("ver_paradas_pasajero/$userId/$idHorario")
 
             } else {

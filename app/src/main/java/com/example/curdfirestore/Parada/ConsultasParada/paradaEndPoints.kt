@@ -57,7 +57,7 @@ interface ApiServiceParada{
 
 
 
-    @GET("$newUrl/api/busquedaparadas/{id}")
+    @GET("$newUrl/api/parada/busquedaparadas/{id}")
     suspend fun busquedaParadasPas(@Path("id") userId: String): List<ParadaData> // Obtener una lista de paradas para las caracteristicas del horario del pasajero
 
 }

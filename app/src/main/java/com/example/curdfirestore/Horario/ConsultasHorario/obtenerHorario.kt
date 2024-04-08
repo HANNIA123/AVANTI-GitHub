@@ -22,7 +22,7 @@ fun conObtenerHorarioId(horarioId: String): HorarioData? {
 
 
         } catch (e: Exception) {
-            println("Error al obtener viaje: $e")
+            println("Error al obtener horario: $e")
         } finally {
             fin = true
         }

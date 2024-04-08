@@ -484,7 +484,7 @@ fun MapViewContainer(mapReady: (GoogleMap) -> Unit) {
     )
 }
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun PreViajeConductorPre() {
@@ -504,4 +504,4 @@ fun PreViajeConductorPre() {
         viajeId = "123"
     )
 }
-
+*/

@@ -9,21 +9,28 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import com.example.avanti.ParadaData
 import com.example.avanti.Usuario.RetrofitClientParada
+import com.example.avanti.ViajeData
 import com.example.avanti.ViajeDataReturn
+import com.example.curdfirestore.Parada.Funciones.obtenerDistanciaParadas
+import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
+import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
 
 @Composable
 fun conBuscarParadasPas(
     navController: NavController,
     correo: String,
     horarioId: String,
-    viajes:  List<ViajeDataReturn>
+    viajes:  List<ViajeData>
 ) {
     var paradas by remember { mutableStateOf<List<ParadaData>?>(null) }
     var text by remember { mutableStateOf("") }
     var busqueda by remember {
         mutableStateOf(true)
     }
-    var show by remember {
+    var showViaje by remember {
+        mutableStateOf(false)
+    }
+    var fin by remember {
         mutableStateOf(false)
     }
     //var listaParadas by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
@@ -36,21 +43,42 @@ fun conBuscarParadasPas(
         try {
             val  resultadoParada = RetrofitClientParada.apiService.busquedaParadasPas(resultado)
             paradas=resultadoParada
-            busqueda=true
         } catch (e: Exception) {
-            busqueda=false
             text="Error al obtener parada: $e"
             println("Error al obtener viaje: $e")
         }
+        finally {
+            fin=true
+        }
+
     }
 
-    if (paradas!=null){
-        //Obtenemos los datos del ultimo horario registrado y en esa cargamos la panatlla
-        /*ObtenerHorario(navController = navController,
-            correo =correo , viajes = viajes!!, paradas =paradas!!, horarioId )*/
+    if(fin){
+
+        if (paradas!=null){
+            println("Parafdas desdes buscar paradas")
+            obtenerDistanciaParadas(
+                navController = navController,
+                correo = correo,
+                viajes = viajes,
+                paradas = paradas!!,
+                horarioId =horarioId
+            )
+        }
+        else{
+            showViaje=true
+            ventanaNoEncontrado(
+                show = showViaje,
+                { showViaje = false },
+                {},
+                userId = correo,
+                navController = navController
+            )
+        }
+
     }
-    if(!busqueda){
-        show=true
-        //VentanaNoFound(navController, correo,show,{show=false }, {})
-    }
+
+
 }
+
+

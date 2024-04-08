@@ -19,6 +19,7 @@ import com.example.curdfirestore.Parada.Pantallas.Editar.registrarParadaBarraEdi
 import com.example.curdfirestore.Horario.Pantallas.verItinerarioPas
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajero
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajeroSinPar
+import com.example.curdfirestore.Parada.ConsultasParada.conBuscarParadasPas
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
@@ -29,6 +30,7 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.perfilPas
 import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Parada.Pantallas.generalParada
 import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
+import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarDestinoConductorEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarOrigenConductorEditar
@@ -43,7 +45,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 
-@SuppressLint("ComposableDestinationInComposeScope")
+@SuppressLint("ComposableDestinationInComposeScope", "SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(
@@ -195,16 +197,9 @@ fun NavGraph(
         }
 
 
-        //Ver viaje, desde el itinerario o desde el registro
-        composable(
-            "ver_mapa_viaje/{viajeid}/{email}"
-        ) {
-            val viajeID = it.arguments?.getString("viajeid") ?: ""
-            val userID = it.arguments?.getString("email") ?: ""
-        }
 
             composable(
-                "ver_mapa_viaje/{viajeid}/{email}/{pantalla}"
+                "ver_mapa_viaje/{viajeid}/{email}"
             ) {
                 val viajeID = it.arguments?.getString("viajeid") ?: ""
                 val userID = it.arguments?.getString("email") ?: ""
@@ -223,14 +218,8 @@ fun NavGraph(
 
             //Ver viaje sin paradas
 
-            composable(
-                "ver_mapa_viaje_sin/{viajeid}/{email}"
-            ) {
-                val viajeID = it.arguments?.getString("viajeid") ?: ""
-                val userID = it.arguments?.getString("email") ?: ""
-            }
                 composable(
-                    "ver_mapa_viaje_sin/{viajeid}/{email}/{pantalla}"
+                    "ver_mapa_viaje_sin/{viajeid}/{email}"
                 ) {
                     val viajeID = it.arguments?.getString("viajeid") ?: ""
                     val userID = it.arguments?.getString("email") ?: ""
@@ -348,15 +337,9 @@ fun NavGraph(
                 composable(
                     "ver_paradas_pasajero/{correo}/{idhorario}"
                 ) {
-
                     val correo = it.arguments?.getString("correo") ?: ""
                     val idhorario = it.arguments?.getString("idhorario") ?: ""
-
-                    //Consulta a ConsultasBD
-                    conBuscarViajePas(
-                        navController = navController, correo =
-                        correo, horarioId = idhorario
-                    )
+                    conBuscarViajePas(navController = navController, correo = correo, horarioId =idhorario )
                 }
 
 
@@ -382,9 +365,8 @@ fun NavGraph(
                 }
 
                 composable("horario_inicio/{userid}") {
-                    val userId = it.arguments?.getString("userid") ?: ""
-                    horariosInicio(navController = navController, userId = userId)
-
+                   val userId = it.arguments?.getString("userid") ?: ""
+                      horariosInicio(navController = navController, userId = userId)
                 }
                 composable("general_horario_pasajero/{userid}") {
                     val userId = it.arguments?.getString("userid") ?: ""

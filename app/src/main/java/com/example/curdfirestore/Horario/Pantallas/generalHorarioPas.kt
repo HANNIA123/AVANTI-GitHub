@@ -101,6 +101,9 @@ fun generalViajePas(
     navController: NavController,
     userId: String
 ) {
+
+
+
     var selectedHoraInicio by remember {
         mutableStateOf("")
     }

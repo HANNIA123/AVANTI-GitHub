@@ -471,6 +471,7 @@ fun verMapaViajeConductorSinPar(
 @Preview(showBackground = true)
 @Composable
 fun PreViajeConductorPres() {
+    /*
     // Esta función se utiliza para la vista previa
     var correo = "hplayasr1700@alumno.ipn.mx"
     val navController = rememberNavController()
@@ -485,6 +486,6 @@ fun PreViajeConductorPres() {
         navController = navController,
         correo = correo,
         viajeId = "123"
-    )
+    )*/
 }
 

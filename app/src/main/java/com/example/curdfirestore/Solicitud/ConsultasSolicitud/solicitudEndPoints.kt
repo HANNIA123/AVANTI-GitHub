@@ -16,7 +16,8 @@ import retrofit2.http.Path
 data class RespuestaApiSolicitud(
     val success: Boolean,
     val message: String,
-    val paradaId: String
+    val paradaId: String,
+    val userId:String
 )
 
 
@@ -37,5 +38,8 @@ interface ApiServiceSolicitud{
 
     @GET("$newUrl/api/solicitud/obtenersolicitudhorario/{id}")
     suspend fun obtenerSolicitud(@Path("id") solicitudId: String): SolicitudData
+    @POST("$newUrl/api/solicitud/registrarsolicitud") // Reemplaza con la ruta de tu endpoint
+    fun enviarSolicitud(@Body solicitudData: SolicitudData): Call<RespuestaApiSolicitud>
+
 
 }

@@ -39,7 +39,8 @@ data class ViajeData(
     var viaje_iniciado:String="",
     var viaje_tarifa:String="",
     var viaje_num_pasajeros:String="",
-    var viaje_num_pasajeros_con:String=""
+    var viaje_num_pasajeros_con:String="",
+    var viaje_id: String,
 
 
 
@@ -121,3 +122,16 @@ data class MarkerItiData(
     var marker_hora: String="",
     var marker_id:String="" //id de la parada o el viaje
 )
+
+data class NoticacionData(
+    var notificacion_id: String="",
+    var notificacion_tipo: String="",
+    var notificacion_usu_origen: String="",
+    var notificacion_usu_destino: String="",
+    var notificacion_id_viaje: String="",
+    var notificacion_id_solicitud: String="", //Solo cuando es solicitud aceptada o recibida
+    var notificacion_fecha:String="",
+    var notificacion_token: String="",
+    var notificacion_hora:String="",
+
+    )

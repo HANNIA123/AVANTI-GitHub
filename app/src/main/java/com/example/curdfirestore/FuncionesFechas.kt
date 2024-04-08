@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 
@@ -51,4 +52,9 @@ fun obtenerMesAnio(): String {
     val currentDate = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale("es", "ES"))
     return currentDate.format(formatter)
+}
+fun obtenerFechaFormatoddmmyyyy(): String {
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val fechaActual = Date()
+    return dateFormat.format(fechaActual)
 }

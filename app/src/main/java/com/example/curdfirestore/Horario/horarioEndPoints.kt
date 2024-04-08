@@ -48,7 +48,13 @@ interface ApiServiceHorario{
     suspend fun obtenerHorario(@Path("id") horarioId: String): HorarioData //Obtiene los datos de un id dado
 
     @GET("$newUrl/api/horario/busquedaviajes/{id}")
-    suspend fun busquedaViajesPas(@Path("id") userId: String): Response<List<ViajeDataReturn>>// Obtener una lista de paradas para las caracteristicas del horario del pasajero
+    suspend fun busquedaViajesPas(@Path("id") userId: String): Response<List<ViajeData>>// Obtener una lista de paradas para las caracteristicas del horario del pasajero
+
+    @PUT("$newUrl/api/horario/modificarsolicitudhorario/{id}/{status}")
+    fun modificarSolicitudHorario(
+        @Path("id") horarioId: String,
+        @Path("status") status: String
+    ): Call<RespuestaApiHorario>
 
 
 }
