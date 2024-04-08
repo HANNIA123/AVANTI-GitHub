@@ -79,6 +79,7 @@ import com.example.curdfirestore.R
 
 import com.example.curdfirestore.Viaje.Funciones.convertirADia
 import com.example.curdfirestore.Viaje.Funciones.convertirATrayecto
+import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
 import com.example.curdfirestore.Viaje.Pantallas.dialogSeleccionDia
 import com.example.curdfirestore.Viaje.Pantallas.dialogoSeleccionTrayecto
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -224,7 +225,7 @@ fun generalViajePas(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            cabeceraConBotonAtras(titulo = "Registro de horario", navController = navController)
+cabeceraEditarAtras(titulo = "Registrar horario", navController = navController, ruta = "horario_inicio/$userId")
 
             Box(
                 modifier = Modifier

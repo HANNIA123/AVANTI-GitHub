@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.HorarioData
 import com.example.avanti.ViajeData
+import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
 import com.example.curdfirestore.Horario.ConsultasHorario.conRegistrarHorario
 import com.example.curdfirestore.NivelAplicacion.SearchBar
 import com.example.curdfirestore.NivelAplicacion.searchPlaces
@@ -111,7 +112,8 @@ fun registrarDestinoPasajero(
             .fillMaxWidth()
             .height(maxh)
     ) {
-        cabeceraConBotonCerrarHorario("Registrar destino", navController, userid)
+        cabeceraConBotonAtras(titulo = "Registrar destino", navController = navController)
+        //cabeceraConBotonCerrarHorario("Registrar destino", navController, userid)
         Column(
             modifier = Modifier
                 .fillMaxWidth()

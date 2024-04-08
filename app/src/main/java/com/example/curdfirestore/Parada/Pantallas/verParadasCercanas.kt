@@ -58,6 +58,7 @@ import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ventanaEnviarSolicitud
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
+import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
 import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
@@ -303,13 +304,16 @@ fun verParadasCercanasPas(
                             )
                         }
 
-
-
-
             }
         }
 
-
+        if (boton) {
+            menuDesplegableCon(
+                onDismiss = { boton = false },
+                navController,
+                userID = correo
+            )
+        }
 
         if (show) {
             ventanaEnviarSolicitud(
