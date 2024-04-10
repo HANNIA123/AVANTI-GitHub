@@ -66,12 +66,15 @@ import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitud
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
+import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
 import com.example.curdfirestore.Usuario.Pasajero.menuDesplegablePas
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.calculateDistance
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Funciones.getDirections
+import com.example.curdfirestore.Viaje.Pantallas.dialogoConfirmarCancelacion
+import com.example.curdfirestore.Viaje.Pantallas.dialogoConfirmarEliminarViaje
 import com.example.curdfirestore.Viaje.Pantallas.menuViajeOpciones
 import com.example.curdfirestore.Viaje.Pantallas.ventanaMarkerItinerario
 import com.example.curdfirestore.textoGris
@@ -102,23 +105,25 @@ fun verMapaViajePasajero(
         mutableStateOf(false)
     }
 
+    var horarioStatus by remember {
+        mutableStateOf("")
+    }
+
 
     BoxWithConstraints {
         maxh = this.maxHeight
     }
 
     var horarioData= conObtenerHorarioId(horarioId = horarioId)
-    //var paradas= conObtenerListaParadas(horarioId)
-
-
     var solicitud= conObtenerSolicitud(horarioId)
-    println("SOLICITUDDDDDD $solicitud")
-    //var paradas= conObtenerParada(horarioId)
 
     val paradaId = solicitud?.parada_id
-    println("La parada es: $paradaId")
     var paradas = if (paradaId != null) conObtenerParadaId(paradaId) else null
+
+    println("SOLICITUDDDDDD $solicitud")
+    println("La parada es: $paradaId")
     println("PARDADAAAS: $paradas")
+
 
 
 
@@ -144,6 +149,9 @@ fun verMapaViajePasajero(
     //Para el menú de opciones de viaje
     var expanded by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf("") }
+
+    var showEliminar by rememberSaveable { mutableStateOf(false) }
+    var showCancelar by rememberSaveable { mutableStateOf(false) }
 
     horarioData?.let {
         paradas?.let {
@@ -190,8 +198,8 @@ fun verMapaViajePasajero(
                 ) {
 
 
-                    cabeceraConMenuCon(
-                        titulo = "Ver viaje",
+                    cabeceraConMenuPas(
+                        titulo = "Ver horario",
                         navController,
                         correo,
                         boton = { estaBoton ->
@@ -385,7 +393,7 @@ fun verMapaViajePasajero(
                         }
 
                         if (show) {
-                            ventanaMarkerItinerario(
+                            ventanaMarkerItinerarioPas(
                                 navController,
                                 horarioId,
                                 correo,
@@ -395,20 +403,28 @@ fun verMapaViajePasajero(
                                 {})
                         }
 
+                        val texBot = if (horarioData.horario_status == "Disponible") {
+                            "Cancelar horario"
+                        } else {
+                            "Activar horario"
+                        }
 
 
                         menuHorarioOpciones(
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
                             offset = (-48).dp,
+                            txtBoton = texBot,
                             onOption1Click = {
                                 var conpantalla = "nomuestra"
                                 var regresa = "vermapa"
                                 //navController.navigate("general_parada/$viajeId/$correo/$conpantalla/$regresa")
                                 // ruta nueva parada
+                                horarioStatus = horarioData.horario_status
+                                showCancelar = true
                             },
                             onOption2Click = {
-                                // dialogo de cancelacion
+                                showEliminar = true
                             },
 
                         )
@@ -437,11 +453,16 @@ fun verMapaViajePasajero(
                             val trayecto = convertirTrayecto(horarioData.horario_trayecto)
                             textoGris(Texto = horarioData.horario_dia, tamTexto = 16f)
                             textoGris(Texto = trayecto, tamTexto = 16f)
-                            textoGris(Texto = horarioData.horario_hora + " hrs", tamTexto = 16f)
+                             if(horarioData.horario_trayecto == "0"){
+                                 textoGris(Texto = "Horario de salida: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
+                             }else{
+                                 textoGris(Texto = "Horario de llegada: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
+                             }
+
+
+                            //textoGris(Texto = horarioData.horario_hora + " hrs", tamTexto = 16f)
 
                         }
-
-
 
 
                         IconButton(
@@ -466,6 +487,39 @@ fun verMapaViajePasajero(
                         userID = correo
                     )
                 }
+
+                if (showCancelar) {
+                    dialogoConfirmarCancelacionP(
+                        onDismiss = { showCancelar = false },
+                        horarioId, correo, horarioStatus,
+                        navController
+
+
+                    )
+                }
+
+                if (showEliminar) {
+                    if(solicitud?.solicitud_status == "Aceptada") {
+                        dialogoConfirmarEliminarHorarioSEA(
+                            onDismiss = { showEliminar = false },
+                            horarioId, solicitud.viaje_id, correo,
+                            navController
+                        )
+                    }else if (solicitud?.solicitud_status == "Pendiente"){
+                        dialogoConfirmarEliminarHorarioSE(
+                            onDismiss = { showEliminar = false },
+                            horarioId, correo,
+                            navController
+                        )
+                    }else{
+                        dialogoConfirmarEliminarHorarioSE(
+                            onDismiss = { showEliminar = false },
+                            horarioId, correo,
+                            navController
+                        )
+                    }
+                }
+
             }
         }
 
