@@ -10,7 +10,7 @@ fun eliminarHorario(documentId: String, navController: NavController, userId:Str
         val documentReference = db.collection("horario").document(documentId)
         documentReference.delete().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                navController.navigate("ver_itinerario_conductor/$userId")
+                navController.navigate("ver_itinerario_pasajero/$userId")
                 // Mostrar Toast indicando que el documento se ha eliminado correctamente
                 Toast.makeText(navController.context, "Horario eliminado ", Toast.LENGTH_SHORT).show()
 
@@ -23,3 +23,4 @@ fun eliminarHorario(documentId: String, navController: NavController, userId:Str
         println("Error al intentar eliminar el documento de Firestore: $e")
     }
 }
+
