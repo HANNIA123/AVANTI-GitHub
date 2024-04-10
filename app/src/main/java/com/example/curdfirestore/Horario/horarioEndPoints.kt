@@ -61,4 +61,27 @@ interface ApiServiceHorario{
         @Path("status") nuevoStatus: String
     ): Call<RespuestaApiHorario>
 
+    //Hannia -- 64-74
+
+
+
+
+
+
+
+
+
+
+    //Caro --75-85
+
+
+
+
+
+
+
+
+
+    ///
+
 }
