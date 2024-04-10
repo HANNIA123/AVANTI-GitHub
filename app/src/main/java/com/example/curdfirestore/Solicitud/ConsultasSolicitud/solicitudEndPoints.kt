@@ -6,6 +6,7 @@ import com.example.avanti.Usuario.BASE_URL
 import com.example.avanti.Usuario.RespuestaApiParada
 import com.example.avanti.Usuario.newUrl
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
@@ -40,6 +41,14 @@ interface ApiServiceSolicitud{
     suspend fun obtenerSolicitud(@Path("id") solicitudId: String): SolicitudData
     @POST("$newUrl/api/solicitud/registrarsolicitud") // Reemplaza con la ruta de tu endpoint
     fun enviarSolicitud(@Body solicitudData: SolicitudData): Call<RespuestaApiSolicitud>
+
+
+
+
+
+
+    @GET("$newUrl/api/obtenersolicitudesconductor/{id}")
+    suspend fun obtenerSolicitudesCon(@Path("id") userId: String): Response<List<SolicitudData>> // Obtener una lista de solicitudes con el id dado
 
 
 }
