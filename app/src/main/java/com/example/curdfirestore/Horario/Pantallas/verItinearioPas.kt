@@ -48,7 +48,9 @@ import androidx.navigation.NavController
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPas
+import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitud
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
@@ -69,6 +71,9 @@ fun verItinerarioPas(
     var mhv by remember {
         mutableStateOf(0.dp)
     }
+
+
+    println("horarios itinerario  $horarios")
 
     BoxWithConstraints {
         mhv = this.maxHeight - 50.dp
@@ -195,8 +200,11 @@ fun verItinerarioPas(
                         horarios?.let {
                             val pantalla = "itinerario"
                             // Filtrar la lista por el nombre buscado
+
+
                             val horariosPorDia =
                                 horarios.filter { it.horario_dia == obtenerNombreDiaEnEspanol(diaActual) }
+
 
 
                             // Realizar acciones según la condición
@@ -223,10 +231,12 @@ fun verItinerarioPas(
                             }
                             else{
 
+
                                 val horariosOrdenados = horariosPorDia.sortedBy { it.horario_hora}
 
                                 horariosOrdenados.forEach {
-
+                                    var solicitud= conObtenerSolicitud(it.horario_id)
+                                    println("SOLICITUDDD EN ITINERARI $solicitud")
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth(),
@@ -260,8 +270,12 @@ fun verItinerarioPas(
                                                 etiqueta = "Solicitud",
                                                 contenido = if (it.horario_solicitud == "No") {
                                                     "Sin solicitud"
+                                                } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Aceptada") {
+                                                    "Solicitud aceptada"
+                                                } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Pendiente") {
+                                                    "Solicitud pendiente"
                                                 } else {
-                                                    "Solicitud enviada"
+                                                    "Solicitud pendiente"
                                                 }
                                             )
 
@@ -271,11 +285,17 @@ fun verItinerarioPas(
                                         IconButton(onClick = {
                                             //navController.navigate("ver_mapa_viaje_pas/${it.horario_id}/$userId/$pantalla")
 
+
                                             if (it.horario_solicitud == "No") {
                                                 navController.navigate("ver_mapa_viaje_pas_sin/${it.horario_id}/$userId/$pantalla")
+                                            } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Aceptada") {
+                                                navController.navigate("ver_mapa_viaje_pas/${it.horario_id}/$userId/$pantalla")
+                                            } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Pendiente") {
+                                                navController.navigate("ver_mapa_viaje_pas/${it.horario_id}/$userId/$pantalla")
                                             } else {
                                                 navController.navigate("ver_mapa_viaje_pas/${it.horario_id}/$userId/$pantalla")
                                             }
+
 
                                         }) {
                                             Icon(

@@ -110,10 +110,6 @@ fun verMapaViajePasajeroSinPar(
     var paradas by remember {
         mutableStateOf<List<ParadaData>>(emptyList())
     }
-
-
-
-
     //Para la ventana de carga
     var isLoading by remember { mutableStateOf(true) }
 
@@ -130,6 +126,9 @@ fun verMapaViajePasajeroSinPar(
     //Para el menú de opciones de viaje
     var expanded by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf("") }
+
+    var showEliminar by rememberSaveable { mutableStateOf(false) }
+
 
     horarioData?.let {
 
@@ -352,7 +351,7 @@ fun verMapaViajePasajeroSinPar(
 
 
 
-                    menuHorarioOpciones(
+                    menuHorarioOpcionesSin(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
                         offset = (-48).dp,
@@ -363,7 +362,7 @@ fun verMapaViajePasajeroSinPar(
                             // ruta nueva parada
                         },
                         onOption2Click = {
-                            // dialogo de cancelacion
+                            showEliminar = true
                         },
                     )
 
@@ -391,7 +390,11 @@ fun verMapaViajePasajeroSinPar(
                         val trayecto = convertirTrayecto(horarioData.horario_trayecto)
                         textoGris(Texto = horarioData.horario_dia, tamTexto = 16f)
                         textoGris(Texto = trayecto, tamTexto = 16f)
-                        textoGris(Texto = horarioData.horario_hora + " hrs", tamTexto = 16f)
+                        if(horarioData.horario_trayecto == "0"){
+                            textoGris(Texto = "Horario de salida: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
+                        }else{
+                            textoGris(Texto = "Horario de llegada: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
+                        }
 
                     }
 
@@ -418,6 +421,15 @@ fun verMapaViajePasajeroSinPar(
                     onDismiss = { boton = false },
                     navController,
                     userID = correo
+                )
+            }
+
+
+            if (showEliminar) {
+                dialogoConfirmarEliminarHorarioP(
+                    onDismiss = { showEliminar = false },
+                    horarioId, correo,
+                    navController
                 )
             }
         }
