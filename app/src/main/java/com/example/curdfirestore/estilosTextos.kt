@@ -102,6 +102,7 @@ fun textoInformacionViaje(etiqueta: String, contenido: String) {
 }
 
 
+
 @Composable
 fun textoGris(Texto:String, tamTexto: Float){
 
@@ -239,4 +240,35 @@ fun textoMarker(Label:String, Text:String) {
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Composable
+fun textTituloInfSolcitud(titulo: String){
+    Text(
+        text = titulo,
+        style = TextStyle(
+            color = Color(71, 12, 107),
+            fontSize = 18.sp,
+            textAlign = TextAlign.Start,
+            fontWeight = FontWeight.Bold
+
+        )
+    )
+}
+
+@Composable
+fun textoInformacionSolicitud(etiqueta: String, contenido: String) {
+    Text(
+        text = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = Color.Black)) {
+                append("$etiqueta: ")
+            }
+            withStyle(style = SpanStyle(color = Color(86,86,86))) {
+                append("$contenido")
+            }
+
+        },
+        fontSize = 16.sp,
+        textAlign = TextAlign.Justify
+    )
 }

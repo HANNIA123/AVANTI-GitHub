@@ -12,6 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 data class RespuestaApiSolicitud(
@@ -51,9 +52,14 @@ interface ApiServiceSolicitud{
 
 
 
-    @GET("$newUrl/api/obtenersolicitudesconductor/{id}")
+    @GET("$newUrl/api/solicitud/obtenersolicitudesconductor/{id}")
     suspend fun obtenerSolicitudesCon(@Path("id") userId: String): Response<List<SolicitudData>> // Obtener una lista de solicitudes con el id dado
     //Hannia 54-64
+    @PUT("$newUrl/api/solicitud/modificarstatussolicitud/{id}/{status}")
+    fun modificarStatusSoli(
+        @Path("id") viajeId: String,
+        @Path("status") status: String
+    ): Call<RespuestaApiSolicitud>
 
 
 
