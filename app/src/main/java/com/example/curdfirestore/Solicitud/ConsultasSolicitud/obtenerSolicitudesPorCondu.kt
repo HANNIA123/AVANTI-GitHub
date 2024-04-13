@@ -16,12 +16,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun conObtenerSolicitudesConductor(
     userId: String,
 ) : List<SolicitudData>?{
+    println("id del conductro $userId")
     var fin by rememberSaveable { mutableStateOf(false) }
     var show by rememberSaveable { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
-
-    //Obtener lista de viajes (Itinerario)
-    var resultado by remember { mutableStateOf(false) }
+    //var solicitudes: List<SolicitudData>?= null
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
     LaunchedEffect(key1 = true) {
         val response = RetrofitClientSolicitud.apiService.obtenerSolicitudesCon(userId)

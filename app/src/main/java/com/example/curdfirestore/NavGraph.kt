@@ -31,6 +31,7 @@ import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Parada.Pantallas.generalParada
 import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
+import com.example.curdfirestore.Solicitud.Pantallas.verSolicitudesCon
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarDestinoConductorEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarOrigenConductorEditar
@@ -343,18 +344,14 @@ fun NavGraph(
 
 
 
-
         //ver solicitudes Hannia --- 346-356
-
-
-
-
-
-
-
-
-
-
+        composable("ver_solicitudes_conductor/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            verSolicitudesCon(
+                navController = navController,
+                userId = userId
+            )
+        }
         ///////////////////////////////////////
         //--------------------Pantallas entrando con pasajero---------------------------
         composable(

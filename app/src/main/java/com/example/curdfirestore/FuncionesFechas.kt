@@ -58,3 +58,10 @@ fun obtenerFechaFormatoddmmyyyy(): String {
     val fechaActual = Date()
     return dateFormat.format(fechaActual)
 }
+
+// Definimos una función de extensión para convertir una cadena de texto en LocalDate
+@RequiresApi(Build.VERSION_CODES.O)
+fun String.toLocalDate(format: String): LocalDate {
+    val formatter = DateTimeFormatter.ofPattern(format)
+    return LocalDate.parse(this, formatter)
+}
