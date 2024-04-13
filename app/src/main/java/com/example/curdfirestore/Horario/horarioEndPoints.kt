@@ -55,6 +55,33 @@ interface ApiServiceHorario{
         @Path("id") horarioId: String,
         @Path("status") status: String
     ): Call<RespuestaApiHorario>
+    @PUT("$newUrl/api/horario/actualizarstatus/{id}/{status}")
+    fun actualizarStatusHorario(
+        @Path("id") horarioId: String,
+        @Path("status") nuevoStatus: String
+    ): Call<RespuestaApiHorario>
 
+    //Hannia -- 64-74
+
+
+
+
+
+
+
+
+
+
+    //Caro --75-85
+
+
+
+
+
+
+
+
+
+    ///
 
 }
