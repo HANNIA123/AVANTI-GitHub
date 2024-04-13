@@ -240,3 +240,16 @@ fun textoMarker(Label:String, Text:String) {
         )
     }
 }
+@Composable
+fun textoHora(hora:String, tam: Float){
+    Text(
+        text = hora,
+        style = TextStyle(
+            color = Color.Black,
+            fontSize = tam.sp,
+            textAlign = TextAlign.Start,
+            fontWeight = FontWeight.Bold
+        )
+    )
+
+}
