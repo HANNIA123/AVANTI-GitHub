@@ -41,14 +41,25 @@ interface ApiServiceSolicitud{
     suspend fun obtenerSolicitud(@Path("id") solicitudId: String): SolicitudData
     @POST("$newUrl/api/solicitud/registrarsolicitud") // Reemplaza con la ruta de tu endpoint
     fun enviarSolicitud(@Body solicitudData: SolicitudData): Call<RespuestaApiSolicitud>
+    //Caro-- 43-53
 
 
 
 
 
 
+
+
+
+    //Hannia 54-64
     @GET("$newUrl/api/obtenersolicitudesconductor/{id}")
     suspend fun obtenerSolicitudesCon(@Path("id") userId: String): Response<List<SolicitudData>> // Obtener una lista de solicitudes con el id dado
 
 
+
+
+
+
+
+    //
 }
