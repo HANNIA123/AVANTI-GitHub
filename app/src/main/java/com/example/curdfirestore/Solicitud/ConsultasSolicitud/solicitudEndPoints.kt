@@ -51,15 +51,16 @@ interface ApiServiceSolicitud{
 
 
 
-
+    //Hannia 54-64
     @GET("$newUrl/api/solicitud/obtenersolicitudesconductor/{id}")
     suspend fun obtenerSolicitudesCon(@Path("id") userId: String): Response<List<SolicitudData>> // Obtener una lista de solicitudes con el id dado
-    //Hannia 54-64
+
     @PUT("$newUrl/api/solicitud/modificarstatussolicitud/{id}/{status}")
     fun modificarStatusSoli(
         @Path("id") viajeId: String,
         @Path("status") status: String
     ): Call<RespuestaApiSolicitud>
+
 
 
 

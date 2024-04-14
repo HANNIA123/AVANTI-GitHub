@@ -102,7 +102,6 @@ fun textoInformacionViaje(etiqueta: String, contenido: String) {
 }
 
 
-
 @Composable
 fun textoGris(Texto:String, tamTexto: Float){
 
@@ -240,6 +239,20 @@ fun textoMarker(Label:String, Text:String) {
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Composable
+fun textoHora(hora:String, tam: Float){
+    Text(
+        text = hora,
+        style = TextStyle(
+            color = Color.Black,
+            fontSize = tam.sp,
+            textAlign = TextAlign.Start,
+            fontWeight = FontWeight.Bold
+        )
+    )
+
 }
 
 @Composable
