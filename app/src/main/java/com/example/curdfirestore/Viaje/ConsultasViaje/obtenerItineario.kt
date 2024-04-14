@@ -1,6 +1,5 @@
 package com.example.curdfirestore.Viaje.ConsultasViaje
 
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,41 +10,6 @@ import androidx.compose.runtime.setValue
 import com.example.avanti.Usuario.RetrofitClientViaje
 import com.example.avanti.ViajeDataReturn
 
-
-/*
-@Composable
-fun conObtenerItinerarioCon(
-    userId:String
-):List<ViajeDataReturn>?
-{
-    var fin by rememberSaveable { mutableStateOf(false) }
-    var show by rememberSaveable { mutableStateOf(false) }
-    var control by remember { mutableStateOf("try") }
-    var viajes by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
-
-
-    LaunchedEffect(key1 = true) {
-        try {
-            val resultadoViajes = RetrofitClientViaje.apiService.obtenerItinerarioCon(userId)
-            viajes = resultadoViajes
-        } catch (e: Exception) {
-            println("Error al obtener parada: $e")
-            control="catch"
-            show=true
-        }
-        finally {
-            fin=true
-        }
-    }
-
-    return if (fin) {
-        viajes
-    } else {
-        null
-    }
-
-}
-*/
 @Composable
 fun conObtenerItinerarioCon(
     userId: String,
