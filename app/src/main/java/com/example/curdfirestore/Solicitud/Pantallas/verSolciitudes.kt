@@ -82,10 +82,16 @@ fun verSolicitudesCon(
 
     var dialogoInf by remember { mutableStateOf(false) } //Status de la solictud terminado
 
-    var confirm by remember { mutableStateOf(false) } //Status de la solictud terminado
+    var confirmA by remember { mutableStateOf(false) } //Status de la solictud terminado
+
+    var confirmR by remember { mutableStateOf(false) } //Status de la solictud terminado
     var presionado by remember { mutableStateOf(false) } //Status de la solictud terminado
 
     var aceptado by remember { mutableStateOf(false) }
+
+    var rechazado by remember { mutableStateOf(false) }
+
+    var noLugares by remember { mutableStateOf(false) }
     var idViaje by remember { mutableStateOf("") }
     var idSol by remember { mutableStateOf("") }
     var idParada by remember { mutableStateOf("") }
@@ -206,6 +212,8 @@ fun verSolicitudesCon(
                                     idParada = it.parada_id
 
                                     usuario = conObtenerUsuarioId(correo = idPasajero)
+
+
                                     Column(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -252,7 +260,7 @@ fun verSolicitudesCon(
                                                         },
                                                         onRechazarClick = {
                                                             presionado = true
-                                                            aceptado = false
+                                                            rechazado = false
                                                         }
                                                     )
                                                 }
@@ -275,10 +283,17 @@ fun verSolicitudesCon(
                 }
 
             }
-            if (confirm) {
-                dialogoSolicitudAceptada(onDismiss = { confirm = false }, navController, userId)
+            if (confirmA) {
+                dialogoSolicitudAceptada(onDismiss = { confirmA = false }, navController, userId)
 
             }
+            if(confirmR){
+                dialogoSolicitudRechazada(onDismiss = { confirmR=false }, navController = navController, userId = userId)
+            }
+            if(noLugares){
+                dialogoSolicitudRechazada(onDismiss = { confirmR=false }, navController = navController, userId = userId)
+            }
+
             if (dialogoInf) {
                 dialogoInformacionSolicitud(
                     onDismiss = { dialogoInf = false },
@@ -322,11 +337,12 @@ fun verSolicitudesCon(
 
                         LaunchedEffect(Unit) {
                             conResponderSolicitud(idSol, "Aceptada") { respuestaExitosa ->
-                                confirm = respuestaExitosa
+                                confirmA = respuestaExitosa
                             }
                         }
 
                     } else {
+                        noLugares=true
                         //Ya no hay lugares disponibles
                         /*show1 = true
                 VentanaSolicitudNoPermitida(navController, userId, show1, { show1 = false }, {})*/
@@ -336,11 +352,9 @@ fun verSolicitudesCon(
                 println("Solcitud Rechazada")
                 LaunchedEffect(Unit) {
                     conResponderSolicitud(idSol, "Rechazada") { respuestaExitosa ->
-                        confirm = respuestaExitosa
+                        confirmR = respuestaExitosa
                     }
                 }
-
-
             }
 
         }
