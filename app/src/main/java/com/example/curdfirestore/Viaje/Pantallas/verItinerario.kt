@@ -3,7 +3,6 @@ package com.example.curdfirestore.Viaje.Pantallas
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
@@ -39,8 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -48,21 +43,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.avanti.ViajeDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
-import com.example.avanti.ui.theme.Aplicacion.lineaGris
-import com.example.avanti.ui.theme.Aplicacion.obtenerDiaDeLaSemanaActual
-import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
-import com.example.avanti.ui.theme.Aplicacion.obtenerMesAnio
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
-import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
-import com.example.curdfirestore.recuadroTitulos
 import com.example.curdfirestore.textoHoraItinerario
-import com.example.curdfirestore.textoHoraViaje
 import com.example.curdfirestore.textoInformacionViaje
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -74,13 +62,16 @@ fun verItinerarioCon(
     navController: NavController,
     userId: String
 ) {
-    var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
-
-    var viajes = conObtenerItinerarioCon(userId = userId)
     var mhv by remember {
         mutableStateOf(0.dp)
     }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
+
+    var viajes by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
+    conObtenerItinerarioCon(userId = userId) { resultado ->
+        viajes = resultado
+    }
+
 
     BoxWithConstraints {
         mhv = this.maxHeight - 50.dp
@@ -106,13 +97,8 @@ fun verItinerarioCon(
                     .fillMaxWidth()
                     .padding(start = 10.dp, end = 10.dp)
             ) {
-                Spacer(modifier = Modifier.height(15.dp))
-                //recuadroTitulos(titulo = obtenerFechaHoyCompleto())
+                Spacer(modifier = Modifier.height(25.dp))
 
-
-
-
-                Spacer(modifier = Modifier.height(10.dp))
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
@@ -120,7 +106,6 @@ fun verItinerarioCon(
                         .background(Color.White)
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
-
 
                 ) {
 
@@ -135,20 +120,20 @@ fun verItinerarioCon(
                                 if (diaActual < DayOfWeek.MONDAY) {
                                     diaActual = DayOfWeek.SUNDAY
                                 }
-                                      },
+                            },
                             modifier = Modifier.size(50.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowLeft,
                                 contentDescription = "Anterior",
-                                tint= Color(72, 12, 107)
+                                tint = Color(72, 12, 107)
                             )
                         }
 
                         Text(
                             text = obtenerNombreDiaEnEspanol(diaActual),
                             style = TextStyle(
-                                color =  Color(72, 12, 107),
+                                color = Color(72, 12, 107),
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold
                             ),
@@ -157,26 +142,22 @@ fun verItinerarioCon(
                         )
 
                         IconButton(
-                            onClick = { diaActual=diaActual.plus(1)
+                            onClick = {
+                                diaActual = diaActual.plus(1)
                                 if (diaActual > DayOfWeek.SATURDAY) {
                                     diaActual = DayOfWeek.SUNDAY
                                 }
-                                      },
+                            },
                             modifier = Modifier.size(50.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowRight,
                                 contentDescription = "Siguiente",
-                                tint= Color(72, 12, 107)
+                                tint = Color(72, 12, 107)
                             )
                         }
                     }
 
-                    /*WeeklyCalendar(selectedDate = selectedDate) { date ->
-                        selectedDate = date
-                    }
-
-                     */
                 }
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -214,109 +195,85 @@ fun verItinerarioCon(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        viajes?.let {
-                            val pantalla = "itinerario"
-                            // Filtrar la lista por el nombre buscado
+                        if (viajes != null) {
                             val viajesPorDia =
-                                viajes.filter { it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) }
-
-
-                            // Realizar acciones según la condición
-                            if (viajesPorDia.isEmpty()) {
-                                Image(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp),
-                                    painter = painterResource(id = R.drawable.buscar),
-                                    contentDescription = "Imagen no viaje",
-                                    contentScale = ContentScale.FillBounds
-                                )
-
-                                Text(
-                                    text = "No hay viajes registrados para hoy",
-                                    style = TextStyle(
-                                        color = Color(86, 86, 86),
-                                        fontSize = 18.sp,
-                                        textAlign = TextAlign.Justify,
+                                viajes!!.filter {
+                                    it.viaje_dia == obtenerNombreDiaEnEspanol(
+                                        diaActual
                                     )
-                                )
+                                }
 
+                            if (viajesPorDia.isEmpty()) {
+                                mensajeNoViajes()
 
-                            }
-                            else{
+                            } else {
+                                val viajesOrdenados =
+                                    viajesPorDia.sortedBy { it.viaje_hora_partida }
 
-                            val viajesOrdenados = viajesPorDia.sortedBy { it.viaje_hora_partida }
+                                viajesOrdenados.forEach {
 
-                            viajesOrdenados.forEach {
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-
-                                    textoHoraItinerario(hora = "${it.viaje_hora_partida} hrs")
-
-                                    Spacer(modifier = Modifier.width(20.dp)) // Agrega un espacio entre el texto y la columna
-
-                                    Column(
+                                    Row(
                                         modifier = Modifier
-                                            .weight(1f) // Utiliza el peso para que la columna ocupe el espacio restante
-                                            .padding(start = 0.dp)
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        var trayectoTexto = convertirTrayecto(it.viaje_trayecto)
 
-                                        textoInformacionViaje(
-                                            etiqueta = "Trayecto",
-                                            contenido = trayectoTexto
-                                        )
+                                        textoHoraItinerario(hora = "${it.viaje_hora_partida} hrs")
 
-                                        textoInformacionViaje(
-                                            etiqueta = "Pasajeros",
-                                            contenido = it.viaje_num_pasajeros
-                                        )
-                                        textoInformacionViaje(
-                                            etiqueta = "Status",
-                                            contenido = it.viaje_status
-                                        )
+                                        Spacer(modifier = Modifier.width(20.dp)) // Agrega un espacio entre el texto y la columna
 
-                                    }
-                                    Spacer(modifier = Modifier.width(10.dp)) // Agrega un espacio entre el texto y la columna
+                                        Column(
+                                            modifier = Modifier
+                                                .weight(1f) // Utiliza el peso para que la columna ocupe el espacio restante
+                                                .padding(start = 0.dp)
+                                        ) {
+                                            val trayectoTexto = convertirTrayecto(it.viaje_trayecto)
 
+                                            textoInformacionViaje(
+                                                etiqueta = "Trayecto",
+                                                contenido = trayectoTexto
+                                            )
 
+                                            textoInformacionViaje(
+                                                etiqueta = "Pasajeros",
+                                                contenido = it.viaje_num_pasajeros
+                                            )
+                                            textoInformacionViaje(
+                                                etiqueta = "Status",
+                                                contenido = it.viaje_status
+                                            )
 
-                                    IconButton(onClick = {
-                                       // navController.navigate("ver_mapa_viaje/${it.viaje_id}/$userId/$pantalla")
-                                        if (it.viaje_paradas != "0") {
-                                            navController.navigate("ver_mapa_viaje/${it.viaje_id}/$userId")
-                                        } else {
-                                            navController.navigate("ver_mapa_viaje_sin/${it.viaje_id}/$userId")
                                         }
+                                        Spacer(modifier = Modifier.width(10.dp)) // Agrega un espacio entre el texto y la columna
 
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.KeyboardArrowRight,
-                                            contentDescription = "Ver viaje",
-                                            modifier = Modifier.size(50.dp),
-                                            tint = Color(137, 13, 86)
-                                        )
+                                        IconButton(onClick = {
+                                            // navController.navigate("ver_mapa_viaje/${it.viaje_id}/$userId/$pantalla")
+                                            if (it.viaje_paradas != "0") {
+                                                navController.navigate("ver_mapa_viaje/${it.viaje_id}/$userId")
+                                            } else {
+                                                navController.navigate("ver_mapa_viaje_sin/${it.viaje_id}/$userId")
+                                            }
+
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.KeyboardArrowRight,
+                                                contentDescription = "Ver viaje",
+                                                modifier = Modifier.size(50.dp),
+                                                tint = Color(137, 13, 86)
+                                            )
+                                        }
                                     }
-
+                                    Spacer(modifier = Modifier.height(15.dp)) // Agrega un espacio entre el texto y la columna
 
                                 }
-                                Spacer(modifier = Modifier.height(15.dp)) // Agrega un espacio entre el texto y la columna
-
-
                             }
-                        }
 
                             //fin columana por viaje
 
+                        } else {
+                            mensajeNoViajes()
                         }
-
-
 
                         //Esta es la fila para cada viaje
 
