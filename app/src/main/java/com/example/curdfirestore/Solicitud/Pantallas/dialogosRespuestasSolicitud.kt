@@ -11,20 +11,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,9 +36,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conResponderSolicitud
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+val paddingIma=15.dp
+val paddingTex=15.dp
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun dialogoSolicitudAceptada(
@@ -87,12 +88,14 @@ fun dialogoSolicitudAceptada(
                         text = "Solicitud aceptada",
                         style = TextStyle(Color(137,  13, 88 )),
                         fontSize = 16.sp,
-                       textAlign = TextAlign.Center
+                       textAlign = TextAlign.Justify,
+                        modifier = Modifier.padding(paddingTex)
                     )
                     Image(
                         modifier = Modifier
                             .height(140.dp)
                             .width(120.dp)
+                            .padding(paddingIma)
                             .align(Alignment.CenterHorizontally), // Centrar horizontalmente
                         painter = painterResource(id = R.drawable.solaceptada),
                         contentDescription = "Imagen pregunta",
@@ -155,12 +158,14 @@ fun dialogoSolicitudRechazada(
                         text = "Solicitud rechazada",
                         style = TextStyle(Color(137,  13, 88 )),
                         fontSize = 16.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Justify,
+                        modifier=Modifier.padding(paddingTex)
                     )
                     Image(
                         modifier = Modifier
                             .height(140.dp)
                             .width(120.dp)
+                            .padding(paddingIma)
                             .align(Alignment.CenterHorizontally), // Centrar horizontalmente
                         painter = painterResource(id = R.drawable.solrechazada),
                         contentDescription = "Imagen pregunta",
@@ -179,54 +184,54 @@ fun dialogoSolicitudRechazada(
 @Composable
 fun dialogoSolicitudNoPermitida(
     onDismiss: () -> Unit,
-
+    idSol:String,
+    idUser:String,
+    navController: NavController
 ) {
-
+    var eliiminar by remember {
+        mutableStateOf(false)
+    }
+    var confirmR by remember { mutableStateOf(false) } //Status de la solictud terminado
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.2f)),
+            .background(Color.Black.copy(alpha = 0.2f))
     ) {
         Dialog(
             onDismissRequest = { },
-            // No permitir cerrar el diálogo al tocar fuera de él
             content = {
                 Column(
                     modifier = Modifier
-
                         .padding(15.dp)
-                        .background(Color.White)
-                    ,
+                        .background(Color.White),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "Ya no tienes lugares disponibles para este viaje. ¿Deseas eliminar esta solicitud?",
-                        style = TextStyle(Color(137,  13, 88 )),
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center
+                        text = "No hay lugares disponibles. ¿Deseas eliminar esta solicitud?",
+                        style = TextStyle(Color.Black),
+                        fontSize = 17.sp,
+                        textAlign = TextAlign.Justify
                     )
                     Image(
                         modifier = Modifier
                             .height(140.dp)
                             .width(120.dp)
-                            .align(Alignment.CenterHorizontally), // Centrar horizontalmente
+                            .align(Alignment.CenterHorizontally),
                         painter = painterResource(id = R.drawable.pregunta),
                         contentDescription = "Imagen pregunta",
-                        contentScale = ContentScale.FillBounds,
-                        alpha = fadeInAlpha
+                        contentScale = ContentScale.FillBounds
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
-
-
                     Row(modifier = Modifier.align(Alignment.End)){
+                        TextButton(onClick = {
 
-
-
-                        TextButton(onClick = { onDismiss() }) {
-                            Text(text = "CANCELAR",
+                            onDismiss() }
+                        ) {
+                            Text(
+                                text = "CANCELAR",
                                 style = TextStyle(
                                     Color(137,67,242),
                                     fontWeight = FontWeight.Bold,
@@ -238,11 +243,10 @@ fun dialogoSolicitudNoPermitida(
                         Spacer(modifier = Modifier.width(10.dp))
 
                         TextButton(
-                            onClick = {
-
-                          //Rechazar
-                            }) {
-                            Text(text = "ACEPTAR",
+                            onClick = { eliiminar=true } // Llamar al método de aceptar
+                        ) {
+                            Text(
+                                text = "ACEPTAR",
                                 style = TextStyle(
                                     Color(137,67,242),
                                     fontWeight = FontWeight.Bold,
@@ -251,6 +255,17 @@ fun dialogoSolicitudNoPermitida(
                             )
                         }
                     }
+                }
+
+                if(eliiminar){
+                    LaunchedEffect(Unit) {
+                        conResponderSolicitud(idSol, "Rechazada") { respuestaExitosa ->
+                            confirmR = respuestaExitosa
+                        }
+                    }
+                }
+                if(confirmR){
+                    navController.navigate("ver_solicitudes_conductor/$idUser")
                 }
 
             },

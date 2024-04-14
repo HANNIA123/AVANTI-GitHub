@@ -35,8 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,14 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.avanti.ParadaData
+import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
-import com.example.avanti.ViajeData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.toLocalDate
-import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarPasajerosDeSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conActualizarLugares
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
@@ -69,38 +65,37 @@ fun verSolicitudesCon(
     userId: String
 ) {
 
-    var listaSolicitudes = conObtenerSolicitudesConductor(userId = userId)
     var mhv by remember {
         mutableStateOf(0.dp)
     }
 
-
-    var usuario by remember { mutableStateOf<UserData?>(null) }
-    var viaje by remember { mutableStateOf<ViajeData?>(null) }
-    var parada by remember { mutableStateOf<ParadaData?>(null) }
-
-
     var dialogoInf by remember { mutableStateOf(false) } //Status de la solictud terminado
-
     var confirmA by remember { mutableStateOf(false) } //Status de la solictud terminado
-
     var confirmR by remember { mutableStateOf(false) } //Status de la solictud terminado
     var presionado by remember { mutableStateOf(false) } //Status de la solictud terminado
-
     var aceptado by remember { mutableStateOf(false) }
-
     var rechazado by remember { mutableStateOf(false) }
-
     var noLugares by remember { mutableStateOf(false) }
+
     var idViaje by remember { mutableStateOf("") }
     var idSol by remember { mutableStateOf("") }
     var idParada by remember { mutableStateOf("") }
     var idPasajero by remember { mutableStateOf("") }
+
+    var usuario by remember { mutableStateOf<UserData?>(null) }
+    var listaSolicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+
+
+    conObtenerSolicitudesConductor(userId = userId) { resultado ->
+        // Asignar el resultado a la variable 'solicitudes'
+        listaSolicitudes = resultado
+    }
+
     BoxWithConstraints {
         mhv = this.maxHeight - 50.dp
     }
-    Box() {
 
+    Box {
         Scaffold(
             bottomBar = {
                 BottomAppBar(modifier = Modifier.height(50.dp)) {
@@ -108,7 +103,6 @@ fun verSolicitudesCon(
                 }
             }
         ) {
-
 
             Column(
                 modifier = Modifier
@@ -141,61 +135,23 @@ fun verSolicitudesCon(
                                 fontSize = 18.sp,
                                 textAlign = TextAlign.Justify,
                             ),
-
                             )
 
                     }
                     Spacer(modifier = Modifier.height(10.dp))
 
-
-
-                    listaSolicitudes?.let {
-                        // Filtrar la lista por el nombre buscado
+                    if (listaSolicitudes != null) {
                         val solPendientes =
-                            listaSolicitudes.filter { it.solicitud_status == "Pendiente" }
+                            listaSolicitudes!!.filter { it.solicitud_status == "Pendiente" }
 
-                        // Realizar acciones según la condición
-                        if (listaSolicitudes.isEmpty()) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .border(2.dp, Color.White)
-                                    .background(Color.White)
-                                    .fillMaxWidth()
-                                    .padding(15.dp)
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                }
-                                Image(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp),
-                                    painter = painterResource(id = R.drawable.buscar),
-                                    contentDescription = "Imagen no viaje",
-                                    contentScale = ContentScale.FillBounds
-                                )
-
-                                Text(
-                                    text = "No hay  solicitudes",
-                                    style = TextStyle(
-                                        color = Color(86, 86, 86),
-                                        fontSize = 18.sp,
-                                        textAlign = TextAlign.Justify,
-                                    )
-                                )
-
-                            }
-
+                        if (solPendientes.isEmpty()) {
+                            mensajeNosolciitudes()
 
                         } else {
                             val solicitudes =
                                 solPendientes.sortedBy { it.solicitud_date.toLocalDate("dd/MM/yyyy") }
 
-                            // val solicitudes = solPendientes.sortedByDescending { it.solicitud_date }
                             solicitudes.forEach {
-
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
@@ -210,9 +166,7 @@ fun verSolicitudesCon(
                                     idSol = it.solicitud_id
                                     idPasajero = it.pasajero_id
                                     idParada = it.parada_id
-
                                     usuario = conObtenerUsuarioId(correo = idPasajero)
-
 
                                     Column(
                                         modifier = Modifier
@@ -254,13 +208,12 @@ fun verSolicitudesCon(
                                                     botonesSolicitud(
                                                         onAceptarClick = {
                                                             presionado = true
-
                                                             aceptado = true
 
                                                         },
                                                         onRechazarClick = {
                                                             presionado = true
-                                                            rechazado = false
+                                                            rechazado = true
                                                         }
                                                     )
                                                 }
@@ -277,8 +230,9 @@ fun verSolicitudesCon(
                         }
 
 
+                    } else {
+                        mensajeNosolciitudes()
                     }
-
 
                 }
 
@@ -287,11 +241,24 @@ fun verSolicitudesCon(
                 dialogoSolicitudAceptada(onDismiss = { confirmA = false }, navController, userId)
 
             }
-            if(confirmR){
-                dialogoSolicitudRechazada(onDismiss = { confirmR=false }, navController = navController, userId = userId)
+            if (confirmR) {
+                dialogoSolicitudRechazada(
+                    onDismiss = { confirmR = false },
+                    navController = navController,
+                    userId = userId
+                )
             }
-            if(noLugares){
-                dialogoSolicitudRechazada(onDismiss = { confirmR=false }, navController = navController, userId = userId)
+            if (noLugares) {
+                dialogoSolicitudNoPermitida(
+                    onDismiss = {
+                        noLugares = false
+                        presionado = false
+                        aceptado = false
+                    },
+                    idSol = idSol,
+                    idUser = userId,
+                    navController
+                )
             }
 
             if (dialogoInf) {
@@ -303,26 +270,19 @@ fun verSolicitudesCon(
                 )
 
             }
-
-
         }
-
 
         //Acciones de la solciitud
         if (presionado) {
             if (aceptado) {
-
-                println("Viaje Id: $idViaje")
                 val viaje = conObtenerViajeId(viajeId = idViaje)
-                var numLugares = 0
+                val numLugares: Int
 
                 if (viaje != null) {
-
                     val nl = viaje.viaje_num_lugares
                     val np = ((viaje.viaje_num_pasajeros).toInt()) + 1 //Pasajeros en ese viaje
                     val npc =
                         ((viaje.viaje_num_pasajeros_con).toInt()) + 1 //Pasajeros en ese viaje y activos
-
 
                     val camposActualizar = mapOf(
                         "viaje_num_pasajeros" to np.toString(),
@@ -330,11 +290,9 @@ fun verSolicitudesCon(
                     )
                     numLugares = nl.toInt()
                     if (numLugares > 0) {
-                        var newLugares = numLugares - 1
+                        val newLugares = numLugares - 1
                         conActualizarLugares(idViaje, "viaje_num_lugares", newLugares.toString())
                         actualizarPasajerosDeSolicitud(idViaje, camposActualizar)
-
-
                         LaunchedEffect(Unit) {
                             conResponderSolicitud(idSol, "Aceptada") { respuestaExitosa ->
                                 confirmA = respuestaExitosa
@@ -342,14 +300,11 @@ fun verSolicitudesCon(
                         }
 
                     } else {
-                        noLugares=true
+                        noLugares = true
                         //Ya no hay lugares disponibles
-                        /*show1 = true
-                VentanaSolicitudNoPermitida(navController, userId, show1, { show1 = false }, {})*/
                     }
                 }
             } else {
-                println("Solcitud Rechazada")
                 LaunchedEffect(Unit) {
                     conResponderSolicitud(idSol, "Rechazada") { respuestaExitosa ->
                         confirmR = respuestaExitosa
@@ -359,7 +314,6 @@ fun verSolicitudesCon(
 
         }
     }
-
 
 }
 

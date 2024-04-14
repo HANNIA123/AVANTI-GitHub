@@ -7,45 +7,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavController
 import com.example.avanti.SolicitudData
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
 
 @Composable
 fun conObtenerSolicitudesConductor(
     userId: String,
-) : List<SolicitudData>?{
-    println("id del conductro $userId")
+    onResultReady: (List<SolicitudData>?) -> Unit // Función de devolución de llamada para el resultado
+) {
+    println("id del conductor $userId")
     var fin by rememberSaveable { mutableStateOf(false) }
-    var show by rememberSaveable { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
-    //var solicitudes: List<SolicitudData>?= null
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+
     LaunchedEffect(key1 = true) {
         val response = RetrofitClientSolicitud.apiService.obtenerSolicitudesCon(userId)
         try {
             if (response.isSuccessful) {
-                solicitudes=response.body()
+                solicitudes = response.body()
             } else {
-                text="No se encontró ningún solicitud que coincida con tu búsqueda"
-
+                text = "No se encontró ninguna solicitud que coincida con tu búsqueda"
             }
         } catch (e: Exception) {
             text = "Error al obtener Solicitud: $e"
-
-        }
-        finally {
+        } finally {
             println(text)
-            fin=true
+            fin = true
+            onResultReady(solicitudes) // Llamada a la función de devolución de llamada con el resultado
         }
     }
-
-    return if (fin) {
-
-        solicitudes
-    } else {
-        null
-    }
-
 }
