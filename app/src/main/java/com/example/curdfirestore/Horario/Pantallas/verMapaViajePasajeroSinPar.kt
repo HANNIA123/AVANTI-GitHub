@@ -356,10 +356,8 @@ fun verMapaViajePasajeroSinPar(
                         onDismissRequest = { expanded = false },
                         offset = (-48).dp,
                         onOption1Click = {
-                            var conpantalla = "nomuestra"
-                            var regresa = "vermapa"
-                            //navController.navigate("general_parada/$horarioId/$correo/$conpantalla/$regresa")
-                            // ruta nueva parada
+                            navController.navigate("ver_paradas_pasajero/$correo/$horarioId")
+
                         },
                         onOption2Click = {
                             showEliminar = true
