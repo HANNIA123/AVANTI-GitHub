@@ -1,5 +1,7 @@
 package com.example.curdfirestore.Solicitud
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +15,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +34,9 @@ import com.example.avanti.NoticacionData
 import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.ConsultasHorario.conActualizarSolicitudHorario
+import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conRegistrarSolicitud
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
@@ -39,6 +44,7 @@ import com.example.curdfirestore.textInMarker
 import com.google.android.gms.maps.model.LatLng
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ventanaEnviarSolicitud(
     navController: NavController,
@@ -52,6 +58,7 @@ fun ventanaEnviarSolicitud(
 ) {
 
     var boton by remember { mutableStateOf(false) }
+    var confirmN by remember { mutableStateOf(false) }
     var confirm by remember { mutableStateOf(false) }
     var enviado by remember { mutableStateOf(false) }
 
@@ -135,7 +142,7 @@ fun ventanaEnviarSolicitud(
                     } else if (parada.par_nombre == "Destino") {
 
                         Text(
-                            text = "Tu unto de llegada",
+                            text = "Tu punto de llegada",
                             modifier = Modifier.padding(2.dp),
 
                             style = TextStyle(
@@ -333,17 +340,26 @@ fun ventanaEnviarSolicitud(
 
             )
 
+        //Enviar esta notificacion al conductor
         val notificacionData = NoticacionData(
             notificacion_tipo = "sr",
-            notificacion_usu_origen = email,
-            notificacion_usu_destino = parada.user_id,
+            notificacion_usu_origen = email, //conductor
+            notificacion_usu_destino = parada.user_id, //pasajero
             notificacion_id_viaje = parada.viaje_id,
-            notificacion_fecha = obtenerFechaFormatoddmmyyyy()
+            notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
+            notificacion_hora = obtenerHoraActual().toString()
         )
-        conRegistrarSolicitud(
-            solicitudData
-        ) //Registra la solicitud en la BD
+        conRegistrarSolicitud(solicitudData) //Registra la solicitud en la BD
+
         conActualizarSolicitudHorario(horarioId = horarioId, status ="Si" )
+
+        LaunchedEffect(Unit) {
+            if(!confirmN) {
+                conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
+                    confirmN = respuestaExitosa
+                }
+            }
+        }
 
         //GuardarNotificacion(noticacionData = notificacionData)
         ejecutado = true

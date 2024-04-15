@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Calendar
@@ -64,4 +65,11 @@ fun obtenerFechaFormatoddmmyyyy(): String {
 fun String.toLocalDate(format: String): LocalDate {
     val formatter = DateTimeFormatter.ofPattern(format)
     return LocalDate.parse(this, formatter)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun obtenerHoraActual(): String {
+    val horaActual = LocalTime.now()
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    return horaActual.format(formatter)
 }

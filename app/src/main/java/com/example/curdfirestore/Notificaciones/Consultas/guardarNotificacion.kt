@@ -1,38 +1,79 @@
 package com.example.curdfirestore.Notificaciones.Consultas
 
+import android.annotation.SuppressLint
 import com.example.avanti.NoticacionData
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.RetrofitClientSolicitud.apiService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-fun GuardarNotificacion(
-    noticacionData: NoticacionData
-){
+@SuppressLint("SuspiciousIndentation")
+ suspend fun conRegistrarNotificacion(
+    notificacionData: NoticacionData,
+    onResponseReceived: (Boolean) -> Unit
+) {
+
+    GlobalScope.launch(Dispatchers.IO) {
+        val call = RetrofitClientNotificacion.apiService.registrarNotificacion(notificacionData)
+        call.enqueue(object : Callback<RespuestaApiNotificacion> {
+            override fun onResponse(
+                call: Call<RespuestaApiNotificacion>,
+                response: Response<RespuestaApiNotificacion>
+            ) {
+                if (response.isSuccessful) {
+                    println("estatus ecitos")
+                    // La modificación fue exitosa
+                    val respuestaApi = response.body()
+                    onResponseReceived(true) // Enviar true cuando la respuesta es exitosa
+                } else {
+                    // Ocurrió un error, manejar según sea necesario
+                    onResponseReceived(false) // Enviar false en caso de error
+                }
+            }
+
+            override fun onFailure(call: Call<RespuestaApiNotificacion>, t: Throwable) {
+                // Manejar errores de red o excepciones
+                t.printStackTrace()
+                onResponseReceived(false) // Enviar false en caso de error
+            }
+        })
+    }
+
+
+
+
+
     /*
-    var resp =""
 
     val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()).build()
-    val apiService = retrofit.create(ApiService::class.java)
-    val call: Call<RespuestaApi> = apiService.enviarNotificacion(noticacionData)
-    call.enqueue(object : Callback<RespuestaApi> {
-        override fun onResponse(call: Call<RespuestaApi>, response: Response<RespuestaApi>) {
-            if (response.isSuccessful) {
-                // Manejar la respuesta exitosa aquí
-                val respuesta = response.body()?.message ?: "Mensaje nulo"
-                resp=respuesta
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val apiService = retrofit.create(ApiServiceNotificacion::class.java)
+    val call: Call<RespuestaApiNotificacion> = apiService.registrarNotificacion(notificacionData)
 
-            } else {
-                resp="Entro al else"
+    var resp by remember { mutableStateOf("") }
+
+    call.enqueue(object : Callback<RespuestaApiNotificacion> {
+        override fun onResponse(
+            call: Call<RespuestaApiNotificacion>,
+            response: Response<RespuestaApiNotificacion>
+        ) {
+            if (response.isSuccessful) {
+                val respuesta = response.body()?.message ?: "Mensaje nulo"
+                val idHorario = response.body()?.notificacionId.toString()
+                resp = respuesta
             }
         }
-        override fun onFailure(call: Call<RespuestaApi>, t: Throwable) {
-            TODO("Not yet implemented")
+
+        override fun onFailure(call: Call<RespuestaApiNotificacion>, t: Throwable) {
+            // Manejar el fallo
+            resp = "Error: ${t.message}"
         }
-    }
-    )
-*/
+    })
+
+     */
 }
