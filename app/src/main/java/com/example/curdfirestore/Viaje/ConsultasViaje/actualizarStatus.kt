@@ -31,16 +31,16 @@ fun conEditarStatusViaje(
     call.enqueue(object : Callback<RespuestaApiViaje> {
         override fun onResponse(call: Call<RespuestaApiViaje>, response: Response<RespuestaApiViaje>) {
             if (response.isSuccessful) {
-                val pantalla="nomuetsra"
+                val pantalla="nomuestra"
                 // Manejar la respuesta exitosa aquí
                 val respuesta = response.body()
                 //resp = respuesta?.message ?: "Mensaje nulo"
                 val viajeParada = respuesta?.viaje_paradas ?: "Campo viaje_parada no encontrado"
 
                 if (viajeParada != "0") {
-                    navController.navigate("ver_mapa_viaje/$viajeId/$userId/$pantalla")
+                    navController.navigate("ver_mapa_viaje/$viajeId/$userId")
                 } else {
-                    navController.navigate("ver_mapa_viaje_sin/$viajeId/$userId/$pantalla")
+                    navController.navigate("ver_mapa_viaje_sin/$viajeId/$userId")
                 }
 
 

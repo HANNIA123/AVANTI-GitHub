@@ -38,6 +38,7 @@ import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.ConsultasHorario.conActualizarSolicitudHorario
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conRegistrarSolicitud
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.textInMarker
@@ -198,19 +199,26 @@ fun ventanaEnviarSolicitud(
                             if (horario.horario_trayecto == "0") {
                                 textInMarker(Label = "Origen: ", Text = "UPIITA-IPN")
                                 textInMarker(Label = "Destino: ", Text = addressP)
-                                textInMarker(
-                                    Label = "Horario aproximada: ",
-                                    Text = "${parada.par_hora} hrs"
-                                )
+
 
                             } else {
                                 textInMarker(Label = "Origen: ", Text = addressP)
                                 textInMarker(Label = "Destino: ", Text = "UPIITA-IPN")
+
+                            }
+                            textInMarker(
+                                Label = "Horario aproximado: ",
+                                Text = "${parada.par_hora} hrs"
+                            )
+
+                            val viaje= conObtenerViajeId(viajeId = parada.viaje_id)
+                            viaje?.let {
                                 textInMarker(
-                                    Label = "Horario aproximada: ",
-                                    Text = "${parada.par_hora} hrs"
+                                    Label = "Tarifa establecida: ",
+                                    Text = "$ ${viaje.viaje_tarifa} "
                                 )
                             }
+
 
                             Column(
                                 modifier = Modifier.fillMaxWidth(),

@@ -3,7 +3,9 @@ package com.example.curdfirestore.Viaje.Pantallas
 import android.annotation.SuppressLint
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,10 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -42,8 +42,6 @@ import androidx.compose.ui.res.painterResource
 
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.avanti.MarkerItiData
-import com.example.avanti.ParadaData
-import com.example.avanti.ViajeData
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadas
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
@@ -65,6 +63,7 @@ import kotlinx.coroutines.GlobalScope
 
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,6 +73,7 @@ fun verMapaViajeConductor(
     viajeId: String
 
 ) {
+
 
     var maxh by remember {
         mutableStateOf(0.dp)
@@ -86,6 +86,7 @@ fun verMapaViajeConductor(
     BoxWithConstraints {
         maxh = this.maxHeight
     }
+
 
 
     var viajeData = conObtenerViajeId(viajeId = viajeId)
@@ -109,8 +110,9 @@ fun verMapaViajeConductor(
     //dialogos
     var show by rememberSaveable { mutableStateOf(false) }
     var showCancelar by rememberSaveable { mutableStateOf(false) }
+    var notificacionCancelar by rememberSaveable { mutableStateOf(false) }
     var showEliminar by rememberSaveable { mutableStateOf(false) }
-    var showEditar by rememberSaveable { mutableStateOf(false) }
+
 
     //Convertir String a coordenadas  -- origen
 
@@ -214,8 +216,7 @@ fun verMapaViajeConductor(
                         )
 
                         var nparadas = paradas.sortedBy { it.par_hora }
-                        println("Paradas en desorden $paradas")
-                        println("Paradas por horario $nparadas")
+
 
                         for (parada in nparadas) {
                             var markerLat by remember { mutableStateOf(0.0) }
@@ -434,9 +435,15 @@ fun verMapaViajeConductor(
                     )
                 }
 
+
+
+
                 if (showCancelar) {
                     dialogoConfirmarCancelacion(
-                        onDismiss = { showCancelar = false },
+                        onDismiss = {
+                            showCancelar = false
+
+                                    },
                         viajeId, correo, viajeStatusF,
                         navController
 

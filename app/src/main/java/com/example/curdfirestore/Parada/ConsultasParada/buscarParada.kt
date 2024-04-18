@@ -31,7 +31,10 @@ fun conBuscarParadasPas(
     var busqueda by remember {
         mutableStateOf(true)
     }
-    var show by remember {
+    var showViaje by remember {
+        mutableStateOf(false)
+    }
+    var fin by remember {
         mutableStateOf(false)
     }
     //var listaParadas by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
@@ -39,41 +42,43 @@ fun conBuscarParadasPas(
     for (id in viajes){
         listaParadas.add(id.viaje_id)
     }
-
-
     val resultado = listaParadas.joinToString(",")
     LaunchedEffect(key1=true ) {
         try {
             val  resultadoParada = RetrofitClientParada.apiService.busquedaParadasPas(resultado)
-
             paradas=resultadoParada
-            busqueda=true
         } catch (e: Exception) {
-            busqueda=false
             text="Error al obtener parada: $e"
             println("Error al obtener viaje: $e")
         }
-    }
-
-    if (paradas!=null){
-        obtenerDistanciaParadas(
-            navController = navController,
-            correo = correo,
-            viajes = viajes,
-            paradas = paradas!!,
-            horarioId = horarioId
-        )
+        finally {
+            fin=true
+        }
 
     }
-    if(!busqueda){
-        show=true
-        ventanaNoEncontrado(
-            show = show,
-            onDismiss = {show=false },
-            onConfirm = { /*TODO*/ },
-            userId = correo,
-            navController = navController
-        )
+
+    if(fin){
+
+        if (paradas!=null){
+            println("Parafdas desdes buscar paradas")
+            obtenerDistanciaParadas(
+                navController = navController,
+                correo = correo,
+                viajes = viajes,
+                paradas = paradas!!,
+                horarioId =horarioId
+            )
+        }
+        else{
+            showViaje=true
+            ventanaNoEncontrado(
+                show = showViaje,
+                { showViaje = false },
+                {},
+                userId = correo,
+                navController = navController
+            )
+        }
 
     }
 

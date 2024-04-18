@@ -2,7 +2,9 @@ package com.example.curdfirestore.Horario.Pantallas
 import android.annotation.SuppressLint
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -74,7 +76,6 @@ import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Funciones.getDirections
 import com.example.curdfirestore.Viaje.Pantallas.dialogoConfirmarCancelacion
-import com.example.curdfirestore.Viaje.Pantallas.dialogoConfirmarEliminarViaje
 import com.example.curdfirestore.Viaje.Pantallas.menuViajeOpciones
 import com.example.curdfirestore.Viaje.Pantallas.ventanaMarkerItinerario
 import com.example.curdfirestore.textoGris
@@ -88,6 +89,7 @@ import kotlinx.coroutines.GlobalScope
 
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -492,9 +494,8 @@ fun verMapaViajePasajero(
                     dialogoConfirmarCancelacionP(
                         onDismiss = { showCancelar = false },
                         horarioId, correo, horarioStatus,
+                        solicitud!!,
                         navController
-
-
                     )
                 }
 
@@ -502,7 +503,7 @@ fun verMapaViajePasajero(
                     if(solicitud?.solicitud_status == "Aceptada") {
                         dialogoConfirmarEliminarHorarioSEA(
                             onDismiss = { showEliminar = false },
-                            horarioId, solicitud.viaje_id, correo,
+                            horarioId, solicitud.viaje_id, correo,solicitud,
                             navController
                         )
                     }else if (solicitud?.solicitud_status == "Pendiente"){

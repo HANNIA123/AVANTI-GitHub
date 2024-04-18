@@ -37,49 +37,62 @@ fun conBuscarViajePas(
     ) {
     //Obtener lista de viajes (Itinerario)
     var viajes by remember { mutableStateOf<List<ViajeData>?>(null) }
-    var show by rememberSaveable { mutableStateOf(false) }
-
-    //var parada by remember { mutableStateOf<ParadaData?>(null) }
+    var showViaje by rememberSaveable { mutableStateOf(false) }
+    var fin by rememberSaveable { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
     var busqueda by remember { mutableStateOf(false) }
-    val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    val apiService = retrofit.create(ApiServiceHorario::class.java)
+
 
     LaunchedEffect(key1 = true) {
         try {
             //val  resultadoViaje = RetrofitClient.apiService.busquedaViajesPas(horarioId)
             val response = RetrofitClientHorario.apiService.busquedaViajesPas(horarioId)
             if (response.isSuccessful) {
-                viajes=response.body()
-            } else {
-                text="No se encontró ningún viaje que coincida con tu búsqueda"
+                println("Encontramos viajeee")
+                viajes = response.body()
                 busqueda=true
+            } else {
+                showViaje=true
+                println("NOOO  viajeee")
+                text = "No se encontró ningún viaje que coincida con tu búsqueda"
+
             }
-            // Haz algo con el objeto Usuario
 
         } catch (e: Exception) {
-            text="Error al obtener viaje: $e"
+            text = "Error al obtener viaje: $e"
             println("Error al obtener viaje: $e")
+        }
+        finally {
+            fin=true
         }
     }
 
 
+    if(fin){
+        if (viajes != null && busqueda == true) {
+            println("Encontramos viajeee")
+            //Se encontro un viaje, ahora buscar la parada
+            conBuscarParadasPas(
+                navController = navController,
+                correo = correo,
+                horarioId = horarioId,
+                viajes = viajes!!
+            )
 
-    if (viajes != null  && busqueda==false) {
-     conBuscarParadasPas(navController = navController, correo = correo, horarioId = horarioId, viajes = viajes!!)
-    }
-    if (busqueda==true){
-        show=true
-        ventanaNoEncontrado(
-                show = show,
-        onDismiss = {show=false },
-        onConfirm = { /*TODO*/ },
-        userId = correo,
-        navController = navController
-        )
+        }
+        else{
+            showViaje=true
+            ventanaNoEncontrado(
+                show = showViaje,
+                { showViaje = false },
+                {},
+                userId = correo,
+                navController = navController
+            )
+
+
+        }
+
 
     }
 
