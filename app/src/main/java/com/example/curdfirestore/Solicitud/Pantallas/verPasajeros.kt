@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -49,11 +50,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.avanti.SolicitudData
+import com.example.avanti.UserData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
+import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
+import com.example.avanti.verPasajerosData
+import com.example.curdfirestore.Horario.Pantallas.dialogoConfirmarEliminarHorarioSE
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Reportes.Pantallas.dialogoBorrarPasajero
+import com.example.curdfirestore.Reportes.Pantallas.dialogoContactoPasajero
+import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarPasajero
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
 import com.example.curdfirestore.Usuario.Conductor.menuCon
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
+import com.example.curdfirestore.Viaje.Funciones.convertirADia
 import com.example.curdfirestore.textoHora
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -67,8 +80,21 @@ fun verPasajeros(
     userid: String,
 ) {
 
-    var maxh = 0.dp
+    var verPasajero by remember { mutableStateOf<verPasajerosData?>(null) }
     var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
+    var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+    var dialogoInf by remember { mutableStateOf(false) }
+    var dialogoContact by remember { mutableStateOf(false) } //Status de la solictud terminado
+    var dialogoBorrar by rememberSaveable { mutableStateOf(false) }
+    var maxh = 0.dp
+
+
+    conObtenerSolicitudesConductor(userId = userid) { resultado ->
+        solicitudes = resultado
+    }
+
+    println("SOLICITUDES $solicitudes")
+
 
     BoxWithConstraints {
         maxh = this.maxHeight - 50.dp
@@ -162,12 +188,8 @@ fun verPasajeros(
                     .padding(start = 10.dp, end = 10.dp)
             ) {
 
-
                 Spacer(modifier = Modifier.height(15.dp))
-                /*
-                //Ordenar por día y por horario los resultados, aqui iría el for
-                val solicitudesOrdenadas = solPendientes.sortedBy { it.solicitud_date } //Agregar el for de la aconsulta y ordenar por horario
-                solicitudesOrdenadas.forEach { _ ->*/
+
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
@@ -181,10 +203,30 @@ fun verPasajeros(
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        textoHora(hora = "14:30 hrs", tam = 20.0f)
-
                         Column {
                             //Columna con informacion de los pasajeros/conductores
+
+                            if(solicitudes!= null){
+                            val sol_aceptadas = solicitudes!!.filter { it.solicitud_status == "Aceptada" }
+                            if (sol_aceptadas.isNotEmpty()){
+                                sol_aceptadas.forEach{
+                                    var id_solicitud = it.solicitud_id
+                                    val usuario = conObtenerUsuarioId(correo = it.pasajero_id)
+                                    val pasajero_id = it.pasajero_id
+                                    val viaje = conObtenerViajeId(viajeId = it.viaje_id)
+                                    val id_viaje = it.viaje_id
+                                    if(usuario != null && viaje != null){
+                                        verPasajero = verPasajerosData(
+                                            solicitud_id = id_solicitud,
+                                            usuario_id = pasajero_id,
+                                            viaje_id = id_viaje,
+                                            nombre_completo = "${usuario.usu_nombre} ${usuario.usu_primer_apellido} ${usuario.usu_segundo_apellido}",
+                                            URL_imagen = usuario.usu_foto,
+                                            dia_viaje = viaje.viaje_dia,
+                                            hora_viaje = viaje.viaje_hora_partida
+                                        )
+                                        if(verPasajero?.dia_viaje == obtenerNombreDiaEnEspanol(diaActual) ){
+                                            println("VERPASAJERODATA $verPasajero")
 
                             Row(
                                 modifier = Modifier
@@ -199,7 +241,7 @@ fun verPasajeros(
                                 ) {
                                     //For para poner por hora, similar a como se origanizan por dia
                                     Text(
-                                        text = "Alejandro Viveros",
+                                        text = "${verPasajero?.nombre_completo}",
                                         style = TextStyle(
                                             color = Color.Black,
                                             fontSize = 20.sp,
@@ -208,54 +250,92 @@ fun verPasajeros(
                                     )
                                 }
 
-                                /*CoilImage(url = urlPrueba, modifier = Modifier
-                                    .size(130.dp)
+                               CoilImage(url = "${verPasajero?.URL_imagen}", modifier = Modifier
+                                    .size(90.dp)
                                     .clip(CircleShape)
-                                    .align(Alignment.CenterHorizontally),
-                                )*/
-
-                                Image(
-                                    modifier = Modifier
-                                        .size(100.dp)
-                                        .clip(CircleShape)
-                                        .align(Alignment.Bottom),
-                                    painter = painterResource(id = R.drawable.pregunta),
-                                    contentDescription = "Imagen pregunta",
-                                    contentScale = ContentScale.FillBounds
+                                    .align(Alignment.Bottom),
                                 )
+
                             }
 
                             botonesVerPasajeros { buttonText ->
-                                // Acción según el botón clicado
                                 when (buttonText) {
                                     "Contacto" -> {
-                                        // Acción para el botón "Contacto"
+                                        dialogoContact = true
                                     }
                                     "Reportar" -> {
-                                        // Acción para el botón "Reportar"
+                                        dialogoInf = true
                                     }
                                     "Borrar" -> {
-                                        // Acción para el botón "Borrar"
+                                        dialogoBorrar = true
+
                                     }
                                 }
                             }
                             lineaGris()
+                            Spacer(modifier = Modifier.height(20.dp))
                         }
 
-                    }
 
+                                        }else{
+                                        Text(
+                                            text = "No hay pasajeros registrados para hoy.",
+                                            style = TextStyle(
+                                                color = Color(86, 86, 86),
+                                                fontSize = 18.sp,
+                                                textAlign = TextAlign.Justify,
+                                            )
+                                        )
+
+                                        }
+
+                                   if (dialogoContact) {
+                                        dialogoContactoPasajero(
+                                            onDismiss = { dialogoContact = false },
+                                            usuario!!
+                                        )
+                                    }
+
+                                    println("USUARIO $usuario")
+                                    if (dialogoInf) {
+                                        dialogoReportarPasajero(
+                                            onDismiss = { dialogoInf = false },
+                                            usuario!!,
+                                            userid,
+                                            navController
+                                        )
+                                    }
+
+                                    if (dialogoBorrar) {
+                                        dialogoBorrarPasajero(
+                                            onDismiss = { dialogoBorrar = false },
+                                            userid, it.solicitud_id,
+                                            navController
+                                        )
+                                    }
+
+
+                                    }
+
+                                }
+
+
+                            }
+
+                        }
+
+
+                    } //cierre de la columna donde puse la info
 
                 }
 
                 //cieere for }
-
             }
-
 
         }
 
-
     }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
