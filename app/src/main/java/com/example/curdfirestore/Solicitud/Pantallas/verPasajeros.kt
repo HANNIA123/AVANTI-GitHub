@@ -100,6 +100,7 @@ fun verPasajeros(
         maxh = this.maxHeight - 50.dp
     }
 
+    Box {
     Scaffold(
         bottomBar = {
             BottomAppBar(modifier = Modifier.height(50.dp)) {
@@ -206,113 +207,98 @@ fun verPasajeros(
                         Column {
                             //Columna con informacion de los pasajeros/conductores
 
-                            if(solicitudes!= null){
-                            val sol_aceptadas = solicitudes!!.filter { it.solicitud_status == "Aceptada" }
-                            if (sol_aceptadas.isNotEmpty()){
-                                sol_aceptadas.forEach{
-                                    var id_solicitud = it.solicitud_id
-                                    val usuario = conObtenerUsuarioId(correo = it.pasajero_id)
-                                    val pasajero_id = it.pasajero_id
-                                    val viaje = conObtenerViajeId(viajeId = it.viaje_id)
-                                    val id_viaje = it.viaje_id
-                                    if(usuario != null && viaje != null){
-                                        verPasajero = verPasajerosData(
-                                            solicitud_id = id_solicitud,
-                                            usuario_id = pasajero_id,
-                                            viaje_id = id_viaje,
-                                            nombre_completo = "${usuario.usu_nombre} ${usuario.usu_primer_apellido} ${usuario.usu_segundo_apellido}",
-                                            URL_imagen = usuario.usu_foto,
-                                            dia_viaje = viaje.viaje_dia,
-                                            hora_viaje = viaje.viaje_hora_partida
-                                        )
-                                        if(verPasajero?.dia_viaje == obtenerNombreDiaEnEspanol(diaActual) ){
-                                            println("VERPASAJERODATA $verPasajero")
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                // Contenido de la columna
-                                Column(
-                                    modifier = Modifier
-                                        .weight(1f) // Para que la columna ocupe todo el espacio disponible
-                                        .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
-                                ) {
-                                    //For para poner por hora, similar a como se origanizan por dia
-                                    Text(
-                                        text = "${verPasajero?.nombre_completo}",
-                                        style = TextStyle(
-                                            color = Color.Black,
-                                            fontSize = 20.sp,
-                                            textAlign = TextAlign.Start,
-                                        ),
-                                    )
-                                }
-
-                               CoilImage(url = "${verPasajero?.URL_imagen}", modifier = Modifier
-                                    .size(90.dp)
-                                    .clip(CircleShape)
-                                    .align(Alignment.Bottom),
-                                )
-
-                            }
-
-                            botonesVerPasajeros { buttonText ->
-                                when (buttonText) {
-                                    "Contacto" -> {
-                                        dialogoContact = true
-                                    }
-                                    "Reportar" -> {
-                                        dialogoInf = true
-                                    }
-                                    "Borrar" -> {
-                                        dialogoBorrar = true
-
-                                    }
-                                }
-                            }
-                            lineaGris()
-                            Spacer(modifier = Modifier.height(20.dp))
-                        }
-
-
-                                        }else{
-                                        Text(
-                                            text = "No hay pasajeros registrados para hoy.",
-                                            style = TextStyle(
-                                                color = Color(86, 86, 86),
-                                                fontSize = 18.sp,
-                                                textAlign = TextAlign.Justify,
+                            if (solicitudes != null) {
+                                val sol_aceptadas =
+                                    solicitudes!!.filter { it.solicitud_status == "Aceptada" }
+                                if (sol_aceptadas.isNotEmpty()) {
+                                    sol_aceptadas.forEach {
+                                        var id_solicitud = it.solicitud_id
+                                        val usuario = conObtenerUsuarioId(correo = it.pasajero_id)
+                                        val pasajero_id = it.pasajero_id
+                                        val viaje = conObtenerViajeId(viajeId = it.viaje_id)
+                                        val id_viaje = it.viaje_id
+                                        if (usuario != null && viaje != null) {
+                                            verPasajero = verPasajerosData(
+                                                solicitud_id = id_solicitud,
+                                                usuario_id = pasajero_id,
+                                                viaje_id = id_viaje,
+                                                nombre_completo = "${usuario.usu_nombre} ${usuario.usu_primer_apellido} ${usuario.usu_segundo_apellido}",
+                                                URL_imagen = usuario.usu_foto,
+                                                dia_viaje = viaje.viaje_dia,
+                                                hora_viaje = viaje.viaje_hora_partida
                                             )
-                                        )
+                                            if (verPasajero?.dia_viaje == obtenerNombreDiaEnEspanol(
+                                                    diaActual
+                                                )
+                                            ) {
+                                                println("VERPASAJERODATA $verPasajero")
+
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth(),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    // Contenido de la columna
+                                                    Column(
+                                                        modifier = Modifier
+                                                            .weight(1f) // Para que la columna ocupe todo el espacio disponible
+                                                            .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
+                                                    ) {
+                                                        //For para poner por hora, similar a como se origanizan por dia
+                                                        Text(
+                                                            text = "${verPasajero?.nombre_completo}",
+                                                            style = TextStyle(
+                                                                color = Color.Black,
+                                                                fontSize = 20.sp,
+                                                                textAlign = TextAlign.Start,
+                                                            ),
+                                                        )
+                                                    }
+
+                                                    CoilImage(
+                                                        url = "${verPasajero?.URL_imagen}",
+                                                        modifier = Modifier
+                                                            .size(90.dp)
+                                                            .clip(CircleShape)
+                                                            .align(Alignment.Bottom),
+                                                    )
+
+                                                }
+
+                                                botonesVerPasajeros { buttonText ->
+                                                    when (buttonText) {
+                                                        "Contacto" -> {
+                                                            dialogoContact = true
+                                                        }
+
+                                                        "Reportar" -> {
+                                                            dialogoInf = true
+                                                        }
+
+                                                        "Borrar" -> {
+                                                            dialogoBorrar = true
+
+                                                        }
+                                                    }
+                                                }
+                                                lineaGris()
+                                                Spacer(modifier = Modifier.height(20.dp))
+                                            }
+
+
+                                        } else {
+                                            Text(
+                                                text = "No hay pasajeros registrados para hoy.",
+                                                style = TextStyle(
+                                                    color = Color(86, 86, 86),
+                                                    fontSize = 18.sp,
+                                                    textAlign = TextAlign.Justify,
+                                                )
+                                            )
 
                                         }
 
-                                   if (dialogoContact) {
-                                        dialogoContactoPasajero(
-                                            onDismiss = { dialogoContact = false },
-                                            usuario!!
-                                        )
-                                    }
 
-                                    println("USUARIO $usuario")
-                                    if (dialogoInf) {
-                                        dialogoReportarPasajero(
-                                            onDismiss = { dialogoInf = false },
-                                            usuario!!,
-                                            userid,
-                                            navController
-                                        )
-                                    }
-
-                                    if (dialogoBorrar) {
-                                        dialogoBorrarPasajero(
-                                            onDismiss = { dialogoBorrar = false },
-                                            userid, it.solicitud_id,
-                                            navController
-                                        )
-                                    }
 
 
                                     }
@@ -335,6 +321,35 @@ fun verPasajeros(
         }
 
     }
+
+        if (dialogoContact) {
+            dialogoContactoPasajero(
+                onDismiss = { dialogoContact = false },
+                usuario!!
+            )
+        }
+
+        println("USUARIO $usuario")
+        if (dialogoInf) {
+            dialogoReportarPasajero(
+                onDismiss = { dialogoInf = false },
+                usuario!!,
+                userid,
+                pasajero_id,
+                navController
+            )
+        }
+
+        if (dialogoBorrar) {
+            dialogoBorrarPasajero(
+                onDismiss = { dialogoBorrar = false },
+                userid, it.solicitud_id,
+                navController
+            )
+        }
+
+
+}
 
 }
 
