@@ -135,3 +135,21 @@ data class NoticacionData(
     var notificacion_hora:String="",
 
     )
+
+data class verPasajerosData(
+    var solicitud_id: String="",
+    var usuario_id: String="",
+    var viaje_id: String="",
+    var nombre_completo: String="",
+    var URL_imagen: String="",
+    var hora_viaje: String="",
+    var dia_viaje: String="",
+)
+
+data class ReporteData(
+    var repor_u_reportado: String="",
+    var repor_u_que_reporta: String="",
+    var repor_motivo: String="",
+    var repor_detalles: String ="",
+    var repor_fecha: String="",
+)
