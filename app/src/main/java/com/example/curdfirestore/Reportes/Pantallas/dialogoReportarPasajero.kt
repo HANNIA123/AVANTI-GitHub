@@ -70,6 +70,7 @@ fun dialogoReportarPasajero(
     onDismiss: () -> Unit,
     usuario: UserData,
     userid: String,
+    pasajero_id: String,
     navController: NavController,
 ) {
     var tamEspacio = 15.dp
@@ -292,7 +293,7 @@ fun dialogoReportarPasajero(
         val fecha_now = obtenerFechaFormatoddmmyyyy()
         val reporteData = ReporteData(
             repor_u_que_reporta = userid,
-            repor_u_reportado =  usuario.usu_id,
+            repor_u_reportado = pasajero_id,
             repor_motivo = motivo,
             repor_detalles = descripciontext,
             repor_fecha = fecha_now
