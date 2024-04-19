@@ -3,7 +3,6 @@ package com.example.curdfirestore.Solicitud.Pantallas
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -36,12 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,22 +54,17 @@ import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.avanti.verPasajerosData
-import com.example.curdfirestore.Horario.Pantallas.dialogoConfirmarEliminarHorarioSE
-import com.example.curdfirestore.R
 import com.example.curdfirestore.Reportes.Pantallas.dialogoBorrarPasajero
 import com.example.curdfirestore.Reportes.Pantallas.dialogoContactoPasajero
 import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarPasajero
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
-import com.example.curdfirestore.Viaje.Funciones.convertirADia
-import com.example.curdfirestore.textoHora
 import java.time.DayOfWeek
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun verPasajeros(
     navController: NavController,
@@ -83,9 +74,18 @@ fun verPasajeros(
     var verPasajero by remember { mutableStateOf<verPasajerosData?>(null) }
     var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+
+    var usuario by remember { mutableStateOf<UserData?>(null) }
     var dialogoInf by remember { mutableStateOf(false) }
     var dialogoContact by remember { mutableStateOf(false) } //Status de la solictud terminado
     var dialogoBorrar by rememberSaveable { mutableStateOf(false) }
+
+    var pasajero_id by remember {
+        mutableStateOf("")
+    }
+    var id_solicitud by remember {
+        mutableStateOf("")
+    }
     var maxh = 0.dp
 
 
@@ -212,9 +212,9 @@ fun verPasajeros(
                                     solicitudes!!.filter { it.solicitud_status == "Aceptada" }
                                 if (sol_aceptadas.isNotEmpty()) {
                                     sol_aceptadas.forEach {
-                                        var id_solicitud = it.solicitud_id
-                                        val usuario = conObtenerUsuarioId(correo = it.pasajero_id)
-                                        val pasajero_id = it.pasajero_id
+                                        id_solicitud = it.solicitud_id
+                                        usuario = conObtenerUsuarioId(correo = it.pasajero_id)
+                                        pasajero_id = it.pasajero_id
                                         val viaje = conObtenerViajeId(viajeId = it.viaje_id)
                                         val id_viaje = it.viaje_id
                                         if (usuario != null && viaje != null) {
@@ -222,8 +222,8 @@ fun verPasajeros(
                                                 solicitud_id = id_solicitud,
                                                 usuario_id = pasajero_id,
                                                 viaje_id = id_viaje,
-                                                nombre_completo = "${usuario.usu_nombre} ${usuario.usu_primer_apellido} ${usuario.usu_segundo_apellido}",
-                                                URL_imagen = usuario.usu_foto,
+                                                nombre_completo = "${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido} ${usuario!!.usu_segundo_apellido}",
+                                                URL_imagen = usuario!!.usu_foto,
                                                 dia_viaje = viaje.viaje_dia,
                                                 hora_viaje = viaje.viaje_hora_partida
                                             )
@@ -329,7 +329,7 @@ fun verPasajeros(
             )
         }
 
-        println("USUARIO $usuario")
+
         if (dialogoInf) {
             dialogoReportarPasajero(
                 onDismiss = { dialogoInf = false },
@@ -343,7 +343,7 @@ fun verPasajeros(
         if (dialogoBorrar) {
             dialogoBorrarPasajero(
                 onDismiss = { dialogoBorrar = false },
-                userid, it.solicitud_id,
+                userid, id_solicitud,
                 navController
             )
         }
