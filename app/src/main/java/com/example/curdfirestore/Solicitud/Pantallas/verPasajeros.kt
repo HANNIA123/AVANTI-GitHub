@@ -64,7 +64,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType")
 @Composable
 fun verPasajeros(
     navController: NavController,
@@ -73,7 +73,9 @@ fun verPasajeros(
 
     var verPasajero by remember { mutableStateOf<verPasajerosData?>(null) }
     var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
-    var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+    var listaSolicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+
+    var listDatos by remember { mutableStateOf<List<verPasajerosData>?>(null) }
 
     var usuario by remember { mutableStateOf<UserData?>(null) }
     var dialogoInf by remember { mutableStateOf(false) }
@@ -86,14 +88,64 @@ fun verPasajeros(
     var id_solicitud by remember {
         mutableStateOf("")
     }
+
+    var termino by remember { mutableStateOf(false) }
     var maxh = 0.dp
 
 
     conObtenerSolicitudesConductor(userId = userid) { resultado ->
-        solicitudes = resultado
+        listaSolicitudes = resultado
     }
 
-    println("SOLICITUDES $solicitudes")
+    if (listaSolicitudes != null) {
+        println("entraa lista")
+        val sol_aceptadas = listaSolicitudes!!.filter { it.solicitud_status == "Aceptada" }
+
+        if (sol_aceptadas.isNotEmpty()) {
+            val nuevosDatos = mutableListOf<verPasajerosData>()
+            sol_aceptadas.forEach { solicitud ->
+                val idSol = solicitud.solicitud_id
+                val status = solicitud.solicitud_status
+                val idViaje = solicitud.viaje_id
+                val idUser = solicitud.pasajero_id
+                val user = conObtenerUsuarioId(correo = solicitud.pasajero_id)
+                val via = conObtenerViajeId(viajeId = solicitud.viaje_id)
+
+                if (status == "Aceptada" && user != null && via != null) {
+                    val datos = verPasajerosData(
+                        idSol,
+                        idUser,
+                        idViaje,
+                        "${user.usu_nombre} ${user.usu_primer_apellido}",
+                        user.usu_foto,
+                        via.viaje_hora_partida,
+                        via.viaje_dia,
+                        status
+                    )
+                    nuevosDatos.add(datos)
+                    println("Nuevo dato agregado: $datos")
+                }
+
+                // Verifica si la lista está completa después de agregar cada dato
+                val cantidadSolicitudes = sol_aceptadas.size
+                val cantidadDatos = nuevosDatos.size
+                if (cantidadDatos == cantidadSolicitudes) {
+                    println("La lista está completa")
+                    termino = true
+                    // Salir del bucle forEach
+                    return@forEach
+                }
+            }
+
+            // Actualiza la lista original en lugar de crear una nueva
+            listDatos = (listDatos ?: emptyList()) + nuevosDatos
+        }
+    }
+
+
+
+
+
 
 
     BoxWithConstraints {
@@ -101,137 +153,123 @@ fun verPasajeros(
     }
 
     Box {
-    Scaffold(
-        bottomBar = {
-            BottomAppBar(modifier = Modifier.height(50.dp)) {
-                menuCon(navController = navController, userID = userid)
-            }
-        }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Color(239, 239, 239)
-                )
-                .height(maxh)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            cabecera("Pasajeros")
-
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .border(2.dp, Color.White)
-                    .background(Color.White)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-
-
-            ) {
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(30.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    IconButton(
-                        onClick = {
-                            diaActual = diaActual.minus(1)
-                            if (diaActual < DayOfWeek.MONDAY) {
-                                diaActual = DayOfWeek.SUNDAY
-                            }
-                        },
-                        modifier = Modifier.size(50.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.KeyboardArrowLeft,
-                            contentDescription = "Anterior",
-                            tint = Color(72, 12, 107)
-                        )
-                    }
-
-                    Text(
-                        text = obtenerNombreDiaEnEspanol(diaActual),
-                        style = TextStyle(
-                            color = Color(72, 12, 107),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    IconButton(
-                        onClick = {
-                            diaActual = diaActual.plus(1)
-                            if (diaActual > DayOfWeek.SATURDAY) {
-                                diaActual = DayOfWeek.SUNDAY
-                            }
-                        },
-                        modifier = Modifier.size(50.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.KeyboardArrowRight,
-                            contentDescription = "Siguiente",
-                            tint = Color(72, 12, 107)
-                        )
-                    }
+        Scaffold(
+            bottomBar = {
+                BottomAppBar(modifier = Modifier.height(50.dp)) {
+                    menuCon(navController = navController, userID = userid)
                 }
-
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            //Contenido
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, end = 10.dp)
+                    .background(
+                        Color(239, 239, 239)
+                    )
+                    .height(maxh)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-
-                Spacer(modifier = Modifier.height(15.dp))
+                cabecera("Pasajeros")
 
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
                         .border(2.dp, Color.White)
                         .background(Color.White)
-                        .fillMaxWidth()
-                        .padding(15.dp)
-                ) {
-                    /*Columna para ordenar por día*/
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Column {
-                            //Columna con informacion de los pasajeros/conductores
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
 
-                            if (solicitudes != null) {
-                                val sol_aceptadas =
-                                    solicitudes!!.filter { it.solicitud_status == "Aceptada" }
-                                if (sol_aceptadas.isNotEmpty()) {
-                                    sol_aceptadas.forEach {
-                                        id_solicitud = it.solicitud_id
-                                        usuario = conObtenerUsuarioId(correo = it.pasajero_id)
-                                        pasajero_id = it.pasajero_id
-                                        val viaje = conObtenerViajeId(viajeId = it.viaje_id)
-                                        val id_viaje = it.viaje_id
-                                        if (usuario != null && viaje != null) {
-                                            verPasajero = verPasajerosData(
-                                                solicitud_id = id_solicitud,
-                                                usuario_id = pasajero_id,
-                                                viaje_id = id_viaje,
-                                                nombre_completo = "${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido} ${usuario!!.usu_segundo_apellido}",
-                                                URL_imagen = usuario!!.usu_foto,
-                                                dia_viaje = viaje.viaje_dia,
-                                                hora_viaje = viaje.viaje_hora_partida
-                                            )
-                                            if (verPasajero?.dia_viaje == obtenerNombreDiaEnEspanol(
-                                                    diaActual
-                                                )
-                                            ) {
-                                                println("VERPASAJERODATA $verPasajero")
+
+                ) {
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(30.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        IconButton(
+                            onClick = {
+                                diaActual = diaActual.minus(1)
+                                if (diaActual < DayOfWeek.MONDAY) {
+                                    diaActual = DayOfWeek.SUNDAY
+                                }
+                            },
+                            modifier = Modifier.size(50.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowLeft,
+                                contentDescription = "Anterior",
+                                tint = Color(72, 12, 107)
+                            )
+                        }
+
+                        Text(
+                            text = obtenerNombreDiaEnEspanol(diaActual),
+                            style = TextStyle(
+                                color = Color(72, 12, 107),
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        IconButton(
+                            onClick = {
+                                diaActual = diaActual.plus(1)
+                                if (diaActual > DayOfWeek.SATURDAY) {
+                                    diaActual = DayOfWeek.SUNDAY
+                                }
+                            },
+                            modifier = Modifier.size(50.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.KeyboardArrowRight,
+                                contentDescription = "Siguiente",
+                                tint = Color(72, 12, 107)
+                            )
+                        }
+                    }
+
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                //Contenido
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp)
+                ) {
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .border(2.dp, Color.White)
+                            .background(Color.White)
+                            .fillMaxWidth()
+                            .padding(15.dp)
+                    ) {
+                        /*Columna para ordenar por día*/
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Column {
+                                //Columna con informacion de los pasajeros/conductores
+
+
+                                if(termino) {
+
+                                        val finales = listDatos!!.filter {
+                                            it.dia_viaje == obtenerNombreDiaEnEspanol(diaActual)
+                                        }
+
+                                        if (finales.isNotEmpty()) {
+                                            finales.forEach {
+                                                id_solicitud = it.solicitud_id
+                                                pasajero_id = it.usuario_id
 
                                                 Row(
                                                     modifier = Modifier
@@ -241,12 +279,12 @@ fun verPasajeros(
                                                     // Contenido de la columna
                                                     Column(
                                                         modifier = Modifier
-                                                            .weight(1f) // Para que la columna ocupe todo el espacio disponible
+                                                            .weight(1f)
                                                             .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
                                                     ) {
                                                         //For para poner por hora, similar a como se origanizan por dia
                                                         Text(
-                                                            text = "${verPasajero?.nombre_completo}",
+                                                            text = it.nombre_completo,
                                                             style = TextStyle(
                                                                 color = Color.Black,
                                                                 fontSize = 20.sp,
@@ -256,13 +294,12 @@ fun verPasajeros(
                                                     }
 
                                                     CoilImage(
-                                                        url = "${verPasajero?.URL_imagen}",
+                                                        url = it.URL_imagen,
                                                         modifier = Modifier
                                                             .size(90.dp)
                                                             .clip(CircleShape)
                                                             .align(Alignment.Bottom),
                                                     )
-
                                                 }
 
                                                 botonesVerPasajeros { buttonText ->
@@ -283,28 +320,16 @@ fun verPasajeros(
                                                 }
                                                 lineaGris()
                                                 Spacer(modifier = Modifier.height(20.dp))
+
+
                                             }
 
-
-                                        } else {
-                                            Text(
-                                                text = "No hay pasajeros registrados para hoy.",
-                                                style = TextStyle(
-                                                    color = Color(86, 86, 86),
-                                                    fontSize = 18.sp,
-                                                    textAlign = TextAlign.Justify,
-                                                )
-                                            )
 
                                         }
 
 
 
-
-                                    }
-
                                 }
-
 
                             }
 
@@ -322,36 +347,36 @@ fun verPasajeros(
 
     }
 
-        if (dialogoContact) {
-            dialogoContactoPasajero(
-                onDismiss = { dialogoContact = false },
-                usuario!!
-            )
-        }
+    if (dialogoContact) {
+        dialogoContactoPasajero(
+            onDismiss = { dialogoContact = false },
+            pasajero_id
+
+        )
+    }
 
 
-        if (dialogoInf) {
-            dialogoReportarPasajero(
-                onDismiss = { dialogoInf = false },
-                usuario!!,
-                userid,
-                pasajero_id,
-                navController
-            )
-        }
+    if (dialogoInf) {
+        dialogoReportarPasajero(
+            onDismiss = { dialogoInf = false },
+            usuario!!,
+            userid,
+            pasajero_id,
+            navController
+        )
+    }
 
-        if (dialogoBorrar) {
-            dialogoBorrarPasajero(
-                onDismiss = { dialogoBorrar = false },
-                userid, id_solicitud,
-                navController
-            )
-        }
+    if (dialogoBorrar) {
+        dialogoBorrarPasajero(
+            onDismiss = { dialogoBorrar = false },
+            userid, id_solicitud,
+            navController
+        )
+    }
 
 
 }
 
-}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)

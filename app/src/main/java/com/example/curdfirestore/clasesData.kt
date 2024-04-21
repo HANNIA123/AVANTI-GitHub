@@ -144,6 +144,7 @@ data class verPasajerosData(
     var URL_imagen: String="",
     var hora_viaje: String="",
     var dia_viaje: String="",
+    var status_sol:String=""
 )
 
 data class ReporteData(

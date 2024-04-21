@@ -31,6 +31,7 @@ import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Parada.Pantallas.generalParada
 import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
+import com.example.curdfirestore.Solicitud.Pantallas.verPasajeros
 import com.example.curdfirestore.Solicitud.Pantallas.verSolicitudesCon
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarDestinoConductorEditar
@@ -334,7 +335,13 @@ fun NavGraph(
         }
 
         //Ver pasajero Caro --- 335-345
-
+        composable("ver_pasajeros_conductor/{userid}") {
+            val userId = it.arguments?.getString("userid") ?: ""
+            verPasajeros(
+                navController = navController,
+                userid = userId
+            )
+        }
 
 
 

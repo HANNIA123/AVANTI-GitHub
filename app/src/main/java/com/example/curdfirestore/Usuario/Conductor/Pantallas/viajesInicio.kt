@@ -188,7 +188,7 @@ cabecera(titulo = "Viajes")
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
 
-                       // navController.navigate(route = "ver_pasajeros_conductor/$userId")
+                       navController.navigate(route = "ver_pasajeros_conductor/$userId")
                     }) {
                     Icon(
                         painter = painterResource(id = R.drawable.users),

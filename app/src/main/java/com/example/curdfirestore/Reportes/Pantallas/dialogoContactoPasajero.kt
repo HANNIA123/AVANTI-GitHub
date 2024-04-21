@@ -43,6 +43,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.avanti.ReporteData
 import com.example.avanti.UserData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
@@ -52,11 +53,12 @@ import com.example.curdfirestore.textTituloInfSolcitud
 @Composable
 fun dialogoContactoPasajero(
     onDismiss: () -> Unit,
-    usuario: UserData,
+    idUsuario: String,
 ) {
     var tamEspacio = 15.dp
     var tamIcono = 55.dp
 
+    val usuario= conObtenerUsuarioId(correo = idUsuario)
 
     Box(
         modifier = Modifier
@@ -72,6 +74,7 @@ fun dialogoContactoPasajero(
                 //expanded = false
             }, // Cierra el diálogo al tocar fuera de él
             content = {
+                usuario?.let {
                 // Contenido del diálogo
                 Column(
                     modifier = Modifier
@@ -89,7 +92,8 @@ fun dialogoContactoPasajero(
                         //textTituloInfSolcitud("Reporte")
 
                         CoilImage(
-                            url = usuario.usu_foto, modifier = Modifier
+                            url = usuario.usu_foto,
+                            modifier = Modifier
                                 .size(90.dp)
                                 .clip(CircleShape)
                                 .align(Alignment.CenterHorizontally), // Centrar horizontalmente
@@ -148,7 +152,7 @@ fun dialogoContactoPasajero(
                     ) {
 
                         TextButton(
-                            onClick = {  onDismiss() },
+                            onClick = { onDismiss() },
                             modifier = Modifier.height(48.dp)
                         ) {
                             Text(
@@ -164,7 +168,7 @@ fun dialogoContactoPasajero(
 
                 }
 
-
+            }
             },
 
             )
