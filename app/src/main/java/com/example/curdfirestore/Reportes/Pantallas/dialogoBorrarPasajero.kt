@@ -26,15 +26,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
 import com.example.curdfirestore.Horario.ConsultasHorario.eliminarHorario
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.eliminarSolicitudById
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.eliminarSolicitudPorHorarioId
+import com.example.curdfirestore.Viaje.ConsultasViaje.aumentarLugaresDeViaje
 
 @Composable
 fun dialogoBorrarPasajero(
     onDismiss: () -> Unit,
     userId:String,
+    viajeId:String,
     idsolicitud: String,
+    horarioId:String,
     navController: NavController
 
 ) {
@@ -97,8 +102,11 @@ fun dialogoBorrarPasajero(
 
                         TextButton(
                             onClick = {
-                                //eliminarHorario(documentId = horarioId,navController, userId)
-                                //eliminarSolicitudPorHorarioId(horarioId)
+                                eliminarSolicitudById(idsolicitud, navController, userId, "ver_pasajeros_conductor")
+                                aumentarLugaresDeViaje(viajeId)
+                                actualizarHorarioPas(horarioId,"horario_solicitud", "No" )
+                                //Falta la creacion de Notificacion
+
                             }) {
                             Text(text = "ACEPTAR",
                                 style = TextStyle(

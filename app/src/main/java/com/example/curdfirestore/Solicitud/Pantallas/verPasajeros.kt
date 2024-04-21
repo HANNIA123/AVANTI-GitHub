@@ -73,13 +73,10 @@ fun verPasajeros(
     userid: String,
 ) {
 
-    var verPasajero by remember { mutableStateOf<verPasajerosData?>(null) }
     var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
     var listaSolicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
 
-    var listDatos by remember { mutableStateOf<List<verPasajerosData>?>(null) }
-
-    var usuario by remember { mutableStateOf<UserData?>(null) }
+    var usuarioPas by remember { mutableStateOf<UserData?>(null) }
     var dialogoInf by remember { mutableStateOf(false) }
     var dialogoContact by remember { mutableStateOf(false) } //Status de la solictud terminado
     var dialogoBorrar by rememberSaveable { mutableStateOf(false) }
@@ -90,22 +87,17 @@ fun verPasajeros(
     var id_solicitud by remember {
         mutableStateOf("")
     }
+    var id_viaje by remember {
+        mutableStateOf("")
+    }
+    var id_horario by remember {
+        mutableStateOf("")
+    }
 
-
-    var ready by remember { mutableStateOf(true) }
-
-    var ultima by remember { mutableStateOf(false) }
     var maxh = 0.dp
-
-
-
-
-
-
 
     conObtenerSolicitudesConductor(userId = userid) { solicitudes ->
         listaSolicitudes = solicitudes
-
     }
 
     var contador by remember {
@@ -208,7 +200,6 @@ fun verPasajeros(
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))
@@ -224,8 +215,6 @@ fun verPasajeros(
                         ) {
                             Column {
                                 //Columna con informacion de los pasajeros/conductores
-
-
                                 if (listaSolicitudes != null) {
 
                                     val solicitudes = listaSolicitudes!!.filter {
@@ -235,16 +224,16 @@ fun verPasajeros(
 
                                     if (solicitudes.isNotEmpty()) {
                                         val listaDias = mutableListOf<String>()
-                                        println("solo solicitude aceptadas: $solicitudes")
 
-                                        val tamSol = solicitudes.size
                                         solicitudes.forEachIndexed { index, solicitud ->
 
-
-                                            val solId = solicitud.viaje_id
+                                            val solId = solicitud.solicitud_id
                                             val pasId = solicitud.pasajero_id
-                                            val viaje = conObtenerViajeId(viajeId = solId)
-                                            contador=0
+                                            val viaId = solicitud.viaje_id
+                                            val horId = solicitud.horario_id
+
+                                            val viaje = conObtenerViajeId(viajeId = viaId)
+                                            contador = 0
 
                                             viaje?.let {
                                                 if (viaje.viaje_dia == obtenerNombreDiaEnEspanol(
@@ -295,48 +284,40 @@ fun verPasajeros(
                                                                 }
 
                                                                 "Reportar" -> {
-                                                                    usuario = pasajero
+                                                                    usuarioPas = pasajero
                                                                     dialogoInf = true
                                                                 }
 
                                                                 "Borrar" -> {
+                                                                    id_solicitud = solId
+                                                                    id_viaje = viaId
+                                                                    id_horario=horId
                                                                     dialogoBorrar = true
+
                                                                 }
                                                             }
                                                         }
                                                         lineaGris()
                                                         Spacer(modifier = Modifier.height(20.dp))
 
-                                                        // Verificar si esta es la última iteración
 
                                                     }
                                                 }
-
-
                                             }
-
-                                            println("lista dias $listaDias")
-                                            println("indez : $index  y ${solicitudes.size}")
-                                            println("contador $contador")
 
                                             if (index == solicitudes.size - 1) {
                                                 if (listaDias.isEmpty()) {
-
                                                     mensajeNoPasajeros()
-                                                    //return@forEachIndexed
                                                 }
-                                                ready=false
                                                 // Código específico para la última iteración
                                             }
                                         }
 
                                     } else {
-                                 ready=false
                                         mensajeNoPasajeros()
                                     }
 
                                 } else {
-ready=false
                                     mensajeNoPasajeros()
                                 }
 
@@ -350,18 +331,15 @@ ready=false
 
                 }
 
-                //cieere for }
             }
 
         }
 
 
-
         if (dialogoContact) {
             dialogoContactoPasajero(
                 onDismiss = { dialogoContact = false },
-                pasajero_id
-
+                usuarioPas!!
             )
         }
 
@@ -369,7 +347,7 @@ ready=false
         if (dialogoInf) {
             dialogoReportarPasajero(
                 onDismiss = { dialogoInf = false },
-                usuario!!,
+                usuarioPas!!,
                 userid,
                 pasajero_id,
                 navController
@@ -379,17 +357,18 @@ ready=false
         if (dialogoBorrar) {
             dialogoBorrarPasajero(
                 onDismiss = { dialogoBorrar = false },
-                userid, id_solicitud,
-                navController
+                userId = userid,
+                viajeId = id_viaje,
+                idsolicitud = id_solicitud,
+                horarioId = id_horario,
+                navController = navController
             )
+
         }
 
 
     }
 
-    if (ready) {
-        lineaCargando(text = "Cargando información...")
-    }
 }
 
 

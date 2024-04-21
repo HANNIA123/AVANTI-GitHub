@@ -53,12 +53,10 @@ import com.example.curdfirestore.textTituloInfSolcitud
 @Composable
 fun dialogoContactoPasajero(
     onDismiss: () -> Unit,
-    idUsuario: String,
+    usuarioPas: UserData,
 ) {
-    var tamEspacio = 15.dp
-    var tamIcono = 55.dp
-
-    val usuario= conObtenerUsuarioId(correo = idUsuario)
+    val tamEspacio = 15.dp
+    val tamIcono = 55.dp
 
     Box(
         modifier = Modifier
@@ -74,7 +72,7 @@ fun dialogoContactoPasajero(
                 //expanded = false
             }, // Cierra el diálogo al tocar fuera de él
             content = {
-                usuario?.let {
+
                 // Contenido del diálogo
                 Column(
                     modifier = Modifier
@@ -92,14 +90,14 @@ fun dialogoContactoPasajero(
                         //textTituloInfSolcitud("Reporte")
 
                         CoilImage(
-                            url = usuario.usu_foto,
+                            url = usuarioPas.usu_foto,
                             modifier = Modifier
                                 .size(90.dp)
                                 .clip(CircleShape)
                                 .align(Alignment.CenterHorizontally), // Centrar horizontalmente
                         )
                         val nombreMostrar =
-                            "${usuario.usu_nombre} ${usuario.usu_primer_apellido}"
+                            "${usuarioPas.usu_nombre} ${usuarioPas.usu_primer_apellido}"
 
                         Text(
                             text = nombreMostrar,
@@ -132,7 +130,7 @@ fun dialogoContactoPasajero(
                             tint = Color(137, 13, 86)
                         )
                         Text(
-                            text = usuario.usu_telefono,
+                            text = usuarioPas.usu_telefono,
                             style = TextStyle(
                                 color = Color.Black,
                                 fontSize = 18.sp,
@@ -168,7 +166,7 @@ fun dialogoContactoPasajero(
 
                 }
 
-            }
+
             },
 
             )
