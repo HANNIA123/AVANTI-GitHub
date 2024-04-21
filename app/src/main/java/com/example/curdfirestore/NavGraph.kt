@@ -357,6 +357,14 @@ fun NavGraph(
                 userId = userId
             )
         }
+        //Ruta para iniciar el viaje
+        composable("empezar_viaje/{correo}/{idhorario}"
+        ) {
+            val correo = it.arguments?.getString("correo") ?: ""
+            val idhorario = it.arguments?.getString("idhorario") ?: ""
+            //conBuscarViajePas(navController = navController, correo = correo, horarioId = idhorario)
+        }
+
         ///////////////////////////////////////
         //--------------------Pantallas entrando con pasajero---------------------------
         composable(
@@ -457,7 +465,14 @@ fun NavGraph(
 
 
 
-
+//Ruta para ver el avance del viaje
+        composable(
+            "ver_progreso_viaje/{correo}/{idhorario}"
+        ) {
+            val correo = it.arguments?.getString("correo") ?: ""
+            val idhorario = it.arguments?.getString("idhorario") ?: ""
+            //conBuscarViajePas(navController = navController, correo = correo, horarioId = idhorario)
+        }
 
         ///////////////////////////
 
