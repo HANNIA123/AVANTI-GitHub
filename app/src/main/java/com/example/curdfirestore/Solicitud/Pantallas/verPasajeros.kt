@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +61,7 @@ import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarPasajero
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
+import com.example.curdfirestore.lineaCargando
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -89,64 +91,26 @@ fun verPasajeros(
         mutableStateOf("")
     }
 
-    var termino by remember { mutableStateOf(false) }
+
+    var ready by remember { mutableStateOf(true) }
+
+    var ultima by remember { mutableStateOf(false) }
     var maxh = 0.dp
 
 
-    conObtenerSolicitudesConductor(userId = userid) { resultado ->
-        listaSolicitudes = resultado
+
+
+
+
+
+    conObtenerSolicitudesConductor(userId = userid) { solicitudes ->
+        listaSolicitudes = solicitudes
+
     }
 
-    if (listaSolicitudes != null) {
-        println("entraa lista")
-        val sol_aceptadas = listaSolicitudes!!.filter { it.solicitud_status == "Aceptada" }
-
-        if (sol_aceptadas.isNotEmpty()) {
-            val nuevosDatos = mutableListOf<verPasajerosData>()
-            sol_aceptadas.forEach { solicitud ->
-                val idSol = solicitud.solicitud_id
-                val status = solicitud.solicitud_status
-                val idViaje = solicitud.viaje_id
-                val idUser = solicitud.pasajero_id
-                val user = conObtenerUsuarioId(correo = solicitud.pasajero_id)
-                val via = conObtenerViajeId(viajeId = solicitud.viaje_id)
-
-                if (status == "Aceptada" && user != null && via != null) {
-                    val datos = verPasajerosData(
-                        idSol,
-                        idUser,
-                        idViaje,
-                        "${user.usu_nombre} ${user.usu_primer_apellido}",
-                        user.usu_foto,
-                        via.viaje_hora_partida,
-                        via.viaje_dia,
-                        status
-                    )
-                    nuevosDatos.add(datos)
-                    println("Nuevo dato agregado: $datos")
-                }
-
-                // Verifica si la lista está completa después de agregar cada dato
-                val cantidadSolicitudes = sol_aceptadas.size
-                val cantidadDatos = nuevosDatos.size
-                if (cantidadDatos == cantidadSolicitudes) {
-                    println("La lista está completa")
-                    termino = true
-                    // Salir del bucle forEach
-                    return@forEach
-                }
-            }
-
-            // Actualiza la lista original en lugar de crear una nueva
-            listDatos = (listDatos ?: emptyList()) + nuevosDatos
-        }
+    var contador by remember {
+        mutableStateOf(0)
     }
-
-
-
-
-
-
 
     BoxWithConstraints {
         maxh = this.maxHeight - 50.dp
@@ -171,6 +135,7 @@ fun verPasajeros(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 cabecera("Pasajeros")
+
 
                 Box(
                     modifier = Modifier
@@ -243,6 +208,7 @@ fun verPasajeros(
 
                     Spacer(modifier = Modifier.height(15.dp))
 
+
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))
@@ -260,76 +226,120 @@ fun verPasajeros(
                                 //Columna con informacion de los pasajeros/conductores
 
 
-                                if(termino) {
+                                if (listaSolicitudes != null) {
 
-                                        val finales = listDatos!!.filter {
-                                            it.dia_viaje == obtenerNombreDiaEnEspanol(diaActual)
-                                        }
+                                    val solicitudes = listaSolicitudes!!.filter {
+                                        it.solicitud_status == "Aceptada"
+                                    }
 
-                                        if (finales.isNotEmpty()) {
-                                            finales.forEach {
-                                                id_solicitud = it.solicitud_id
-                                                pasajero_id = it.usuario_id
 
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth(),
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    // Contenido de la columna
-                                                    Column(
-                                                        modifier = Modifier
-                                                            .weight(1f)
-                                                            .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
-                                                    ) {
-                                                        //For para poner por hora, similar a como se origanizan por dia
-                                                        Text(
-                                                            text = it.nombre_completo,
-                                                            style = TextStyle(
-                                                                color = Color.Black,
-                                                                fontSize = 20.sp,
-                                                                textAlign = TextAlign.Start,
-                                                            ),
-                                                        )
-                                                    }
+                                    if (solicitudes.isNotEmpty()) {
+                                        val listaDias = mutableListOf<String>()
+                                        println("solo solicitude aceptadas: $solicitudes")
 
-                                                    CoilImage(
-                                                        url = it.URL_imagen,
-                                                        modifier = Modifier
-                                                            .size(90.dp)
-                                                            .clip(CircleShape)
-                                                            .align(Alignment.Bottom),
+                                        val tamSol = solicitudes.size
+                                        solicitudes.forEachIndexed { index, solicitud ->
+
+
+                                            val solId = solicitud.viaje_id
+                                            val pasId = solicitud.pasajero_id
+                                            val viaje = conObtenerViajeId(viajeId = solId)
+                                            contador=0
+
+                                            viaje?.let {
+                                                if (viaje.viaje_dia == obtenerNombreDiaEnEspanol(
+                                                        diaActual
                                                     )
-                                                }
+                                                ) {
+                                                    listaDias.add("viaje")
+                                                    val pasajero =
+                                                        conObtenerUsuarioId(correo = pasId)
+                                                    pasajero?.let {
+                                                        val nombreCompleto =
+                                                            "${pasajero.usu_nombre} ${pasajero.usu_primer_apellido}"
 
-                                                botonesVerPasajeros { buttonText ->
-                                                    when (buttonText) {
-                                                        "Contacto" -> {
-                                                            dialogoContact = true
+                                                        Row(
+                                                            modifier = Modifier.fillMaxWidth(),
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            // Contenido de la columna
+                                                            Column(
+                                                                modifier = Modifier
+                                                                    .weight(1f)
+                                                                    .padding(start = 8.dp)
+                                                            ) {
+                                                                Text(
+                                                                    text = nombreCompleto,
+                                                                    style = TextStyle(
+                                                                        color = Color.Black,
+                                                                        fontSize = 20.sp,
+                                                                        textAlign = TextAlign.Start,
+                                                                    ),
+                                                                )
+                                                            }
+
+                                                            CoilImage(
+                                                                url = pasajero.usu_foto,
+                                                                modifier = Modifier
+                                                                    .size(90.dp)
+                                                                    .clip(CircleShape)
+                                                                    .align(Alignment.Bottom),
+                                                            )
                                                         }
 
-                                                        "Reportar" -> {
-                                                            dialogoInf = true
-                                                        }
+                                                        botonesVerPasajeros { buttonText ->
+                                                            when (buttonText) {
+                                                                "Contacto" -> {
+                                                                    pasajero_id = pasId
+                                                                    dialogoContact = true
+                                                                }
 
-                                                        "Borrar" -> {
-                                                            dialogoBorrar = true
+                                                                "Reportar" -> {
+                                                                    usuario = pasajero
+                                                                    dialogoInf = true
+                                                                }
 
+                                                                "Borrar" -> {
+                                                                    dialogoBorrar = true
+                                                                }
+                                                            }
                                                         }
+                                                        lineaGris()
+                                                        Spacer(modifier = Modifier.height(20.dp))
+
+                                                        // Verificar si esta es la última iteración
+
                                                     }
                                                 }
-                                                lineaGris()
-                                                Spacer(modifier = Modifier.height(20.dp))
 
 
                                             }
 
+                                            println("lista dias $listaDias")
+                                            println("indez : $index  y ${solicitudes.size}")
+                                            println("contador $contador")
 
+                                            if (index == solicitudes.size - 1) {
+                                                if (listaDias.isEmpty()) {
+
+                                                    mensajeNoPasajeros()
+                                                    //return@forEachIndexed
+                                                }
+                                                ready=false
+                                                // Código específico para la última iteración
+                                            }
                                         }
 
+                                    } else {
+                                 ready=false
+                                        mensajeNoPasajeros()
+                                    }
 
-
+                                } else {
+ready=false
+                                    mensajeNoPasajeros()
                                 }
+
 
                             }
 
@@ -345,36 +355,41 @@ fun verPasajeros(
 
         }
 
+
+
+        if (dialogoContact) {
+            dialogoContactoPasajero(
+                onDismiss = { dialogoContact = false },
+                pasajero_id
+
+            )
+        }
+
+
+        if (dialogoInf) {
+            dialogoReportarPasajero(
+                onDismiss = { dialogoInf = false },
+                usuario!!,
+                userid,
+                pasajero_id,
+                navController
+            )
+        }
+
+        if (dialogoBorrar) {
+            dialogoBorrarPasajero(
+                onDismiss = { dialogoBorrar = false },
+                userid, id_solicitud,
+                navController
+            )
+        }
+
+
     }
 
-    if (dialogoContact) {
-        dialogoContactoPasajero(
-            onDismiss = { dialogoContact = false },
-            pasajero_id
-
-        )
+    if (ready) {
+        lineaCargando(text = "Cargando información...")
     }
-
-
-    if (dialogoInf) {
-        dialogoReportarPasajero(
-            onDismiss = { dialogoInf = false },
-            usuario!!,
-            userid,
-            pasajero_id,
-            navController
-        )
-    }
-
-    if (dialogoBorrar) {
-        dialogoBorrarPasajero(
-            onDismiss = { dialogoBorrar = false },
-            userid, id_solicitud,
-            navController
-        )
-    }
-
-
 }
 
 

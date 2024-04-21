@@ -6,18 +6,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.RetrofitClientUsuario
+import com.example.curdfirestore.lineaCargando
 
 
 //unicamente lauched effect para las consultas, funciones unicamente.
 //inicuar con la palabra "con" las funciones de consulta, con de consulta
 @Composable
 fun conObtenerUsuarioId(correo: String): UserData? {
+    var noReady by remember {
+        mutableStateOf(true)
+    }
     var fin by remember {
         mutableStateOf(false)
     }
     var usuario by remember { mutableStateOf<UserData?>(null) }
+
     LaunchedEffect(key1 = true) {
         try {
             val resultadoUsuario = RetrofitClientUsuario.apiService.obtenerUsuario(correo)
@@ -39,6 +45,10 @@ fun conObtenerUsuarioId(correo: String): UserData? {
         null
     }
 }
+
+
+
+
 
 
 

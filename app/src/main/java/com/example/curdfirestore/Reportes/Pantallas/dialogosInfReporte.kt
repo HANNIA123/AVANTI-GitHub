@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,9 +42,6 @@ fun dialogSeleccionMotivo(
     onDaysSelected: (Set<Int>) -> Unit
 ) {
     var selectedMotivo by remember { mutableStateOf(0) }
-    var boton by remember { mutableStateOf(false) }
-    var ejecutado by remember { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -49,13 +49,10 @@ fun dialogSeleccionMotivo(
 
         ) {
 
-
         Dialog(
             onDismissRequest = {
-                onDismiss()
-
-                //expanded = false
-            }, // Cierra el diálogo al tocar fuera de él
+                //onDismiss()
+            },
             content = {
                 // Contenido del diálogo
                 Column(
@@ -64,9 +61,8 @@ fun dialogSeleccionMotivo(
                         .background(Color.White)
                         .padding(15.dp)
 
-
                 ) {
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
                     Text(
                         text = "Selecciona el motivo",
                         textAlign = TextAlign.Left,
@@ -74,43 +70,46 @@ fun dialogSeleccionMotivo(
                             .fillMaxWidth()
                             .padding(5.dp),
                         style = TextStyle(
-                            fontSize = 20.sp,
+                            fontSize = 18.sp,
                             color = Color.Black
 
                         )
                     )
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     // Lista de motivos de reporte
                     val daysOfWeek =
                         listOf(
                             "Acoso",
                             "Cancelación de viaje",
-                            "No asistió a punto de encuentro",
+                            "No asistió al punto de encuentro",
                             "Malas prácticas de conducción",
                             "Otros"
                         )
 
                     // Botones para seleccionar/deseleccionar motivo
                     LazyVerticalGrid(
-                        columns = GridCells.Adaptive(230.dp),
+                        columns = GridCells.Adaptive(500.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                     ) {
                         items(daysOfWeek.size) { index ->
                             val isSelected = index + 1 == selectedMotivo
-                            DayButton(
+                            ReporteButton(
                                 day = daysOfWeek[index],
                                 isSelected = isSelected,
+
                                 onToggle = {
                                     selectedMotivo = if (isSelected) 0 else index + 1
                                 }
+
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(40.dp))
 
-                    Spacer(modifier = Modifier.height(25.dp))
+
                     // Botón de confirmación
 
                     Row(modifier = Modifier.align(Alignment.End)) {
@@ -145,14 +144,42 @@ fun dialogSeleccionMotivo(
                         }
                     }
 
-
-                    ///////////////
                 }
             },
 
             )
-
     }
+}
 
+@Composable
+fun ReporteButton(
+    day: String,
+    isSelected: Boolean,
+    onToggle: () -> Unit
+) {
+    val selectedState = rememberUpdatedState(isSelected)
+
+    Button(
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (selectedState.value) {
+                Color(116, 116, 116) // Cambiar a tu color cuando está seleccionado
+            } else {
+                Color(238, 236, 239) // Cambiar a tu color cuando no está seleccionado
+            }
+        ),
+        modifier = Modifier
+            .padding(4.dp)
+            .width(220.dp),
+        onClick = { onToggle() },
+    ) {
+        Text(
+            text = day,
+            style = TextStyle(
+                color = if (selectedState.value) Color.White else Color(137, 13, 88),
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
 
 }

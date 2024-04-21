@@ -73,12 +73,12 @@ fun dialogoReportarPasajero(
     pasajero_id: String,
     navController: NavController,
 ) {
-    var tamEspacio = 15.dp
-    var tamIcono = 55.dp
+    val tamEspacio = 15.dp
+    val tamIcono = 45.dp
     var motivo by remember {
         mutableStateOf("Motivo del reporte: ")
     }
-    var campoMotivo by remember {
+    val campoMotivo by remember {
         mutableStateOf(false)
     }
     var showDialogMotivo by remember { mutableStateOf(false) }
@@ -97,7 +97,6 @@ fun dialogoReportarPasajero(
         motivo = "Motivo: $motivoCon"
 
     }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -105,11 +104,9 @@ fun dialogoReportarPasajero(
 
         ) {
 
-
         Dialog(
             onDismissRequest = {
-                onDismiss()
-                //expanded = false
+                // onDismiss()
             }, // Cierra el diálogo al tocar fuera de él
             content = {
                 // Contenido del diálogo
@@ -118,8 +115,6 @@ fun dialogoReportarPasajero(
                         .fillMaxWidth()
                         .background(Color.White)
                         .padding(15.dp)
-
-
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -127,9 +122,10 @@ fun dialogoReportarPasajero(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         textTituloInfSolcitud("Reporte")
-
+                        Spacer(modifier = Modifier.height(15.dp))
                         CoilImage(
-                            url = usuario.usu_foto, modifier = Modifier
+                            url = usuario.usu_foto,
+                            modifier = Modifier
                                 .size(90.dp)
                                 .clip(CircleShape)
                                 .align(Alignment.CenterHorizontally), // Centrar horizontalmente
@@ -141,7 +137,7 @@ fun dialogoReportarPasajero(
                             text = nombreMostrar,
                             style = TextStyle(
                                 color = Color.Black,
-                                fontSize = 18.sp,
+                                fontSize = 17.sp,
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Bold
 
@@ -150,11 +146,7 @@ fun dialogoReportarPasajero(
 
 
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    lineaGris()
-                    Spacer(modifier = Modifier.height(5.dp))
-                    //Informacion del viaje
-                    //textTituloInfSolcitud("Motivo")
+                    Spacer(modifier = Modifier.height(15.dp))
 
                     Row(
                         modifier = Modifier
@@ -166,7 +158,8 @@ fun dialogoReportarPasajero(
                             .clickable {
                                 showDialogMotivo = true
                                 // show = true
-                            }
+                            },
+                        verticalAlignment = Alignment.CenterVertically // Alineación vertical centrada
                     ) {
 
                         Icon(
@@ -181,18 +174,15 @@ fun dialogoReportarPasajero(
                             text = motivo,
                             textAlign = TextAlign.Left,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(30.dp, 15.dp, 10.dp, 10.dp),
+                                .padding(10.dp),
                             style = TextStyle(
-                                fontSize = 20.sp,
+                                fontSize = 17.sp,
                                 color = Color.Black
-
                             )
                         )
-
                     }
 
-                    if(campoMotivo) {
+                    if (campoMotivo) {
                         Text(
                             text = "*Por favor ingresa el motivo",
                             style = TextStyle(
@@ -202,10 +192,7 @@ fun dialogoReportarPasajero(
                         )
                     }
 
-
-
                     Spacer(modifier = Modifier.height(tamEspacio))
-
                     textTituloInfSolcitud("Detalles")
 
                     BasicTextField(
@@ -213,32 +200,36 @@ fun dialogoReportarPasajero(
                         onValueChange = { descripcion = TextFieldValue(it) },
                         textStyle = TextStyle(
                             color = Color(104, 104, 104),
-                            fontSize = 18.sp
+                            fontSize = 16.sp
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            //.fillMaxHeight()
-                            .height(100.dp)
+                            .height(150.dp) // Ajusta la altura del cuadro de texto aquí
                             .border(
                                 width = 1.dp,
                                 color = Color.LightGray,
                                 shape = RectangleShape
                             )
-                            .padding(8.dp) // Opcional: puedes ajustar el relleno según tus preferencias
+                            .padding(8.dp), // Opcional: puedes ajustar el relleno según tus preferencias
+                        singleLine = false // Esto permite múltiples líneas de texto
                     )
                     Spacer(modifier = Modifier.height(tamEspacio))
-
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
                         Button(
-                            colors= ButtonDefaults.buttonColors(backgroundColor = Color(137, 13, 88) ),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color(
+                                    137,
+                                    13,
+                                    88
+                                )
+                            ),
                             onClick = {
-                                boton=true
-                                confirmR=true
+                                boton = true
+                                confirmR = true
                                 //showDialog = true
 
                             }) {
@@ -251,10 +242,8 @@ fun dialogoReportarPasajero(
                             )
                         }
 
-
-
                         TextButton(
-                            onClick = {  onDismiss() },
+                            onClick = { onDismiss() },
                             modifier = Modifier.height(48.dp)
                         ) {
                             Text(
@@ -270,11 +259,9 @@ fun dialogoReportarPasajero(
 
                 }
 
-
             },
 
             )
-
     }
     // Diálogo para la selección de días
     if (showDialogMotivo) {
@@ -288,8 +275,7 @@ fun dialogoReportarPasajero(
         dialogoReporteEnviado(onDismiss = { confirmR = false }, navController, userid)
     }
 
-
-    if (boton==true && ejecutado==false){
+    if (boton == true && ejecutado == false) {
         val fecha_now = obtenerFechaFormatoddmmyyyy()
         val reporteData = ReporteData(
             repor_u_que_reporta = userid,
@@ -298,11 +284,8 @@ fun dialogoReportarPasajero(
             repor_detalles = descripciontext,
             repor_fecha = fecha_now
         )
-
         conRegistrarReporte(navController, reporteData)
-
-        ejecutado=true
+        ejecutado = true
     }
-
 
 }
