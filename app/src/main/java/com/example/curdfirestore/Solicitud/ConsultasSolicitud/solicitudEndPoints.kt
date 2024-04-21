@@ -39,7 +39,7 @@ object RetrofitClientSolicitud{
 interface ApiServiceSolicitud{
 
     @GET("$newUrl/api/solicitud/obtenersolicitudhorario/{id}")
-    suspend fun obtenerSolicitud(@Path("id") solicitudId: String): SolicitudData
+    suspend fun obtenerSolicitudbyHorario(@Path("id") horarioId: String): SolicitudData
     @POST("$newUrl/api/solicitud/registrarsolicitud") // Reemplaza con la ruta de tu endpoint
     fun enviarSolicitud(@Body solicitudData: SolicitudData): Call<RespuestaApiSolicitud>
 //Caro-- 43-53
@@ -60,6 +60,17 @@ interface ApiServiceSolicitud{
         @Path("id") viajeId: String,
         @Path("status") status: String
     ): Call<RespuestaApiSolicitud>
+
+    //Consulta solicitudes por el id de un viaje y su status
+    @GET("$newUrl/api/solicitud/solicitudesbyviaje/{idviaje}/{status}")
+    suspend fun obtenerSolicitudesbyViaje(
+        @Path("idviaje") idviaje: String,
+        @Path("status") status: String
+    ): List<SolicitudData>
+
+    //Obtener solicitud teniendo su id
+
+
 
 
 

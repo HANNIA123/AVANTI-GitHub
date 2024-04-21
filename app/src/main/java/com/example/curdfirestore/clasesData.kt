@@ -100,7 +100,7 @@ data class SolicitudData(
     var solicitud_date:String="",
     var solicitud_id:String="",
     var solicitud_activa_pas:String="",
-    var solicitud_activa_cond:String=""
+    var solicitud_activa_con:String=""
 )
 
 

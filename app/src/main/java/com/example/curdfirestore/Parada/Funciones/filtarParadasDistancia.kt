@@ -1,5 +1,7 @@
 package com.example.curdfirestore.Parada.Funciones
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +19,7 @@ import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 
 //Pantalla desp ues de la busqueda de paradas que coincidan con el horario
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun obtenerDistanciaParadas(
     navController: NavController,

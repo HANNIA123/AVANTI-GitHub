@@ -1,10 +1,13 @@
 package com.example.curdfirestore.Parada.ConsultasParada
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import com.example.avanti.ParadaData
@@ -15,6 +18,7 @@ import com.example.curdfirestore.Parada.Funciones.obtenerDistanciaParadas
 import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
 import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun conBuscarParadasPas(
     navController: NavController,
@@ -77,7 +81,6 @@ fun conBuscarParadasPas(
         }
 
     }
-
 
 }
 

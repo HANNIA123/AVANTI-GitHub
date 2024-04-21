@@ -3,7 +3,6 @@ package com.example.curdfirestore.Horario.Pantallas
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -37,21 +36,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.avanti.HorarioDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPas
-import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
-import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitud
-import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.textoHoraItinerario
@@ -66,14 +61,17 @@ fun verItinerarioPas(
     navController: NavController,
     userId: String
 ) {
-    var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
-    var horarios = conObtenerItinerarioPas(userId = userId)
     var mhv by remember {
         mutableStateOf(0.dp)
     }
 
+    var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
+    var horarios by remember { mutableStateOf<List<HorarioDataReturn>?>(null) }
+    conObtenerItinerarioPas(userId = userId) { resultado ->
+        horarios = resultado
+    }
 
-    println("horarios itinerario  $horarios")
+
 
     BoxWithConstraints {
         mhv = this.maxHeight - 50.dp
@@ -109,7 +107,6 @@ fun verItinerarioPas(
                         .background(Color.White)
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
-
 
                 ) {
 
@@ -196,41 +193,18 @@ fun verItinerarioPas(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
-                        horarios?.let {
+                        if(horarios!=null)
+                     {
                             val pantalla = "itinerario"
-                            // Filtrar la lista por el nombre buscado
-
-
                             val horariosPorDia =
-                                horarios.filter { it.horario_dia == obtenerNombreDiaEnEspanol(diaActual) }
+                                horarios!!.filter { it.horario_dia == obtenerNombreDiaEnEspanol(diaActual) }
 
-
-
-                            // Realizar acciones según la condición
                             if (horariosPorDia.isEmpty()) {
-                                Image(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp),
-                                    painter = painterResource(id = R.drawable.buscar),
-                                    contentDescription = "Imagen no viaje",
-                                    contentScale = ContentScale.FillBounds
-                                )
 
-                                Text(
-                                    text = "No hay horarios registrados para hoy.",
-                                    style = TextStyle(
-                                        color = Color(86, 86, 86),
-                                        fontSize = 18.sp,
-                                        textAlign = TextAlign.Justify,
-                                    )
-                                )
-
+                        mensajeNoHorarios()
 
                             }
                             else{
-
 
                                 val horariosOrdenados = horariosPorDia.sortedBy { it.horario_hora}
 
@@ -243,7 +217,6 @@ fun verItinerarioPas(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-
 
                                         textoHoraItinerario(hora = "${it.horario_hora} hrs")
 
@@ -285,7 +258,6 @@ fun verItinerarioPas(
                                         IconButton(onClick = {
                                             //navController.navigate("ver_mapa_viaje_pas/${it.horario_id}/$userId/$pantalla")
 
-
                                             if (it.horario_solicitud == "No") {
                                                 navController.navigate("ver_mapa_viaje_pas_sin/${it.horario_id}/$userId/$pantalla")
                                             } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Aceptada") {
@@ -315,11 +287,11 @@ fun verItinerarioPas(
                             }
 
                             //fin columana por viaje
-
+                        } else {
+                            mensajeNoHorarios()
                         }
 
                         //Esta es la fila para cada viaje
-
                     }
                 }
 

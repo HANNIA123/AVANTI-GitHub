@@ -17,9 +17,9 @@ fun conObtenerSolicitud(horarioId: String): SolicitudData? {
     var solicitud by remember { mutableStateOf<SolicitudData?>(null) }
     LaunchedEffect(key1 = true) {
         try {
-            val resultadoParada = RetrofitClientSolicitud.apiService.obtenerSolicitud(horarioId)
-            solicitud = resultadoParada
-            // Haz algo con el objeto Usuario
+            val resultadoSolicitud = RetrofitClientSolicitud.apiService.obtenerSolicitudbyHorario(horarioId)
+            solicitud = resultadoSolicitud
+
             println("Solicitud solicitud: $solicitud")
         } catch (e: Exception) {
             println("Error al obtener la solicitud: $e")
@@ -29,7 +29,7 @@ fun conObtenerSolicitud(horarioId: String): SolicitudData? {
     }
 
 
-    // Puedes retornar el usuario directamente
+
     return if (fin) {
         solicitud
     } else {

@@ -37,7 +37,7 @@ fun mensajeNosolciitudes(){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-        }
+
         Image(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,6 +56,6 @@ fun mensajeNosolciitudes(){
                 textAlign = TextAlign.Justify,
             )
         )
-
+        }
     }
 }

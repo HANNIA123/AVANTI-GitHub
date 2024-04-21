@@ -43,12 +43,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.avanti.NoticacionData
 import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.avanti.ui.theme.Aplicacion.toLocalDate
+import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarPasajerosDeSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conActualizarLugares
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
@@ -76,6 +80,7 @@ fun verSolicitudesCon(
     var aceptado by remember { mutableStateOf(false) }
     var rechazado by remember { mutableStateOf(false) }
     var noLugares by remember { mutableStateOf(false) }
+    var confirmN by remember { mutableStateOf(false) }
 
     var idViaje by remember { mutableStateOf("") }
     var idSol by remember { mutableStateOf("") }
@@ -290,14 +295,33 @@ fun verSolicitudesCon(
                     )
                     numLugares = nl.toInt()
                     if (numLugares > 0) {
+                        //Enviar esta notificacion al conductor
+                        val notificacionData = NoticacionData(
+                            notificacion_tipo = "sa",
+                            notificacion_usu_origen = userId,
+                            notificacion_usu_destino = idPasajero,
+                            notificacion_id_viaje = idViaje,
+                            notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
+                            notificacion_hora = obtenerHoraActual().toString()
+                        )
                         val newLugares = numLugares - 1
                         conActualizarLugares(idViaje, "viaje_num_lugares", newLugares.toString())
                         actualizarPasajerosDeSolicitud(idViaje, camposActualizar)
+
                         LaunchedEffect(Unit) {
                             conResponderSolicitud(idSol, "Aceptada") { respuestaExitosa ->
                                 confirmA = respuestaExitosa
                             }
                         }
+                        LaunchedEffect(Unit) {
+                            if(!confirmN) {
+                                conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
+                                    confirmN = respuestaExitosa
+                                }
+                            }
+                        }
+
+
 
                     } else {
                         noLugares = true

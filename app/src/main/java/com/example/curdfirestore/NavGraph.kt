@@ -205,7 +205,6 @@ fun NavGraph(
         ) {
             val viajeID = it.arguments?.getString("viajeid") ?: ""
             val userID = it.arguments?.getString("email") ?: ""
-            val pantalla = it.arguments?.getString("pantalla") ?: ""
 
             verMapaViajeConductor(
                 navController = navController,
@@ -225,7 +224,6 @@ fun NavGraph(
         ) {
             val viajeID = it.arguments?.getString("viajeid") ?: ""
             val userID = it.arguments?.getString("email") ?: ""
-            val pantalla = it.arguments?.getString("pantalla") ?: ""
 
             verMapaViajeConductorSinPar(
                 navController = navController,

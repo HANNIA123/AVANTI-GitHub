@@ -1,6 +1,8 @@
 package com.example.curdfirestore.Horario.ConsultasHorario
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,17 +11,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
+import com.example.avanti.Usuario.BASE_URL
 import com.example.avanti.ViajeData
 import com.example.avanti.ViajeDataReturn
+import com.example.curdfirestore.Horario.ApiServiceHorario
 import com.example.curdfirestore.Horario.RetrofitClientHorario
 import com.example.curdfirestore.Parada.ConsultasParada.conBuscarParadasPas
 import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 /*Primero busca un viaje que coincida con los datos que porporciono el pasajero,
 de acuerdo al día y tipo de trayecto (no se considera el horario para una mayor probabilidad de
 encontrar paradas. Esta busqueda se hace en el servidor.
 * */
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("RememberReturnType")
 @Composable
 fun conBuscarViajePas(
@@ -74,7 +81,7 @@ fun conBuscarViajePas(
 
         }
         else{
-showViaje=true
+            showViaje=true
             ventanaNoEncontrado(
                 show = showViaje,
                 { showViaje = false },

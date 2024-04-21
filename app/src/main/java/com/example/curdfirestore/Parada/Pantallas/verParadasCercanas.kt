@@ -83,6 +83,7 @@ import kotlinx.coroutines.withContext
 * horario filtrado del pasajero, el marker abre una ventana (VentanaSolicitudesPasa)
 
 * */
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

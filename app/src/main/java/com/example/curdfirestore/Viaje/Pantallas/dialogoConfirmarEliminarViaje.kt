@@ -1,6 +1,7 @@
 package com.example.curdfirestore.Viaje.Pantallas
 
-
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,33 +33,90 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.example.avanti.NoticacionData
+import com.example.avanti.SolicitudData
+import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
+import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
+import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
+import com.example.curdfirestore.Viaje.ConsultasViaje.eliminarSolicitudPorviajeId
+import com.example.curdfirestore.Viaje.ConsultasViaje.eliminarViaje
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun dialogoConfirmarEditarViaje(
+fun dialogoConfirmarEliminarViaje(
     onDismiss: () -> Unit,
     viajeId: String,
     userId: String,
-    numParadas: String,
     navController: NavController
 
 ) {
+
+    var eliminar by remember {
+        mutableStateOf(false)
+    }
+    var ejecutado by remember {
+        mutableStateOf(false)
+    }
+    var confirmN by remember {
+        mutableStateOf(false)
+    }
+    var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+    conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
+        solicitudes = resultado
+    }
+
+    if (eliminar) {
+        if (solicitudes != null) {
+            for ((index, solicitud) in solicitudes!!.withIndex()) {
+                actualizarHorarioPas(solicitud.horario_id, "horario_solicitud", "No")
+
+                val notificacionData = NoticacionData(
+                    notificacion_tipo = "ve",
+                    notificacion_usu_origen = userId,
+                    notificacion_usu_destino = solicitud.pasajero_id,
+                    notificacion_id_viaje = viajeId,
+                    notificacion_id_solicitud = solicitud.solicitud_id,
+                    notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
+                    notificacion_hora = obtenerHoraActual(),
+
+                    )
+                if (!ejecutado) {
+                    LaunchedEffect(Unit) {
+                        conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
+                            confirmN = respuestaExitosa
+                        }
+                    }
+
+                }
+                if (index == solicitudes!!.size - 1) {
+                    ejecutado = true
+                }
+            }
+
+        }
+        //eliminar solicitud
+        eliminarSolicitudPorviajeId(viajeId)
+        //eliminar campo de horario solicitud
+
+
+        eliminarViaje(documentId = viajeId, navController, userId)
+
+    }
 
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.5f)),
-
-        ) {
+    ) {
         Dialog(
             onDismissRequest = {
                 onDismiss()
-
-            }, // Cierra el diálogo al tocar fuera de él
+            },
             content = {
-                // Contenido del diálogo
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -70,7 +133,7 @@ fun dialogoConfirmarEditarViaje(
                         contentScale = ContentScale.FillBounds
                     )
                     Text(
-                        text = "Si editas el viaje, los pasajeros serán eliminados y deberán enviarte nuevamente la solicitud. ¿Deseas continuar?",
+                        text = "Este viaje se eliminará definitivamente. ¿Deseas continuar?",
                         textAlign = TextAlign.Justify,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -83,18 +146,8 @@ fun dialogoConfirmarEditarViaje(
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
-
                     Row(modifier = Modifier.align(Alignment.End)) {
-                        TextButton(onClick = {
-                            val ruta = if (numParadas == "0") {
-                                "ver_mapa_viaje_sin/$viajeId/$userId"
-                            } else {
-                                "ver_mapa_viaje/$viajeId/$userId"
-                            }
-                            navController.navigate(ruta)
-                            onDismiss()
-                        }
-                        ) {
+                        TextButton(onClick = { onDismiss() }) {
                             Text(
                                 text = "CANCELAR",
                                 style = TextStyle(
@@ -109,9 +162,7 @@ fun dialogoConfirmarEditarViaje(
 
                         TextButton(
                             onClick = {
-
-                                onDismiss()
-
+                                eliminar = true
                             }) {
                             Text(
                                 text = "ACEPTAR",
@@ -127,9 +178,6 @@ fun dialogoConfirmarEditarViaje(
                 }
             },
 
-
             )
-
     }
-
 }
