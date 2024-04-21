@@ -216,11 +216,9 @@ fun verPasajeros(
                             Column {
                                 //Columna con informacion de los pasajeros/conductores
                                 if (listaSolicitudes != null) {
-
                                     val solicitudes = listaSolicitudes!!.filter {
                                         it.solicitud_status == "Aceptada"
                                     }
-
 
                                     if (solicitudes.isNotEmpty()) {
                                         val listaDias = mutableListOf<String>()
@@ -291,7 +289,8 @@ fun verPasajeros(
                                                                 "Borrar" -> {
                                                                     id_solicitud = solId
                                                                     id_viaje = viaId
-                                                                    id_horario=horId
+                                                                    id_horario = horId
+                                                                    pasajero_id=pasId
                                                                     dialogoBorrar = true
 
                                                                 }
@@ -299,8 +298,6 @@ fun verPasajeros(
                                                         }
                                                         lineaGris()
                                                         Spacer(modifier = Modifier.height(20.dp))
-
-
                                                     }
                                                 }
                                             }
@@ -316,16 +313,11 @@ fun verPasajeros(
                                     } else {
                                         mensajeNoPasajeros()
                                     }
-
                                 } else {
                                     mensajeNoPasajeros()
                                 }
-
-
                             }
-
                         }
-
 
                     } //cierre de la columna donde puse la info
 
@@ -361,9 +353,9 @@ fun verPasajeros(
                 viajeId = id_viaje,
                 idsolicitud = id_solicitud,
                 horarioId = id_horario,
+                pasajeroId = pasajero_id,
                 navController = navController
             )
-
         }
 
 

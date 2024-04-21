@@ -4,7 +4,7 @@ import android.widget.Toast
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
 
-fun eliminarSolicitudById(documentId: String, navController: NavController, userId:String, ruta:String) {
+fun eliminarSolicitudById(documentId: String, navController: NavController, userId:String, ruta:String, textoToast:String) {
     try {
         val db = FirebaseFirestore.getInstance()
         val documentReference = db.collection("solicitud").document(documentId)
@@ -12,7 +12,7 @@ fun eliminarSolicitudById(documentId: String, navController: NavController, user
             if (task.isSuccessful) {
                 navController.navigate("$ruta/$userId")
                 // Mostrar Toast indicando que el documento se ha eliminado correctamente
-                Toast.makeText(navController.context, "solicitud eliminado ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(navController.context, textoToast, Toast.LENGTH_SHORT).show()
 
                 println("Documento con ID $documentId eliminado correctamente de Firestore.")
             } else {
