@@ -5,7 +5,9 @@ import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -99,6 +101,7 @@ fun convertirANumDia(nombreDia: String): Int{
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun convertirStringATime(horaString: String): LocalTime {
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
     return LocalTime.parse(horaString, formatter)
