@@ -34,7 +34,9 @@ import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conEditarCampoViaje
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
+import com.example.curdfirestore.Viaje.Pantallas.MapViewContainer
 import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.UbicacionRealTime
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -143,21 +145,23 @@ fun obtenerCoordenadas(
                     .height(maxh - 140.dp)
             ) {
 
-                val listaDeCoordenadas = mutableListOf<LatLng>()
-                /*val listaParadas = conObtenerListaParadas(viajeId = viajeId)
-                listaParadas?.let {
-                    val paradas =
-                        listaParadas.sortedBy { it.par_hora }
+                ///
+                MapViewContainer { googleMap: GoogleMap ->
+                    // Habilita los controles de zoom
+                    googleMap.uiSettings.isZoomControlsEnabled = true
+                    // Agrega los marcadores
 
-                    paradas.forEach { parada ->
-                        val parLatLng = convertirStringALatLng(parada.par_ubicacion)
-                        if (parLatLng != null) {
-                            listaDeCoordenadas.add(parLatLng)
-                        }
+                    // Agrega el marcador en una ubicación específica
+                    val marker = MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude)).title("Título del marcador")
+                    googleMap.addMarker(marker)
+
+
                     }
-                }
-                */
 
+
+
+                ///
+/*
                 GoogleMap(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -166,7 +170,7 @@ fun obtenerCoordenadas(
                             LatLng(
                                 latLng.latitude,
                                 latLng.longitude
-                            ), 14f, 0f, 0f
+                            ), 16f, 0f, 0f
                         )
                     )
                 ) {
@@ -242,7 +246,7 @@ fun obtenerCoordenadas(
 
                     }
                 }
-
+*/
 
             }
 
