@@ -73,3 +73,35 @@ fun obtenerHoraActual(): String {
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
     return horaActual.format(formatter)
 }
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun obtenerHoraActualConRestaDeMinutos(minutosARestar: Long): String {
+    // Obtener la hora actual
+    val horaActual = LocalTime.now()
+
+    // Restar minutos a la hora actual
+    val horaConResta = horaActual.minusMinutes(minutosARestar)
+
+    // Formatear la hora en un formato deseado (opcional)
+    val formato = DateTimeFormatter.ofPattern("HH:mm:ss")
+    val horaFormateada = horaConResta.format(formato)
+
+    // Devolver la hora formateada
+    return horaFormateada
+}
+@RequiresApi(Build.VERSION_CODES.O)
+fun obtenerHoraActualConSumaDeMinutos(minutosASumar: Long): String {
+    // Obtener la hora actual
+    val horaActual = LocalTime.now()
+
+    // Sumar minutos a la hora actual
+    val horaConSuma = horaActual.plusMinutes(minutosASumar)
+
+    // Formatear la hora en un formato deseado (opcional)
+    val formato = DateTimeFormatter.ofPattern("HH:mm:ss")
+    val horaFormateada = horaConSuma.format(formato)
+
+    // Devolver la hora formateada
+    return horaFormateada
+}

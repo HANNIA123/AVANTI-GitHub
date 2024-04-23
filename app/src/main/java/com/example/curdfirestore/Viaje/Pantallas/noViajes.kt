@@ -23,25 +23,24 @@ fun mensajeNoViajes() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-    }
-    Image(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp),
-        painter = painterResource(id = R.drawable.buscar),
-        contentDescription = "Imagen no viaje",
-        contentScale = ContentScale.FillBounds
-    )
-    Spacer(modifier = Modifier.height(15.dp))
 
-    Text(
-        text = "No hay viajes registrados para hoy",
-        style = TextStyle(
-            color = Color(86, 86, 86),
-            fontSize = 18.sp,
-            textAlign = TextAlign.Justify,
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            painter = painterResource(id = R.drawable.buscar),
+            contentDescription = "Imagen no viaje",
+            contentScale = ContentScale.FillBounds
         )
-    )
+        Spacer(modifier = Modifier.height(15.dp))
 
-
+        Text(
+            text = "No hay viajes registrados para hoy",
+            style = TextStyle(
+                color = Color(86, 86, 86),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Justify,
+            )
+        )
+    }
 }

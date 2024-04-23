@@ -1,5 +1,7 @@
 package com.example.avanti.Usuario
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,6 +19,7 @@ import com.example.curdfirestore.Viaje.Funciones.obtenerCoordenadas
 
 
 //funcion para que una vez que se logueo, pueda validar que tipo de usuario es
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun obtenerTipoUsuario(
     navController: NavController,
@@ -30,8 +33,8 @@ fun obtenerTipoUsuario(
     usuario?.let {
 
         if(usuario!!.usu_tipo=="Conductor"){
-            obtenerCoordenadas(userId)
-        //homePantallaConductor(navController = navController, userid =userId )
+           // obtenerCoordenadas(userId)
+        homePantallaConductor(navController = navController, userid =userId )
 
 
         }

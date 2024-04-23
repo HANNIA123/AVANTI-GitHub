@@ -33,6 +33,7 @@ import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
 import com.example.curdfirestore.Solicitud.Pantallas.verPasajeros
 import com.example.curdfirestore.Solicitud.Pantallas.verSolicitudesCon
+import com.example.curdfirestore.Viaje.Funciones.obtenerCoordenadas
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarDestinoConductorEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarOrigenConductorEditar
@@ -358,11 +359,11 @@ fun NavGraph(
             )
         }
         //Ruta para iniciar el viaje
-        composable("empezar_viaje/{correo}/{idhorario}"
+        composable("empezar_viaje/{correo}/{viajeid}"
         ) {
-            val correo = it.arguments?.getString("correo") ?: ""
-            val idhorario = it.arguments?.getString("idhorario") ?: ""
-            //conBuscarViajePas(navController = navController, correo = correo, horarioId = idhorario)
+            val userId = it.arguments?.getString("correo") ?: ""
+            val viajeId = it.arguments?.getString("viajeid") ?: ""
+            obtenerCoordenadas(userId = userId, viajeId =viajeId, navController=navController)
         }
 
         ///////////////////////////////////////
