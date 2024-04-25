@@ -5,7 +5,6 @@ package com.example.avanti.Usuario.Conductor.Pantallas
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 
@@ -39,8 +38,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,16 +48,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ViajeDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
-import com.example.curdfirestore.R
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConRestaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConSumaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Usuario.Conductor.menuCon
-import com.example.curdfirestore.Viaje.ConsultasViaje.conEditarCampoViaje
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
-import com.example.curdfirestore.Viaje.Funciones.obtenerCoordenadas
+import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
 import com.example.curdfirestore.Viaje.Pantallas.mensajeNoViajes
 
 import com.example.curdfirestore.recuadroTitulos

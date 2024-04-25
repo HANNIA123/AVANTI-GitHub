@@ -1,16 +1,13 @@
-package com.example.curdfirestore.Viaje.Funciones
+package com.example.curdfirestore.Viaje.Pantallas.Monitoreo
 
-import android.Manifest
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.TweenSpec
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -35,24 +31,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.avanti.SolicitudData
+import com.example.avanti.ViajeDataReturn
+import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParadaPorViaje
-import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadas
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorHorario
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
-import com.example.curdfirestore.Viaje.ConsultasViaje.conEditarCampoViaje
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.ConsultasViaje.editarCampoViajeSinRuta
-import com.example.curdfirestore.Viaje.Pantallas.MapViewContainer
-import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.UbicacionRealTime
+import com.example.curdfirestore.Viaje.Funciones.UbicacionRealTime
+import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.lineaCargando
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
@@ -61,15 +58,13 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun obtenerCoordenadas(
@@ -90,8 +85,9 @@ fun obtenerCoordenadas(
     var validar by remember {
         mutableStateOf(false)
     }
-    UbicacionRealTime(context, newUserId)
-    val referencia = Firebase.database.getReference("ubicacion").child(newUserId)
+
+    UbicacionRealTime(context, viajeId)
+    val referencia = Firebase.database.getReference("ubicacion").child(viajeId)
 
 
     var latLng by remember { mutableStateOf(LatLng(0.0, 0.0)) } // Coordenadas de San Francisco
@@ -151,6 +147,11 @@ fun obtenerCoordenadas(
 
     val listaParadasCom = conObtenerListaParadasRT(viajeId = viajeId)
     val infViaje = conObtenerViajeId(viajeId = viajeId)
+    var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+
+    conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
+        solicitudes = resultado
+    }
 
     Box {
         Column(
@@ -349,8 +350,15 @@ fun obtenerCoordenadas(
                                     valor = "si"
                                 )
 
+                                solicitudes?.forEach {
+                                    actualizarHorarioPas(it.horario_id, "horario_iniciado", "si")
+
+                                }
+
                                 actualizarCampoParadaPorViaje(viajeId, "para_viaje_comenzado", "si")
-                            }
+
+
+                                 }
                             else {
                                 println("Parada actual----.--- $numParadaActual y total paradas $totalParadas")
                                 if (numParadaActual < totalParadas) {
@@ -364,7 +372,13 @@ fun obtenerCoordenadas(
                                     editarCampoViajeSinRuta(viajeId, "viaje_iniciado", "no")
                                     actualizarCampoParadaPorViaje(viajeId, "par_recorrido", "no")
                                     actualizarCampoParadaPorViaje(viajeId, "para_viaje_comenzado", "no")
+                                    solicitudes?.forEach {
+                                        actualizarHorarioPas(it.horario_id, "horario_iniciado", "no")
+
+                                    }
+
                                     navController.navigate("homeconductor/$userId")
+
                                 }
 
                             }

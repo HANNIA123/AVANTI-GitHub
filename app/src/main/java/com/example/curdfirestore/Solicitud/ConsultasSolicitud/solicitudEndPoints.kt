@@ -67,6 +67,12 @@ interface ApiServiceSolicitud{
         @Path("idviaje") idviaje: String,
         @Path("status") status: String
     ): List<SolicitudData>
+    @GET("$newUrl/api/solicitud/solicitudesbyhorario/{idhorario}/{status}")
+    suspend fun obtenerSolicitudesbyHorario(
+        @Path("idhorario") idviaje: String,
+        @Path("status") status: String
+    ): List<SolicitudData>
+
 
     //Obtener solicitud teniendo su id
 

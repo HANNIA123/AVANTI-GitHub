@@ -1,4 +1,4 @@
-package com.example.curdfirestore.Viaje.Pantallas.Monitoreo
+package com.example.curdfirestore.Viaje.Funciones
 
 import android.Manifest
 import android.annotation.SuppressLint
