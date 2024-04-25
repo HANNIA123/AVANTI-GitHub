@@ -36,7 +36,7 @@ fun UbicacionRealTime(context: Context, userId:String) {
 
             val locationHelper = LocationHelper(context)
             locationHelper.observeLocationUpdates { latitude, longitude ->
-                println("Nuevas coordenada $latitude $longitude")
+               // println("Nuevas coordenada $latitude $longitude")
                 // Creamos un mapa solo con las coordenadas
                 val coordenadas: Map<String, Double> = mapOf("latitud" to latitude, "longitud" to longitude)
                 // Guardamos las coordenadas dentro del nodo userId

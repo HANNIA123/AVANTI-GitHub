@@ -10,6 +10,8 @@ import androidx.navigation.NavController
 import com.example.avanti.ParadaData
 import com.example.avanti.Usuario.RetrofitClientParada
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 @Composable
 fun conObtenerListaParadas(
@@ -38,6 +40,46 @@ fun conObtenerListaParadas(
             fin=true
         }
     }
+    return if (fin) {
+        paradas
+    } else {
+        null
+    }
+}
+
+@Composable
+fun conObtenerListaParadasRT(
+    viajeId: String
+): List<Pair<String, ParadaData>>? {
+
+    var fin by remember { mutableStateOf(false) }
+    // Obtener lista de paradas
+    var paradas by remember { mutableStateOf<List<Pair<String, ParadaData>>?>(null) }
+
+    LaunchedEffect(key1 = viajeId) {
+        val db = Firebase.firestore
+
+        val paradasRef = db.collection("parada").whereEqualTo("viaje_id", viajeId)
+
+        paradasRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                println("Error al obtener paradas: $error")
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
+                val listaParadas = snapshot.documents.map { document ->
+                    val idDocumento = document.id
+                    val paradaData = document.toObject(ParadaData::class.java)
+                    idDocumento to paradaData!!
+                }
+                paradas = listaParadas
+                println("Paradas obtenidas: $paradas")
+            }
+            fin = true
+        }
+    }
+
     return if (fin) {
         paradas
     } else {

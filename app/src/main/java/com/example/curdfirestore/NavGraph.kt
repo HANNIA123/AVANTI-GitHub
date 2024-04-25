@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
+import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
 import com.example.curdfirestore.Horario.ConsultasHorario.conBuscarViajePas
 import com.example.curdfirestore.Horario.Pantallas.generalViajePas
 import com.example.curdfirestore.Horario.Pantallas.registrarDestinoPasajero
@@ -92,6 +93,15 @@ fun NavGraph(
             // homePantallaConductor(navController = navController, userid = )
 
         }
+        composable(
+            "homeconductor/{useid}"
+        ) {
+            val userId = it.arguments?.getString("useid") ?: ""
+             homePantallaConductor(navController = navController, userid = userId)
+
+        }
+
+
         //Pantallas entrando con conductor
         composable(
             "cuenta_conductor/{userid}"

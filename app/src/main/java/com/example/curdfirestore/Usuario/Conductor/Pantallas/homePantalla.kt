@@ -224,20 +224,21 @@ else {
                                                 )
                                             ),
                                             onClick = {
+                                                navController.navigate( "empezar_viaje/$userid/${viaje.viaje_id}")
                                                 //Iniaciar Viaje
-                                                      conEditarCampoViaje(
+                                                     /* conEditarCampoViaje(
                                                           navController = navController,
                                                           ruta = "empezar_viaje/$userid/${viaje.viaje_id}",
                                                           viajeId = viaje.viaje_id,
                                                           camposEditar = "viaje_iniciado",
                                                           nuevoValor = "si"
 
-                                                      )
+                                                      )*/
                                             },
                                             modifier = Modifier.width(180.dp)
                                         ) {
                                             Text(
-                                                text = "Iniciar viaje", style = TextStyle(
+                                                text = "Ver viaje", style = TextStyle(
                                                     fontSize = 18.sp,
                                                     color = Color.White
                                                 )

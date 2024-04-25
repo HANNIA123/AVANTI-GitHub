@@ -44,6 +44,7 @@ data class ViajeData(
 
 
 
+
     )
 
 data class ViajeDataReturn(
@@ -111,7 +112,10 @@ data class ParadaData(
     var par_nombre: String="",
     var par_hora: String="",
     var par_ubicacion: String="",
-    var user_id:String ="" //Agregado 12/12/2023!!!
+    var user_id:String ="" ,
+    var par_recorrido: String="",
+    var para_viaje_comenzado:String=""
+
 
     )
 
