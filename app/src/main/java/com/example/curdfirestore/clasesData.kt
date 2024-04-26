@@ -40,7 +40,7 @@ data class ViajeData(
     var viaje_tarifa:String="",
     var viaje_num_pasajeros:String="",
     var viaje_num_pasajeros_con:String="",
-    var viaje_id: String,
+    var viaje_id: String="",
 
 
 

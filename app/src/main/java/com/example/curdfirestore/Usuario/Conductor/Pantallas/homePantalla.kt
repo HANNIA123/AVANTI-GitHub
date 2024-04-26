@@ -62,6 +62,7 @@ import com.example.curdfirestore.recuadroTitulos
 import com.example.curdfirestore.textoHoraViaje
 import com.example.curdfirestore.textoInformacionViaje
 import java.time.LocalDate
+import java.time.LocalTime
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -79,7 +80,6 @@ fun homePantallaConductor(
 
     val diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
 
-
     var viajes by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
     conObtenerItinerarioCon(userId = userid) { resultado ->
         viajes = resultado
@@ -91,7 +91,6 @@ fun homePantallaConductor(
 
         if(viajesIniciados.isNotEmpty()) {
             val primerViajeIniciado = viajesIniciados.firstOrNull()
-
             obtenerCoordenadas(userId = userid, primerViajeIniciado!!.viaje_id, navController)
         }
 else {
@@ -161,12 +160,28 @@ else {
 
                         val horaMinima = obtenerHoraActualConRestaDeMinutos(30)
                         val horaMaxima = obtenerHoraActualConSumaDeMinutos(30)
+
+                        println("Dias: ${obtenerNombreDiaEnEspanol(diaActual)}  hora maxima $horaMaxima " +
+                                "hora minimaa   $horaMinima")
+                        val vvv=viajes!!.filter {
+                            it.viaje_dia== obtenerNombreDiaEnEspanol(diaActual)
+                        }
+
+                        val horamin = viajes!!.filter {
+                            it.viaje_dia == obtenerNombreDiaEnEspanol(
+                                diaActual
+                            ) && it.viaje_hora_partida >= horaMinima
+
+                        }
+
+
+
                         val viajesFiltrados = viajes!!.filter {
                             it.viaje_dia == obtenerNombreDiaEnEspanol(
                                 diaActual
                             ) && it.viaje_hora_partida >= horaMinima && it.viaje_hora_partida <= horaMaxima
-                        }
 
+                        }
 
                         //Mostrar solo los viajes del dia y los que estan por empezar
 

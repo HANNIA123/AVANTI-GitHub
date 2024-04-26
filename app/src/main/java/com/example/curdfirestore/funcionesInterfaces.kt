@@ -13,11 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -230,6 +227,19 @@ fun lineaGris(){
             .height(1.dp)
             //.align(Alignment.CenterHorizontally)
             .background(Color(222, 222, 222))
+
+    )
+}
+
+@Composable
+fun lineaGrisModificada(width: Dp, height: Dp, color: Color){
+    Box(
+        modifier = Modifier
+            .width(width)
+            .height(height)
+            .background(color)
+            //.align(Alignment.CenterHorizontally)
+          //  .background(Color(222, 222, 222))
 
     )
 }
