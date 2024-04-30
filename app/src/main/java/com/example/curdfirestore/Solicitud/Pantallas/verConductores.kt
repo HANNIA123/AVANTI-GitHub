@@ -55,11 +55,13 @@ import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.avanti.verPasajerosData
+import com.example.curdfirestore.Reportes.Pantallas.dialogoBorrarConductor
 import com.example.curdfirestore.Reportes.Pantallas.dialogoBorrarPasajero
-import com.example.curdfirestore.Reportes.Pantallas.dialogoContactoPasajero
-import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarPasajero
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
+import com.example.curdfirestore.Reportes.Pantallas.dialogoContactoConductor
+import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarConductor
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPasajero
 import com.example.curdfirestore.Usuario.Conductor.menuCon
+import com.example.curdfirestore.Usuario.Pasajero.menuPas
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.lineaCargando
 import java.time.DayOfWeek
@@ -68,7 +70,7 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType")
 @Composable
-fun verPasajeros(
+fun verConductores(
     navController: NavController,
     userid: String,
 ) {
@@ -76,12 +78,12 @@ fun verPasajeros(
     var diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
     var listaSolicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
 
-    var usuarioPas by remember { mutableStateOf<UserData?>(null) }
+    var usuarioCon by remember { mutableStateOf<UserData?>(null) }
     var dialogoInf by remember { mutableStateOf(false) }
     var dialogoContact by remember { mutableStateOf(false) } //Status de la solictud terminado
     var dialogoBorrar by rememberSaveable { mutableStateOf(false) }
 
-    var pasajero_id by remember {
+    var conductor_id by remember {
         mutableStateOf("")
     }
     var id_solicitud by remember {
@@ -96,7 +98,7 @@ fun verPasajeros(
 
     var maxh = 0.dp
 
-    conObtenerSolicitudesConductor(userId = userid) { solicitudes ->
+    conObtenerSolicitudesPasajero(userId = userid) { solicitudes ->
         listaSolicitudes = solicitudes
     }
 
@@ -112,7 +114,7 @@ fun verPasajeros(
         Scaffold(
             bottomBar = {
                 BottomAppBar(modifier = Modifier.height(50.dp)) {
-                    menuCon(navController = navController, userID = userid)
+                    menuPas(navController = navController, userID = userid)
                 }
             }
         ) {
@@ -126,7 +128,7 @@ fun verPasajeros(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                cabecera("Pasajeros")
+                cabecera("Conductores")
 
 
                 Box(
@@ -226,7 +228,7 @@ fun verPasajeros(
                                         solicitudes.forEachIndexed { index, solicitud ->
 
                                             val solId = solicitud.solicitud_id
-                                            val pasId = solicitud.pasajero_id
+                                            val conId = solicitud.conductor_id
                                             val viaId = solicitud.viaje_id
                                             val horId = solicitud.horario_id
 
@@ -239,11 +241,11 @@ fun verPasajeros(
                                                     )
                                                 ) {
                                                     listaDias.add("viaje")
-                                                    val pasajero =
-                                                        conObtenerUsuarioId(correo = pasId)
-                                                    pasajero?.let {
+                                                    val conductor =
+                                                        conObtenerUsuarioId(correo = conId)
+                                                    conductor?.let {
                                                         val nombreCompleto =
-                                                            "${pasajero.usu_nombre} ${pasajero.usu_primer_apellido}"
+                                                            "${conductor.usu_nombre} ${conductor.usu_primer_apellido}"
 
                                                         Row(
                                                             modifier = Modifier.fillMaxWidth(),
@@ -266,7 +268,7 @@ fun verPasajeros(
                                                             }
 
                                                             CoilImage(
-                                                                url = pasajero.usu_foto,
+                                                                url = conductor.usu_foto,
                                                                 modifier = Modifier
                                                                     .size(90.dp)
                                                                     .clip(CircleShape)
@@ -277,14 +279,14 @@ fun verPasajeros(
                                                         botonesVerPasajeros { buttonText ->
                                                             when (buttonText) {
                                                                 "Contacto" -> {
-                                                                    usuarioPas = pasajero
-                                                                    pasajero_id = pasId
+                                                                    usuarioCon = conductor
+                                                                    conductor_id = conId
                                                                     dialogoContact = true
                                                                 }
 
                                                                 "Reportar" -> {
-                                                                    usuarioPas = pasajero
-                                                                    pasajero_id = pasId
+                                                                    usuarioCon = conductor
+                                                                    conductor_id = conId
                                                                     dialogoInf = true
                                                                 }
 
@@ -292,7 +294,7 @@ fun verPasajeros(
                                                                     id_solicitud = solId
                                                                     id_viaje = viaId
                                                                     id_horario = horId
-                                                                    pasajero_id=pasId
+                                                                    conductor_id=conId
                                                                     dialogoBorrar = true
 
                                                                 }
@@ -331,32 +333,32 @@ fun verPasajeros(
 
 
         if (dialogoContact) {
-            dialogoContactoPasajero(
+            dialogoContactoConductor(
                 onDismiss = { dialogoContact = false },
-                usuarioPas!!,
-                pasajero_id
+                usuarioCon!!,
+                conductor_id
             )
         }
 
 
         if (dialogoInf) {
-            dialogoReportarPasajero(
+            dialogoReportarConductor(
                 onDismiss = { dialogoInf = false },
-                usuarioPas!!,
+                usuarioCon!!,
                 userid,
-                pasajero_id,
+                conductor_id,
                 navController
             )
         }
 
         if (dialogoBorrar) {
-            dialogoBorrarPasajero(
+            dialogoBorrarConductor(
                 onDismiss = { dialogoBorrar = false },
                 userId = userid,
                 viajeId = id_viaje,
                 idsolicitud = id_solicitud,
                 horarioId = id_horario,
-                pasajeroId = pasajero_id,
+                conductorId = conductor_id,
                 navController = navController
             )
         }
@@ -367,13 +369,3 @@ fun verPasajeros(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun PreviewSolicitudes() {
-    val navController = rememberNavController()
-    verPasajeros(
-        navController = navController,
-        userid = "hannia"
-    )
-}

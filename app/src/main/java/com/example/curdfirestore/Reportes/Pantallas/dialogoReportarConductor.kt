@@ -1,6 +1,5 @@
 package com.example.curdfirestore.Reportes.Pantallas
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,16 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -45,32 +40,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import com.example.avanti.ParadaData
 import com.example.avanti.ReporteData
 import com.example.avanti.UserData
-import com.example.avanti.ViajeData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
-import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
-import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
 import com.example.curdfirestore.Reportes.ConsultasReporte.conRegistrarReporte
 import com.example.curdfirestore.Reportes.Funciones.convertiraMotivo
-import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
-import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
-import com.example.curdfirestore.Viaje.Funciones.convertirADia
-import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
-import com.example.curdfirestore.Viaje.Pantallas.DayButton
-import com.example.curdfirestore.Viaje.Pantallas.dialogSeleccionDia
 import com.example.curdfirestore.textTituloInfSolcitud
-import com.example.curdfirestore.textoInformacionSolicitud
-import com.example.curdfirestore.textoInformacionViaje
 
 @Composable
-fun dialogoReportarPasajero(
+fun dialogoReportarConductor(
     onDismiss: () -> Unit,
-    usuario: UserData,
+    usuarioCon: UserData,
     userid: String,
-    pasajero_id: String,
+    conductor_id: String,
     navController: NavController,
 ) {
     val tamEspacio = 15.dp
@@ -124,14 +107,14 @@ fun dialogoReportarPasajero(
                         textTituloInfSolcitud("Reporte")
                         Spacer(modifier = Modifier.height(15.dp))
                         CoilImage(
-                            url = usuario.usu_foto,
+                            url = usuarioCon.usu_foto,
                             modifier = Modifier
                                 .size(90.dp)
                                 .clip(CircleShape)
                                 .align(Alignment.CenterHorizontally), // Centrar horizontalmente
                         )
                         val nombreMostrar =
-                            "${usuario.usu_nombre} ${usuario.usu_primer_apellido}"
+                            "${usuarioCon.usu_nombre} ${usuarioCon.usu_primer_apellido}"
 
                         Text(
                             text = nombreMostrar,
@@ -272,14 +255,14 @@ fun dialogoReportarPasajero(
     }
 
     if (confirmR) {
-        dialogoReporteEnviadoCon(onDismiss = { confirmR = false }, navController, userid)
+        dialogoReporteEnviadoPas(onDismiss = { confirmR = false }, navController, userid)
     }
 
     if (boton == true && ejecutado == false) {
         val fecha_now = obtenerFechaFormatoddmmyyyy()
         val reporteData = ReporteData(
             repor_u_que_reporta = userid,
-            repor_u_reportado = pasajero_id,
+            repor_u_reportado = conductor_id,
             repor_motivo = motivo,
             repor_detalles = descripciontext,
             repor_fecha = fecha_now
