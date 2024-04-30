@@ -467,8 +467,12 @@ fun NavGraph(
         }
 
         //ruta ver conductores 450-460 -- Caro
-
-
+        //ruta ver conductores 450-460 -- Caro
+        composable( "ver_conductores_pasajero/{userid}"
+        ) {
+            val userId= it.arguments?.getString("userid")?:""
+            //verConductores(navController = navController, userid = userId)
+        }
 
 
 
