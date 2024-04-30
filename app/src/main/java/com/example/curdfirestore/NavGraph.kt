@@ -10,7 +10,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
+import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
 import com.example.curdfirestore.Horario.ConsultasHorario.conBuscarViajePas
+import com.example.curdfirestore.Horario.Pantallas.Monitoreo.verUbicacionMonitoreo
 import com.example.curdfirestore.Horario.Pantallas.generalViajePas
 import com.example.curdfirestore.Horario.Pantallas.registrarDestinoPasajero
 import com.example.curdfirestore.Horario.Pantallas.registrarOrigenPasajero
@@ -19,7 +21,6 @@ import com.example.curdfirestore.Parada.Pantallas.Editar.registrarParadaBarraEdi
 import com.example.curdfirestore.Horario.Pantallas.verItinerarioPas
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajero
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajeroSinPar
-import com.example.curdfirestore.Parada.ConsultasParada.conBuscarParadasPas
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
@@ -30,9 +31,9 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.perfilPas
 import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Parada.Pantallas.generalParada
 import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
-import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
 import com.example.curdfirestore.Solicitud.Pantallas.verPasajeros
 import com.example.curdfirestore.Solicitud.Pantallas.verSolicitudesCon
+import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarDestinoConductorEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarOrigenConductorEditar
@@ -91,6 +92,15 @@ fun NavGraph(
             // homePantallaConductor(navController = navController, userid = )
 
         }
+        composable(
+            "homeconductor/{useid}"
+        ) {
+            val userId = it.arguments?.getString("useid") ?: ""
+            homePantallaConductor(navController = navController, userid = userId)
+
+        }
+
+
         //Pantallas entrando con conductor
         composable(
             "cuenta_conductor/{userid}"
@@ -358,11 +368,11 @@ fun NavGraph(
             )
         }
         //Ruta para iniciar el viaje
-        composable("empezar_viaje/{correo}/{idhorario}"
+        composable("empezar_viaje/{correo}/{viajeid}"
         ) {
-            val correo = it.arguments?.getString("correo") ?: ""
-            val idhorario = it.arguments?.getString("idhorario") ?: ""
-            //conBuscarViajePas(navController = navController, correo = correo, horarioId = idhorario)
+            val userId = it.arguments?.getString("correo") ?: ""
+            val viajeId = it.arguments?.getString("viajeid") ?: ""
+            obtenerCoordenadas(userId = userId, viajeId =viajeId, navController=navController)
         }
 
         ///////////////////////////////////////
@@ -457,8 +467,12 @@ fun NavGraph(
         }
 
         //ruta ver conductores 450-460 -- Caro
-
-
+        //ruta ver conductores 450-460 -- Caro
+        composable( "ver_conductores_pasajero/{userid}"
+        ) {
+            val userId= it.arguments?.getString("userid")?:""
+            //verConductores(navController = navController, userid = userId)
+        }
 
 
 
@@ -467,11 +481,21 @@ fun NavGraph(
 
 //Ruta para ver el avance del viaje
         composable(
-            "ver_progreso_viaje/{correo}/{idhorario}"
+            "ver_progreso_viaje/{correo}/{idviaje}/{idsolicitud}/{idhorario}"
         ) {
             val correo = it.arguments?.getString("correo") ?: ""
-            val idhorario = it.arguments?.getString("idhorario") ?: ""
-            //conBuscarViajePas(navController = navController, correo = correo, horarioId = idhorario)
+            val idviaje = it.arguments?.getString("idviaje") ?: ""
+            val idHorario = it.arguments?.getString("idhorario") ?: ""
+            val idsolicitud = it.arguments?.getString("idsolicitud") ?: ""
+            verUbicacionMonitoreo(
+                userId = correo,
+                viajeId = idviaje,
+                horarioId = idHorario,
+                solicitudId = idsolicitud,
+                navController = navController
+            )
+
+
         }
 
         ///////////////////////////
