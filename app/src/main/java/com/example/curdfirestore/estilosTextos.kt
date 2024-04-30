@@ -285,3 +285,15 @@ fun textoInformacionSolicitud(etiqueta: String, contenido: String) {
         textAlign = TextAlign.Justify
     )
 }
+@Composable
+fun textInfPasajeros(texto:String, color:Color){
+    Text(
+        text = texto,
+        style = TextStyle(
+            color = color,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Start
+
+        )
+    )
+}

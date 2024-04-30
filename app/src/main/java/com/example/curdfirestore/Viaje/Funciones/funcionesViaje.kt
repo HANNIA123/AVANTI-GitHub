@@ -230,6 +230,26 @@ fun convertCoordinatesToAddress(coordenadas:LatLng): String {
         "No se encontraron direcciones para las coordenadas dadas"
     }
 }
+@Composable
+fun convertCoordinatesToAddressRec(coordenadas: LatLng): String {
+    val latitud: Double = coordenadas.latitude
+    val longitud: Double = coordenadas.longitude
+    val context = LocalContext.current
+    val geocoder = Geocoder(context, Locale.getDefault())
+    val addresses: List<Address> = geocoder.getFromLocation(latitud, longitud, 1)!!
+
+    return if (addresses.isNotEmpty()) {
+        val address = addresses[0]
+        val addressLines = address.getAddressLine(0).split(", ")
+        // Cambia el número aquí para obtener más o menos líneas de dirección
+        val linesToTake = 2 // Cambia esto según tus preferencias
+        val shortAddress = addressLines.take(linesToTake).joinToString(", ")
+        shortAddress
+    } else {
+        "No se encontraron direcciones para las coordenadas dadas"
+    }
+}
+
 
 // La función getDistance debe obtener la distancia entre dos puntos utilizando la API de Google Maps.
 // Implementa esta función según tus necesidades y utiliza el apiKey proporcionado.

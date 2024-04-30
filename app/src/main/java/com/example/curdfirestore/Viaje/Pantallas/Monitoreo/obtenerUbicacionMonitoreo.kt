@@ -6,11 +6,13 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,7 +25,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,24 +49,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.NoticacionData
+import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
 import com.example.avanti.ui.theme.Aplicacion.lineaGrisModificada
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
-import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
-import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParadaPorViaje
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.R
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
-import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
-import com.example.curdfirestore.Viaje.ConsultasViaje.editarCampoViajeSinRuta
 import com.example.curdfirestore.Viaje.Funciones.UbicacionRealTime
+import com.example.curdfirestore.Viaje.Funciones.accionesComienzoViaje
+import com.example.curdfirestore.Viaje.Funciones.accionesTerminoViaje
+import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddressRec
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.lineaCargando
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -101,7 +104,7 @@ fun obtenerCoordenadas(
         maxh = this.maxHeight
     }
     BoxWithConstraints {
-        maxw=this.maxWidth
+        maxw = this.maxWidth
     }
 
     val context = LocalContext.current
@@ -113,10 +116,8 @@ fun obtenerCoordenadas(
         mutableStateOf(false)
     }
 
-    if(empezarUbicacion) {
-        UbicacionRealTime(context, viajeId)
-    }
-        val referencia = Firebase.database.getReference("ubicacion").child(viajeId)
+
+    val referencia = Firebase.database.getReference("ubicacion").child(viajeId)
 
 
     var latLng by remember { mutableStateOf(LatLng(0.0, 0.0)) } // Coordenadas de San Francisco
@@ -129,6 +130,8 @@ fun obtenerCoordenadas(
 
     //Consulta a la BD
     var datosAnteriores: Map<String, Any>? = null
+    UbicacionRealTime(context, viajeId)
+
 
     referencia.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -158,14 +161,24 @@ fun obtenerCoordenadas(
         }
     })
 
+
     //Paradas en el mapa y control de ellas
     var boton by remember {
         mutableStateOf(false)
     }
-    var botonNotificacion by remember {
+    var botonNotificacionInicio by remember {
+        mutableStateOf(false)
+    }
+    var botonNotificacionParada by remember {
+        mutableStateOf(false)
+    }
+    var verInformacionViaje by remember {
         mutableStateOf(false)
     }
     var ejecutado by remember {
+        mutableStateOf(false)
+    }
+    var ejecutadoPar by remember {
         mutableStateOf(false)
     }
     var notEnviada by remember {
@@ -187,6 +200,10 @@ fun obtenerCoordenadas(
     val infViaje = conObtenerViajeRT(viajeId = viajeId)
     //conObtenerViajeId(viajeId = viajeId)
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+    var paradasOrdenadasPasar by remember {
+        mutableStateOf<List<Pair<String, ParadaData>>?>(null)
+    }
+
 
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
@@ -249,7 +266,6 @@ fun obtenerCoordenadas(
                     }
 
 
-
                     val lineH = 3.dp
                     // Variable para almacenar el valor máximo de width
 
@@ -301,7 +317,7 @@ fun obtenerCoordenadas(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(maxh -195.dp)
+                            .height(maxh - 175.dp)
                     ) {
                         val cameraPosition = remember {
                             CameraPosition(
@@ -325,8 +341,10 @@ fun obtenerCoordenadas(
                                         cameraPosition.tilt,
                                         cameraPosition.bearing
                                     )
-                                    delay(6000)
+                                    delay(8000)
                                 } else {
+
+
                                     delay(500)
                                 }
                             }
@@ -353,13 +371,20 @@ fun obtenerCoordenadas(
                                     )
                                 ),
                                 title = "Tu ubicación",
-                                snippet = "Ubicación: ",
                                 icon = BitmapDescriptorFactory.fromResource(R.drawable.autooficial),
                             )
 
                             paradasOrdenadas.forEach { parada ->
                                 val parLatLng = convertirStringALatLng(parada.second.par_ubicacion)
                                 if (parLatLng != null) {
+                                    val direccionPar =
+                                        convertirStringALatLng(parada.second.par_ubicacion)?.let { it1 ->
+                                            convertCoordinatesToAddressRec(
+                                                coordenadas = it1
+                                            )
+                                        }
+
+
                                     Marker(
                                         state = MarkerState(
                                             position = LatLng(
@@ -368,7 +393,7 @@ fun obtenerCoordenadas(
                                             )
                                         ),
                                         title = "Parada ${parada.second.par_nombre}",
-                                        snippet = "Ubicación: ",
+                                        //snippet = "Dirección: $direccionPar",
                                         icon = BitmapDescriptorFactory.fromResource(R.drawable.paradas),
                                     )
                                 }
@@ -376,34 +401,45 @@ fun obtenerCoordenadas(
 
                             }
 
-                                val origenLatLng = convertirStringALatLng(infViaje.viaje_origen)
-                                val destinoLatLng = convertirStringALatLng(infViaje.viaje_destino)
-                                if (origenLatLng != null) {
-                                    Marker(
-                                        state = MarkerState(
-                                            position = LatLng(
-                                                origenLatLng.latitude,
-                                                origenLatLng.longitude
-                                            )
-                                        ),
-                                        title = "Punto de origen",
-                                        snippet = "Ubicación: ",
-                                        icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
-                                    )
-                                }
-                                if (destinoLatLng != null) {
-                                    Marker(
-                                        state = MarkerState(
-                                            position = LatLng(
-                                                destinoLatLng.latitude,
-                                                destinoLatLng.longitude
-                                            )
-                                        ),
-                                        title = "Punto de llegada",
-                                        snippet = "Ubicación: ",
-                                        icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
-                                    )
-                                }
+                            val origenLatLng = convertirStringALatLng(infViaje.viaje_origen)
+                            val destinoLatLng = convertirStringALatLng(infViaje.viaje_destino)
+                            val direccionOri = origenLatLng?.let { it1 ->
+                                convertCoordinatesToAddressRec(
+                                    it1
+                                )
+                            }
+                            val direccionDes = destinoLatLng?.let { it1 ->
+                                convertCoordinatesToAddressRec(
+                                    it1
+                                )
+                            }
+
+                            if (origenLatLng != null) {
+                                Marker(
+                                    state = MarkerState(
+                                        position = LatLng(
+                                            origenLatLng.latitude,
+                                            origenLatLng.longitude
+                                        )
+                                    ),
+                                    title = "Origen",
+                                    //  snippet = "Dirección: $direccionOri",
+                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
+                                )
+                            }
+                            if (destinoLatLng != null) {
+                                Marker(
+                                    state = MarkerState(
+                                        position = LatLng(
+                                            destinoLatLng.latitude,
+                                            destinoLatLng.longitude
+                                        )
+                                    ),
+                                    title = "Punto de llegada",
+                                    //snippet = "Ubicación: $direccionDes",
+                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
+                                )
+                            }
 
                         }
 
@@ -420,7 +456,7 @@ fun obtenerCoordenadas(
                                     //Reportar imprevisto
                                 },
                                 colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = Color(137, 13, 88)
+                                    backgroundColor = Color(180, 13, 13)
                                 ),
                                 shape = CircleShape, // Cambiado a CircleShape para hacer el botón redondo
                                 contentPadding = ButtonDefaults.ContentPadding,
@@ -439,29 +475,32 @@ fun obtenerCoordenadas(
                             }
                         }
 
-
                     }
-
-
                     val textoBoton = if (viajeComenzado.isEmpty()) {
                         "Comenzar viaje"
-                    } else if (numParadaActual < totalParadas - 1) {
-                        "Llegué a la parada"
-                    } else {
-                        "Finalizar viaje"
+                    }
+                    else {
+                      if (numParadaActual < totalParadas-1) {
+                          "Llegué a la parada"
+                      }
+                        else{
+                          "Finalizar viaje"
+                        }
                     }
 
+
                     //Boton de llegada
-                    Column(
+                    Row(
                         modifier = Modifier
-                            .background(Color.White)
                             .fillMaxWidth()
-                            .height(80.dp)
-                            .padding(5.dp, 0.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .height(60.dp)
+                            .padding(8.dp, 0.dp, 8.dp, 7.dp)
+                            .background(Color.White),
+
+                        horizontalArrangement = Arrangement.SpaceBetween, // Distribuye los elementos de forma equitativa en el eje horizontal
+                        verticalAlignment = Alignment.CenterVertically // Alin
 
                     ) {
-
                         Button(
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color(
@@ -471,67 +510,23 @@ fun obtenerCoordenadas(
                                 )
                             ),
                             onClick = {
-                                empezarUbicacion=true
+                                empezarUbicacion = true
                                 num = listParadasRecorridas.size
                                 numParadaActual = listParadasRecorridas.size
                                 if (viajeComenzado.isEmpty()) {
-                                    //Enviar notificaciones de comienzo de viaje
-
-                                    //El conductor comenzo el viaje, enviar notificacion al pasajero
-                                    editarCampoViajeSinRuta(
-                                        documentId = viajeId,
-                                        campo = "viaje_iniciado",
-                                        valor = "si"
-                                    )
-                                    solicitudes?.forEach {
-                                        actualizarHorarioPas(
-                                            it.horario_id,
-                                            "horario_iniciado",
-                                            "si"
-                                        )
-                                        actualizarCampoSolicitud(it.solicitud_id, "solicitud_viaje_iniciado", "si")
-
-                                    }
-
-
-                                    actualizarCampoParadaPorViaje(
-                                        viajeId,
-                                        "para_viaje_comenzado",
-                                        "si"
-                                    )
-                                    editarCampoViajeSinRuta(viajeId, "viaje_iniciado", "si")
-                                    botonNotificacion=true
+                                 accionesComienzoViaje(viajeId = viajeId, solicitudes = solicitudes)
+                                    botonNotificacionInicio = true
 
                                 } else {
-                                    println("Parada actual----.--- $numParadaActual y total paradas $totalParadas")
                                     if (numParadaActual < totalParadas) {
                                         idParadaActual = paradasOrdenadas[numParadaActual].first
-                                        println("Recorrido")
                                         actualizarCampoParada(idParadaActual, "par_recorrido", "si")
+                                        paradasOrdenadasPasar=paradasOrdenadas
+                                        botonNotificacionParada=true
+
                                     } else {
                                         // Restablecer el status del viaje y las paradas
-                                        editarCampoViajeSinRuta(viajeId, "viaje_iniciado", "no")
-                                        actualizarCampoParadaPorViaje(
-                                            viajeId,
-                                            "par_recorrido",
-                                            "no"
-                                        )
-                                        actualizarCampoParadaPorViaje(
-                                            viajeId,
-                                            "para_viaje_comenzado",
-                                            "no"
-                                        )
-                                        solicitudes?.forEach {
-                                            actualizarHorarioPas(
-                                                it.horario_id,
-                                                "horario_iniciado",
-                                                "no"
-                                            )
-                                            actualizarCampoSolicitud(it.solicitud_id, "solicitud_viaje_iniciado", "no")
-
-                                        }
-
-                                        navController.navigate("homeconductor/$userId")
+                                   accionesTerminoViaje(viajeId, solicitudes, navController, userId)
 
                                     }
 
@@ -539,8 +534,10 @@ fun obtenerCoordenadas(
 
                             },
                             modifier = Modifier
-                                .width(380.dp)
+
+                                .fillMaxHeight()
                                 .padding(5.dp)
+                                .weight(0.6f) // Ocupa el 80% del ancho disponible
                         ) {
                             Text(
                                 text = textoBoton,
@@ -550,11 +547,34 @@ fun obtenerCoordenadas(
                                 )
                             )
                         }
+                        Spacer(modifier = Modifier.width(10.dp))
 
-                        if(botonNotificacion){
-                            if(solicitudes!=null){
+                        Button(
+                            onClick = {
+                                paradasOrdenadasPasar=paradasOrdenadas
+                                verInformacionViaje=true
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color(137, 13, 88)
+                            ),
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(5.dp)
+
+
+                        ) {
+
+                            Icon(
+                                Icons.Default.Info,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+
+                        }
+
+                        if (botonNotificacionInicio) {
+                            if (solicitudes != null) {
                                 for ((index, solicitud) in solicitudes!!.withIndex()) {
-                                    actualizarHorarioPas(solicitud.horario_id, "horario_solicitud", "No")
 
                                     val notificacionData = NoticacionData(
                                         notificacion_tipo = "vc",
@@ -580,15 +600,57 @@ fun obtenerCoordenadas(
                                 }
 
                             }
-                            botonNotificacion=false
+                            botonNotificacionInicio = false
+                        }
+
+                        if (botonNotificacionParada) {
+                            if (solicitudes != null) {
+                                for ((index, solicitud) in solicitudes!!.withIndex()) {
+                                    val paradaId=solicitud.parada_id
+                                    paradasOrdenadasPasar?.forEach {parada->
+                                        if (paradaId ==parada.first){
+                                            val notificacionData = NoticacionData(
+                                                notificacion_tipo = "llp",
+                                                notificacion_usu_origen = userId,
+                                                notificacion_usu_destino = solicitud.pasajero_id,
+                                                notificacion_id_viaje = viajeId,
+                                                notificacion_id_solicitud = solicitud.solicitud_id,
+                                                notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
+                                                notificacion_hora = obtenerHoraActual(),
+
+                                                )
+                                            if (!ejecutadoPar) {
+                                                LaunchedEffect(Unit) {
+                                                    conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
+                                                        notEnviada = respuestaExitosa
+                                                    }
+                                                }
+
+                                            }
+                                            if (index == solicitudes!!.size - 1) {
+                                                ejecutadoPar = true
+                                            }
+
+                                        }
+                                    }
+
+                                }
+                            }
+                            botonNotificacionParada = false
                         }
 
                     }
+
+
+                    //Aqui
+
 
                 }
             }
         }
     }
+
+
 
     if (boton) {
         menuDesplegableCon(
@@ -600,6 +662,11 @@ fun obtenerCoordenadas(
 
     if (!cargando) {
         lineaCargando(text = "Cargando Mapa....")
+    }
+    if(verInformacionViaje){
+        //Pantalla para ver la lista de paradas, con sus pasajeros y si validaron o no su identidad
+
+        paradasOrdenadasPasar?.let { verInformacionViajeComenzada(navController = navController, userid = userId, paradasOrdenadas = it, viajeId = viajeId) }
     }
 }
 

@@ -16,6 +16,8 @@ import com.example.avanti.ViajeData
 import com.example.avanti.ViajeDataReturn
 import com.example.curdfirestore.Parada.Funciones.obtenerDistanciaParadas
 import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -48,4 +50,44 @@ fun conObtenerSolicitudesPorViaje(
 
     }
 
+}
+
+@Composable
+fun conObtenerSolicitudesPorViajeRT(
+    viajeId: String
+): List<Pair<String, SolicitudData>>? {
+
+    var fin by remember { mutableStateOf(false) }
+    // Obtener lista de paradas
+    var solicitudes by remember { mutableStateOf<List<Pair<String, SolicitudData>>?>(null) }
+
+    LaunchedEffect(key1 = viajeId) {
+        val db = Firebase.firestore
+
+        val paradasRef = db.collection("solicitud").whereEqualTo("viaje_id", viajeId)
+
+        paradasRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                println("Error al obtener solicitudes: $error")
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
+                val listaParadas = snapshot.documents.map { document ->
+                    val idDocumento = document.id
+                    val paradaData = document.toObject(SolicitudData::class.java)
+                    idDocumento to paradaData!!
+                }
+                solicitudes = listaParadas
+
+            }
+            fin = true
+        }
+    }
+
+    return if (fin) {
+        solicitudes
+    } else {
+        null
+    }
 }

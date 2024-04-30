@@ -92,20 +92,22 @@ data class HorarioDataReturn(
 )
 
 data class SolicitudData(
-    var viaje_id: String="",
-    var horario_id: String="",
-    var conductor_id: String="",
-    var pasajero_id:String="",
-    var parada_id:String="",
-    var horario_trayecto: String="",
-    var solicitud_status:String="",
-    var solicitud_date:String="",
-    var solicitud_id:String="",
-    var solicitud_activa_pas:String="",
-    var solicitud_activa_con:String="",
-    var solicitud_viaje_iniciado:String="",
+    var viaje_id: String = "",
+    var horario_id: String = "",
+    var conductor_id: String = "",
+    var pasajero_id: String = "",
+    var parada_id: String = "",
+    var horario_trayecto: String = "",
+    var solicitud_status: String = "",
+    var solicitud_date: String = "",
+    var solicitud_id: String = "",
+    var solicitud_activa_pas: String = "",
+    var solicitud_activa_con: String = "",
+    var solicitud_viaje_iniciado: String = "",
+    var solicitud_validacion_pasajero: String = "",
+    var solicitud_validacion_conductor: String = ""
 
-    )
+)
 
 
 

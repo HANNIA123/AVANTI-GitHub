@@ -32,7 +32,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.curdfirestore.R
 
 @Composable
-fun cabecera(titulo:String){
+fun cabecera(titulo: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -75,39 +75,39 @@ fun cabecera(titulo:String){
 }
 
 @Composable
-fun tituloAtras(Titulo: String,
-                   navController: NavController
-){
+fun tituloAtras(
+    Titulo: String,
+    navController: NavController
+) {
     Row {
-        Row (
+        Row(
             modifier = Modifier
                 .padding(5.dp, 10.dp, 0.dp, 0.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
 
             Box {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
-                        modifier= Modifier
+                        modifier = Modifier
                             .height(57.dp)
                             .width(57.dp)
                             .align(Alignment.Center),
 
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Icono atras",
-                        tint= Color(137, 13, 88),
+                        tint = Color(137, 13, 88),
 
                         )
                 }
 
             }
             Text(
-                text= Titulo,  style = TextStyle(
-                    color= Color(71, 12, 107),
+                text = Titulo, style = TextStyle(
+                    color = Color(71, 12, 107),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
-
 
 
                 )
@@ -117,26 +117,26 @@ fun tituloAtras(Titulo: String,
         cabecera(Titulo)
     }
 }
+
 @Composable
-fun tituloNoAtras(Titulo: String,
-                navController: NavController
-){
+fun tituloNoAtras(
+    Titulo: String,
+    navController: NavController
+) {
     Row {
-        Row (
+        Row(
             modifier = Modifier
                 .padding(20.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically
-        ){
-
+        ) {
 
 
             Text(
-                text= Titulo,  style = TextStyle(
-                    color= Color(71, 12, 107),
+                text = Titulo, style = TextStyle(
+                    color = Color(71, 12, 107),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
-
 
 
                 )
@@ -148,12 +148,12 @@ fun tituloNoAtras(Titulo: String,
 }
 
 
-
 @Composable
-fun cabeceraConBotonAtras(titulo:String,
-                          navController: NavController,
+fun cabeceraConBotonAtras(
+    titulo: String,
+    navController: NavController,
 
-){
+    ) {
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -176,7 +176,64 @@ fun cabeceraConBotonAtras(titulo:String,
         ) {
             IconButton(
 
-                onClick = { navController.popBackStack()},
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .padding(end = 16.dp) // Ajusta el espacio entre el icono y el texto
+            ) {
+                Icon(
+                    Icons.Filled.ArrowBack,
+                    contentDescription = "volver",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+
+            Text(
+                text = titulo,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+
+    }
+
+
+}
+
+@Composable
+fun cabeceraAtrasRuta(
+    titulo: String,
+    navController: NavController, ruta: String
+
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+    )
+    {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp),
+            painter = painterResource(id = R.drawable.fondorec),
+            contentDescription = "Fondo inicial",
+            contentScale = ContentScale.FillBounds
+        )
+        Row(
+            modifier = Modifier
+                .padding(18.dp, 10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+
+                onClick = { navController.navigate(ruta)},
                 modifier = Modifier
                     .padding(end = 16.dp) // Ajusta el espacio entre el icono y el texto
             ) {
@@ -206,10 +263,6 @@ fun cabeceraConBotonAtras(titulo:String,
 }
 
 
-
-
-
-
 @Composable
 fun CoilImage(url: String, modifier: Modifier = Modifier) {
     Image(
@@ -220,7 +273,7 @@ fun CoilImage(url: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun lineaGris(){
+fun lineaGris() {
     Box(
         modifier = Modifier
             .width(350.dp)
@@ -232,22 +285,22 @@ fun lineaGris(){
 }
 
 @Composable
-fun lineaGrisModificada(width: Dp, height: Dp, color: Color){
+fun lineaGrisModificada(width: Dp, height: Dp, color: Color) {
     Box(
         modifier = Modifier
             .width(width)
             .height(height)
             .background(color)
-            //.align(Alignment.CenterHorizontally)
-          //  .background(Color(222, 222, 222))
+        //.align(Alignment.CenterHorizontally)
+        //  .background(Color(222, 222, 222))
 
     )
 }
 
 
 @Composable
-fun nombreCompleto(nombre: String, apellidop: String, apellidom: String):String {
+fun nombreCompleto(nombre: String, apellidop: String, apellidom: String): String {
     var fn: String
-    fn= nombre+" "+ apellidop+ " "+ apellidom
-    return  fn
+    fn = nombre + " " + apellidop + " " + apellidom
+    return fn
 }
