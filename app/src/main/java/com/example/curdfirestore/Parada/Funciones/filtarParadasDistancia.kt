@@ -14,9 +14,14 @@ import com.example.avanti.ParadaData
 import com.example.avanti.ViajeData
 import com.example.avanti.ViajeDataReturn
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
+import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadas
 import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
 import com.example.curdfirestore.Parada.Pantallas.verParadasCercanasPas
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
+import androidx.compose.runtime.collectAsState
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.runBlocking
 
 //Pantalla desp ues de la busqueda de paradas que coincidan con el horario
 @RequiresApi(Build.VERSION_CODES.O)
@@ -24,91 +29,46 @@ import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 fun obtenerDistanciaParadas(
     navController: NavController,
     correo: String,
-    viajes:  List<ViajeData>,
-    paradas:  List<ParadaData>,
-    horarioId:String
+    viajes: List<ViajeData>,
+    paradas: List<ParadaData>,
+    horarioId: String
 
 ) {
-    val filterviajes by remember { mutableStateOf<List<ParadaData>?>(null) }
 
-    var filterparadas by remember { mutableStateOf<List<ParadaData>?>(null) }
-    var coordenadasDis by remember { mutableStateOf("") }
+
+    var filterparadas by remember { mutableStateOf<MutableList<ParadaData>>(mutableListOf()) }
+    var coordenadasObtenerDis by remember { mutableStateOf(LatLng(0.0, 0.0)) }
 
     val horario = conObtenerHorarioId(horarioId = horarioId)
     var validar by remember { mutableStateOf(false) }
-    var validarcontenido by remember { mutableStateOf(false) }
     var show by rememberSaveable { mutableStateOf(false) }
-
-
-
     horario?.let {
-        val listaActual = filterviajes?.toMutableList() ?: mutableListOf()
+        val horarioOrigen = convertirStringALatLng(horario.horario_origen)
+        val horarioDestino = convertirStringALatLng(horario.horario_destino)
 
-        //Coordenadas del pasajero
-        var LatHorarioDes by remember { mutableStateOf(0.0) }
-        var LonHorarioDes by remember { mutableStateOf(0.0) }
+        viajes.forEachIndexed { indexViaje, viaje ->
+            val numLugares = (viaje.viaje_num_lugares).toInt()
+            val statusViaje = viaje.viaje_status
+            paradas.forEach { parada ->
+                val paradaCoordenadas = convertirStringALatLng(parada.par_ubicacion)
 
-        var LatHorarioOri by remember { mutableStateOf(0.0) }
-        var LonHorarioOri by remember { mutableStateOf(0.0) }
+                coordenadasObtenerDis = if (viaje.viaje_trayecto == "0") {
 
+                    horarioDestino!!
 
-
-        var markerLatO by remember { mutableStateOf(0.0) }
-        var markerLonO by remember { mutableStateOf(0.0) }
-        val markerCoordenadasLatLngDes = convertirStringALatLng(horario!!.horario_destino)
-        if (markerCoordenadasLatLngDes != null) {
-            LatHorarioDes = markerCoordenadasLatLngDes.latitude
-            LonHorarioDes = markerCoordenadasLatLngDes.longitude
-        }
-
-
-        val markerCoordenadasLatLngOri = convertirStringALatLng(horario!!.horario_origen)
-
-        if (markerCoordenadasLatLngOri != null) {
-            LatHorarioOri = markerCoordenadasLatLngOri.latitude
-            LonHorarioOri = markerCoordenadasLatLngOri.longitude
-            // Hacer algo con las coordenadas LatLng
-
-        } else {
-            // La conversión falló
-            println("Error al convertir la cadena a LatLng")
-        }
-
-
-        var indiceViaje = 0
-        while (indiceViaje < viajes.size) {
-            var indiceParada = 0
-            val viaje = viajes[indiceViaje]
-            var lugaresDisp=0
-            try{
-                // Intenta convertir el String a Int
-                lugaresDisp=viaje.viaje_num_lugares.toInt()
-            }catch(e: NumberFormatException){
-                println("No se pudo convertir el String a Int: ${e.message}")
-            }
-
-            if (viaje.viaje_status == "Disponible" && lugaresDisp>0) {  //Validar el numero de lugares
-                if (viaje.viaje_trayecto == "0") {
-                    coordenadasDis = horario.horario_destino
                 } else {
-                    coordenadasDis = horario.horario_origen
+                    horarioOrigen!!
                 }
-                while (indiceParada < paradas.size) {
-                    //Verificar
 
-                    val parada = paradas[indiceParada]
 
-                    val markerCoordenadasLatLngO =
-                        convertirStringALatLng(parada.par_ubicacion)
-                    if (markerCoordenadasLatLngO != null) {
-                        markerLatO = markerCoordenadasLatLngO.latitude
-                        markerLonO = markerCoordenadasLatLngO.longitude
-                        // Hacer algo con las coordenadas LatLng
-                    }
+                if (numLugares > 0 && statusViaje == "Disponible") {
+                    val distancia =
+                        getDistanceCorrecto(coordenadasObtenerDis!!, paradaCoordenadas!!)
 
-                    val distance = getDistance(coordenadasDis, parada.par_ubicacion)
 
-                    if (distance <= 1000.0f) {
+                    if (distancia <= 1500.0f) {
+                        println("entra al if de distancia")
+
                         val nuevaP =
                             ParadaData(
                                 user_id = parada.user_id,
@@ -118,50 +78,30 @@ fun obtenerDistanciaParadas(
                                 par_ubicacion = parada.par_ubicacion,
                                 par_id = parada.par_id
                             )
-                        validarcontenido = true
-                        listaActual.add(nuevaP)
-                        println("Lista actual $listaActual")
+                        filterparadas.add(nuevaP)
 
+                        println("Filtrado $filterparadas")
                     }
-                    println("El tipo de dato de miVariable es: ${distance::class.simpleName}")
-                    indiceParada++
-                }
-
-                if (indiceViaje == viajes.size - 1) {
-                    validar = true
 
                 }
-            }
-            indiceViaje++
 
+            }
+
+            // Verifica si es la última iteración del bucle viajes
+            val isLastViaje = indexViaje == viajes.size - 1
+
+            if (isLastViaje) {
+                validar = true
+            }
         }
 
-        if(validar==true) {
+    }
+    println("FINAL LISTA----- $filterparadas")
 
-            if (validarcontenido) {
+    if (validar) {
 
-                println("Encontramos paradaaaaa")
-                verParadasCercanasPas(
-                    navController = navController,
-                    correo = correo,
-                    horarioId = horarioId,
-                    paradas = listaActual
-                )
 
-            } else {
-                show=true
-                ventanaNoEncontrado(
-                    show = show,
-                    { show = false },
-                    {},
-                    userId = correo,
-                    navController = navController
-                )
-              //  VentanaLejos(navController, correo, show, { show = false }, {})
-            }
-            println("filtro: $listaActual")
-        }
-        else{
+        if (filterparadas.isEmpty()) {
             show = true
             ventanaNoEncontrado(
                 show = show,
@@ -170,129 +110,17 @@ fun obtenerDistanciaParadas(
                 userId = correo,
                 navController = navController
             )
+
+        } else {
+            println("Encontramos paradaaaaa")
+            verParadasCercanasPas(
+                navController = navController,
+                correo = correo,
+                horarioId = horarioId,
+                paradas = filterparadas!!
+            )
         }
+
     }
 
 }
-
-/*
-@Composable
-fun obtenerDistanciaParadas(
-    viajes:  List<ViajeData>,
-    paradas:  List<ParadaData>,
-    horario: HorarioData,
-) : List<ParadaData>?{
-
-    val filterviajes by remember { mutableStateOf<List<ParadaData>?>(null) }
-    var coordenadasDis by remember { mutableStateOf("") }
-
-
-    var validar by remember { mutableStateOf(false) }
-    var validarcontenido by remember { mutableStateOf(false) }
-    var fin by rememberSaveable { mutableStateOf(false) }
-
-
-    val listaActual = filterviajes?.toMutableList() ?: mutableListOf()
-
-
-
-        //Coordenadas del pasajero
-        var LatHorarioDes by remember { mutableStateOf(0.0) }
-        var LonHorarioDes by remember { mutableStateOf(0.0) }
-
-        var LatHorarioOri by remember { mutableStateOf(0.0) }
-        var LonHorarioOri by remember { mutableStateOf(0.0) }
-
-
-        var markerLatO by remember { mutableStateOf(0.0) }
-        var markerLonO by remember { mutableStateOf(0.0) }
-        val markerCoordenadasLatLngDes = convertirStringALatLng(horario!!.horario_destino)
-        if (markerCoordenadasLatLngDes != null) {
-            LatHorarioDes = markerCoordenadasLatLngDes.latitude
-            LonHorarioDes = markerCoordenadasLatLngDes.longitude
-        }
-
-
-        val markerCoordenadasLatLngOri = convertirStringALatLng(horario!!.horario_origen)
-
-        if (markerCoordenadasLatLngOri != null) {
-            LatHorarioOri = markerCoordenadasLatLngOri.latitude
-            LonHorarioOri = markerCoordenadasLatLngOri.longitude
-            // Hacer algo con las coordenadas LatLng
-
-        } else {
-            // La conversión falló
-            println("Error al convertir la cadena a LatLng")
-        }
-
-
-        var indiceViaje = 0
-        while (indiceViaje < viajes.size) {
-            var indiceParada = 0
-            val viaje = viajes[indiceViaje]
-            var lugaresDisp = 0
-            try {
-                // Intenta convertir el String a Int
-                lugaresDisp = viaje.viaje_num_lugares.toInt()
-            } catch (e: NumberFormatException) {
-                println("No se pudo convertir el String a Int: ${e.message}")
-            }
-
-            if (viaje.viaje_status == "Disponible" && lugaresDisp > 0) {  //Validar el numero de lugares
-                if (viaje.viaje_trayecto == "0") {
-                    coordenadasDis = horario.horario_destino
-                } else {
-                    coordenadasDis = horario.horario_origen
-                }
-                while (indiceParada < paradas.size) {
-                    //Verificar
-
-                    val parada = paradas[indiceParada]
-
-                    val markerCoordenadasLatLngO =
-                        convertirStringALatLng(parada.par_ubicacion)
-                    if (markerCoordenadasLatLngO != null) {
-                        markerLatO = markerCoordenadasLatLngO.latitude
-                        markerLonO = markerCoordenadasLatLngO.longitude
-                        // Hacer algo con las coordenadas LatLng
-                    }
-
-                    val distance = getDistance(coordenadasDis, parada.par_ubicacion)
-
-                    if (distance <= 1000.0f) {
-                        val nuevaP =
-                            ParadaData(
-                                user_id = parada.user_id,
-                                viaje_id = parada.viaje_id,
-                                par_nombre = parada.par_nombre,
-                                par_hora = parada.par_hora,
-                                par_ubicacion = parada.par_ubicacion,
-                                par_id = parada.par_id
-                            )
-                        validarcontenido = true
-                        listaActual.add(nuevaP)
-                        println("Lista actual $listaActual")
-
-                    }
-                    println("El tipo de dato de miVariable es: ${distance::class.simpleName}")
-                    indiceParada++
-                }
-
-                if (indiceViaje == viajes.size - 1) {
-                    validar = true
-
-                }
-            }
-            indiceViaje++
-
-        }
-
-
-
-    println("Sin datos $listaActual ----------------")
-
-    return listaActual
-
-
-}
-*/

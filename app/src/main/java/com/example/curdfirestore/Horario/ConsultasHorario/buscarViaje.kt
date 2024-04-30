@@ -17,6 +17,7 @@ import com.example.avanti.ViajeDataReturn
 import com.example.curdfirestore.Horario.ApiServiceHorario
 import com.example.curdfirestore.Horario.RetrofitClientHorario
 import com.example.curdfirestore.Parada.ConsultasParada.conBuscarParadasPas
+import com.example.curdfirestore.Parada.Funciones.obtenerDistanciaParadas
 import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -70,9 +71,8 @@ fun conBuscarViajePas(
 
     if(fin){
         if (viajes != null && busqueda == true) {
-            println("Encontramos viajeee")
-            //Se encontro un viaje, ahora buscar la parada
-            conBuscarParadasPas(
+
+           conBuscarParadasPas(
                 navController = navController,
                 correo = correo,
                 horarioId = horarioId,
