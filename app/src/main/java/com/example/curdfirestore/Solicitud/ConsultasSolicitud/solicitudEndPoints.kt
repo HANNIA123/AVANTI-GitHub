@@ -74,10 +74,10 @@ interface ApiServiceSolicitud{
     ): List<SolicitudData>
 
 
-    //Obtener solicitud teniendo su id
 
-
-
+    //Obtener solicitud teniendo su id del pasajero
+    @GET("$newUrl/api/solicitud/obtenersolicitudespasajero/{id}")
+    suspend fun obtenerSolicitudesPas(@Path("id") userId: String): Response<List<SolicitudData>> // Obtener una lista de solicitudes con el id dado
 
 
 

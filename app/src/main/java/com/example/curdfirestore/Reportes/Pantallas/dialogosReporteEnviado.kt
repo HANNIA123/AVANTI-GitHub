@@ -43,7 +43,77 @@ val paddingIma=15.dp
 val paddingTex=15.dp
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun dialogoReporteEnviado(
+fun dialogoReporteEnviadoPas(
+    onDismiss: () -> Unit,
+    navController: NavController,
+    userId:String
+) {
+
+    val fadeInAlpha = animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(durationMillis = 1000), label = ""
+    ).value
+
+    val scope = rememberCoroutineScope()
+
+    scope.launch {
+        // Espera 3 segundos antes de cerrar el diálogo automáticamente
+        //delay(2000)
+        delay(1000)
+        navController.navigate("ver_conductores_pasajero/$userId")
+        onDismiss()
+
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.2f)),
+    ) {
+        Dialog(
+            onDismissRequest = { },
+            // No permitir cerrar el diálogo al tocar fuera de él
+            content = {
+                Column(
+                    modifier = Modifier
+
+                        .padding(15.dp)
+                        .background(Color.White)
+                    ,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = "Reporte enviado",
+                        style = TextStyle(Color(137,  13, 88 )),
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Justify,
+                        modifier = Modifier.padding(paddingTex)
+                    )
+                    Image(
+                        modifier = Modifier
+                            .height(140.dp)
+                            .width(120.dp)
+                            .padding(paddingIma)
+                            .align(Alignment.CenterHorizontally), // Centrar horizontalmente
+                        painter = painterResource(id = R.drawable.solaceptada),
+                        contentDescription = "Imagen pregunta",
+                        contentScale = ContentScale.FillBounds,
+                        alpha = fadeInAlpha
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
+            },
+        )
+    }
+}
+
+
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun dialogoReporteEnviadoCon(
     onDismiss: () -> Unit,
     navController: NavController,
     userId:String

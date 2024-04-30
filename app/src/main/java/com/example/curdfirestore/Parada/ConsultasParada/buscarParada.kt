@@ -65,7 +65,7 @@ fun conBuscarParadasPas(
                 navController = navController,
                 correo = correo,
                 viajes = viajes,
-                paradas = paradas!!,
+                paradas=paradas!!,
                 horarioId =horarioId
             )
         }
