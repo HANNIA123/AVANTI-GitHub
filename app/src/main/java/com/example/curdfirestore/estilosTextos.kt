@@ -20,6 +20,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -193,6 +194,33 @@ fun textInMarker(Label:String, Text:String){
 }
 
 @Composable
+fun textInfViaje(Label:String, Text:String, color:Color, tam: Float){
+    Text(
+        buildAnnotatedString {
+            withStyle(style = SpanStyle(     fontWeight = FontWeight.Bold,
+                fontSize = tam.sp
+            )) {
+                append(Label)
+            }
+
+
+            withStyle(style = SpanStyle(
+
+            )) {
+                append(Text)
+            }
+        }
+
+        ,
+        style = TextStyle(
+            color = color,
+            fontSize = tam.sp,
+
+            )
+    )
+}
+
+@Composable
 fun texItinerario(Label:String, Text:String) {
     Row {
         Text(
@@ -242,19 +270,31 @@ fun textoMarker(Label:String, Text:String) {
 }
 
 @Composable
-fun textoHora(hora:String, tam: Float){
+fun textoNegrita(texto:String, tam: Float, color: Color){
     Text(
-        text = hora,
+        text = texto,
         style = TextStyle(
-            color = Color.Black,
+            color = color,
             fontSize = tam.sp,
-            textAlign = TextAlign.Start,
+
             fontWeight = FontWeight.Bold
         )
     )
 
 }
+@Composable
+fun textoNormal(texto:String, tam: Float, color: Color){
+    Text(
+        text = texto,
+        style = TextStyle(
+            color = color,
+            fontSize = tam.sp,
 
+            fontWeight = FontWeight.Bold
+        )
+    )
+
+}
 @Composable
 fun textTituloInfSolcitud(titulo: String){
     Text(

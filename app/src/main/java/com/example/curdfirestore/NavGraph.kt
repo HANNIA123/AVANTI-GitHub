@@ -33,6 +33,7 @@ import com.example.curdfirestore.Parada.Pantallas.generalParada
 import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Solicitud.Pantallas.verPasajeros
 import com.example.curdfirestore.Solicitud.Pantallas.verSolicitudesCon
+import com.example.curdfirestore.Usuario.Pasajero.Pantallas.homePantallaPasajero
 import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
 import com.example.curdfirestore.Viaje.Pantallas.Editar.registrarDestinoConductorEditar
@@ -389,6 +390,13 @@ fun NavGraph(
         composable("perfil_pasajero/{userid}") {
             val userId = it.arguments?.getString("userid") ?: ""
             perfilPas(navController = navController, userId = userId)
+
+        }
+        composable(
+            "home_pasajero/{userid}"
+        ) {
+            val userId = it.arguments?.getString("userid") ?: ""
+            homePantallaPasajero(navController, userId)
 
         }
 

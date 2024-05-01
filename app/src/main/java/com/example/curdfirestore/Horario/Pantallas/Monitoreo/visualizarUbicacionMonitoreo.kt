@@ -54,6 +54,7 @@ import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParadaPorViaje
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
+import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaRT
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
@@ -72,6 +73,7 @@ import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViaje
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViajePas
 import com.example.curdfirestore.lineaCargando
+import com.example.curdfirestore.textInfPasajeros
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -144,7 +146,7 @@ fun verUbicacionMonitoreo(
 
     val listaParadasCom = conObtenerListaParadasRT(viajeId = viajeId)
     val infViaje = conObtenerViajeRT(viajeId = viajeId)
-
+    val parada = conObtenerParadaRT(paradaId = paradaId)
     var maxh by remember {
         mutableStateOf(0.dp)
     }
@@ -164,6 +166,9 @@ fun verUbicacionMonitoreo(
     }
 
     var cargando by remember {
+        mutableStateOf(false)
+    }
+    var botonFinalizo by remember {
         mutableStateOf(false)
     }
 
@@ -189,7 +194,7 @@ fun verUbicacionMonitoreo(
         ) {
 
             cabeceraConMenuPas(
-                titulo = "Tu viaje ha comenzado",
+                titulo = "Tu viaje...",
                 navController,
                 userId,
                 boton = { estaBoton ->
@@ -199,6 +204,12 @@ fun verUbicacionMonitoreo(
 
 
             infViaje?.let {
+                if (infViaje.viaje_iniciado == "no") {
+                    botonFinalizo = true
+
+
+                }
+
                 listaParadasCom?.let {
                     val paradasOrdenadas = listaParadasCom.sortedBy { it.second.par_hora }
                     val totalParadas = paradasOrdenadas.size
@@ -214,42 +225,50 @@ fun verUbicacionMonitoreo(
 
                     Column(
                         modifier = Modifier
-                            .height(45.dp)
+                            .height(46.dp)
                             .background(Color.White)
                             .padding(10.dp)
                     ) {
-
-
-                        Text(
-                            "Progreso del viaje...", fontSize = 12.sp,
-                            color = Color(165, 165, 165)
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Row() {
-
-
-                            for (i in 0..(totalParadas + 2)) {
-                                val color: Color
-                                if (viajeComenzado.isEmpty()) {
-                                    println("No ha comenzado")
-                                    color = Color(222, 222, 222)
-                                } else {
-                                    val numeros = listParadasRecorridas.size
-                                    if (i <= numeros) {
-                                        color = Color.Blue
-                                    } else {
-                                        color = Color(222, 222, 222)
-                                    }
-                                }
-                                lineaGrisModificada(
-                                    width = lineaW,
-                                    height = lineH,
-                                    color = color
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
+                        parada?.let {
+                            val textollegada = when (parada.par_recorrido) {
+                                "si" -> "El conductor llegó a la parada"
+                                else -> "Conductor en camino"
                             }
 
 
+
+
+                            Text(
+                                textollegada, fontSize = 13.sp,
+                                color = Color(86, 86, 86)
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Row() {
+
+
+                                for (i in 0..(totalParadas + 2)) {
+                                    val color: Color
+                                    if (viajeComenzado.isEmpty()) {
+                                        println("No ha comenzado")
+                                        color = Color(222, 222, 222)
+                                    } else {
+                                        val numeros = listParadasRecorridas.size
+                                        if (i <= numeros) {
+                                            color = Color.Blue
+                                        } else {
+                                            color = Color(222, 222, 222)
+                                        }
+                                    }
+                                    lineaGrisModificada(
+                                        width = lineaW,
+                                        height = lineH,
+                                        color = color
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                }
+
+
+                            }
                         }
                     }
                 }
@@ -405,104 +424,109 @@ fun verUbicacionMonitoreo(
             }
 
 
-            //Boton de llegada
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp)
-                    .background(Color.White),
-                horizontalArrangement = Arrangement.SpaceBetween, // Distribuye los elementos de forma equitativa en el eje horizontal
-                verticalAlignment = Alignment.CenterVertically // Alin
-
-            ) {
-
-                val parada = conObtenerParadaId(paradaId = paradaId)
                 parada?.let {
-                    if (parada.par_llegada_pas != "si") {
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(
-                                    137,
-                                    13,
-                                    88
-                                )
-                            ),
-                            onClick = {
-                                botonNotificacionParada = true
-                                actualizarCampoParada(paradaId, "par_llegada_pas", "si")
 
-                            },
-                            modifier = Modifier
-                                .height(54.dp)
-                                .padding(5.dp)
-                                .weight(0.6f) // Ocupa el 80% del ancho disponible
-                        ) {
-                            Text(
-                                text = "Llegué a la parada",
-                                style = TextStyle(
-                                    fontSize = 18.sp,
-                                    color = Color.White
-                                )
-                            )
-                        }
-                    } else {
-                        //Verificar la validación, si ya es exitosa, entonces...
-                        Box (modifier = Modifier.padding(5.dp)){
-                            Text(
-                                text = "Viaje en progreso...",
-                                style = TextStyle(
-                                    fontSize = 18.sp,
-                                    color = Color(
+                    //Boton de llegada
+                    Row(
+                        modifier = Modifier   .background(Color.White)
+                            .fillMaxWidth()   .height(70.dp),
+
+                        horizontalArrangement = Arrangement.SpaceBetween, // Distribuye los elementos de forma equitativa en el eje horizontal
+                        verticalAlignment = Alignment.CenterVertically // Alin
+
+                    ) {
+
+
+                        if (parada.par_llegada_pas != "si") {
+
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color(
                                         137,
                                         13,
                                         88
-                                    ),
                                     )
-                            )
+                                ),
+                                onClick = {
+                                    botonNotificacionParada = true
+                                    actualizarCampoParada(paradaId, "par_llegada_pas", "si")
+
+                                },
+                                modifier = Modifier
+                                    .height(54.dp)
+                                    .padding(5.dp)
+                                    .weight(0.6f) // Ocupa el 80% del ancho disponible
+                            ) {
+                                Text(
+                                    text = "Llegué a la parada",
+                                    style = TextStyle(
+                                        fontSize = 18.sp,
+                                        color = Color.White
+                                    )
+                                )
+                            }
+                        } else {
+                            //Verificar la validación, si ya es exitosa, entonces...
+                            Box(modifier = Modifier
+                                .padding(5.dp)
+                                .weight(0.6f)) {
+                                Text(
+                                    text = "En camino...",
+                                    style = TextStyle(
+                                        fontSize = 18.sp,
+                                        color = Color(
+                                            137,
+                                            13,
+                                            88
+                                        ),
+                                    )
+                                )
+                            }
+
                         }
 
+
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        Button(
+                            onClick = {
+
+                                verInformacionViaje = true
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color(137, 13, 88)
+                            ),
+                            modifier = Modifier
+                                .height(54.dp)
+                                .padding(5.dp)
+
+                        ) {
+
+                            Icon(
+                                Icons.Default.Info,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+
+                        }
                     }
 
-                }
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Button(
-                    onClick = {
-                        verInformacionViaje = true
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(137, 13, 88)
-                    ),
-                    modifier = Modifier
-                        .height(54.dp)
-                        .padding(5.dp)
-
-                ) {
-
-                    Icon(
-                        Icons.Default.Info,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-
-                }
-
-
-                if (botonNotificacionParada) {
-                    solicitud?.let {
-                        registrarNotificacionViajePas(
-                            tipoNot = "llp",
-                            solicitud,
-                            userId,
-                            viajeId
-                        )
+                    if (botonNotificacionParada) {
+                        solicitud?.let {
+                            registrarNotificacionViajePas(
+                                tipoNot = "llp",
+                                solicitud,
+                                userId,
+                                viajeId
+                            )
+                        }
+                        botonNotificacionParada = false
                     }
-                    botonNotificacionParada = false
+
+
                 }
 
-
-            }
 
 
         }
@@ -520,10 +544,19 @@ fun verUbicacionMonitoreo(
         solicitud?.let {
             dialogoVerInfViajeIniciado(
                 onDismiss = { verInformacionViaje = false },
-                solicitud
+                solicitud,
+                paradaId
             )
         }
 
+    }
+    if (botonFinalizo) {
+        dialogoViajeFinalizo(
+            onDismiss = { botonFinalizo = false },
+            "El viaje ha finalizado",
+            userId,
+            navController
+        )
     }
     if (!cargando) {
         lineaCargando(text = "Cargando Mapa....")
