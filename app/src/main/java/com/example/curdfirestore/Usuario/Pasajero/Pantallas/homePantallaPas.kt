@@ -142,7 +142,7 @@ fun homePantallaPasajero(
                         val unaSolicitud = solicitud!!.first()
                         //Mandar a la pantalla para ver el viaje
 
-                        navController.navigate("ver_progreso_viaje/$userid/${unaSolicitud.viaje_id}/${unaSolicitud.solicitud_id}/${unaSolicitud.horario_id}")
+                        navController.navigate("ver_progreso_viaje/$userid/${unaSolicitud.viaje_id}/${unaSolicitud.solicitud_id}/${unaSolicitud.horario_id}/${unaSolicitud.parada_id}")
 
                     }
 

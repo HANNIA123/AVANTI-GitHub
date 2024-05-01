@@ -119,7 +119,8 @@ data class ParadaData(
     var par_ubicacion: String="",
     var user_id:String ="" ,
     var par_recorrido: String="",
-    var para_viaje_comenzado:String=""
+    var para_viaje_comenzado:String="",
+    var par_llegada_pas:String=""
 
 
     )

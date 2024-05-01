@@ -375,6 +375,7 @@ fun NavGraph(
             obtenerCoordenadas(userId = userId, viajeId =viajeId, navController=navController)
         }
 
+
         ///////////////////////////////////////
         //--------------------Pantallas entrando con pasajero---------------------------
         composable(
@@ -481,17 +482,19 @@ fun NavGraph(
 
 //Ruta para ver el avance del viaje
         composable(
-            "ver_progreso_viaje/{correo}/{idviaje}/{idsolicitud}/{idhorario}"
+            "ver_progreso_viaje/{correo}/{idviaje}/{idsolicitud}/{idhorario}/{idparada}"
         ) {
             val correo = it.arguments?.getString("correo") ?: ""
             val idviaje = it.arguments?.getString("idviaje") ?: ""
             val idHorario = it.arguments?.getString("idhorario") ?: ""
             val idsolicitud = it.arguments?.getString("idsolicitud") ?: ""
+            val idParada= it.arguments?.getString("idparada") ?: ""
             verUbicacionMonitoreo(
                 userId = correo,
                 viajeId = idviaje,
                 horarioId = idHorario,
                 solicitudId = idsolicitud,
+                paradaId=idParada,
                 navController = navController
             )
 

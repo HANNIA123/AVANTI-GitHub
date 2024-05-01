@@ -67,6 +67,7 @@ import com.example.curdfirestore.Viaje.Funciones.accionesComienzoViaje
 import com.example.curdfirestore.Viaje.Funciones.accionesTerminoViaje
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddressRec
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
+import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViaje
 import com.example.curdfirestore.lineaCargando
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -172,6 +173,9 @@ fun obtenerCoordenadas(
     var botonNotificacionParada by remember {
         mutableStateOf(false)
     }
+    var botonNotificacionFin by remember {
+        mutableStateOf(false)
+    }
     var verInformacionViaje by remember {
         mutableStateOf(false)
     }
@@ -241,6 +245,7 @@ fun obtenerCoordenadas(
                         mutableStateOf(listParadasRecorridas.size)
                     }
 
+                    numParadaActual = listParadasRecorridas.size
                     val animationDurationMillis = 2000
                     val scope = rememberCoroutineScope()
                     var currentLatLng by remember { mutableStateOf(latLng) }
@@ -476,15 +481,16 @@ fun obtenerCoordenadas(
                         }
 
                     }
+                    println("Total de paradas $totalParadas")
+                    println("Numero parada actual $numParadaActual")
+
                     val textoBoton = if (viajeComenzado.isEmpty()) {
                         "Comenzar viaje"
-                    }
-                    else {
-                      if (numParadaActual < totalParadas-1) {
-                          "Llegué a la parada"
-                      }
-                        else{
-                          "Finalizar viaje"
+                    } else {
+                        if (numParadaActual < totalParadas ) {
+                            "Llegué a la parada"
+                        } else {
+                            "Finalizar viaje"
                         }
                     }
 
@@ -494,9 +500,8 @@ fun obtenerCoordenadas(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp)
-                            .padding(8.dp, 0.dp, 8.dp, 7.dp)
-                            .background(Color.White),
 
+                            .background(Color.White),
                         horizontalArrangement = Arrangement.SpaceBetween, // Distribuye los elementos de forma equitativa en el eje horizontal
                         verticalAlignment = Alignment.CenterVertically // Alin
 
@@ -512,21 +517,32 @@ fun obtenerCoordenadas(
                             onClick = {
                                 empezarUbicacion = true
                                 num = listParadasRecorridas.size
-                                numParadaActual = listParadasRecorridas.size
+                               // numParadaActual = listParadasRecorridas.size
                                 if (viajeComenzado.isEmpty()) {
-                                 accionesComienzoViaje(viajeId = viajeId, solicitudes = solicitudes)
+                                    accionesComienzoViaje(
+                                        viajeId = viajeId,
+                                        solicitudes = solicitudes
+                                    )
                                     botonNotificacionInicio = true
 
                                 } else {
                                     if (numParadaActual < totalParadas) {
                                         idParadaActual = paradasOrdenadas[numParadaActual].first
                                         actualizarCampoParada(idParadaActual, "par_recorrido", "si")
-                                        paradasOrdenadasPasar=paradasOrdenadas
-                                        botonNotificacionParada=true
+                                        paradasOrdenadasPasar = paradasOrdenadas
+                                        botonNotificacionParada = true
 
                                     } else {
                                         // Restablecer el status del viaje y las paradas
-                                   accionesTerminoViaje(viajeId, solicitudes, navController, userId)
+                                        botonNotificacionFin = true
+
+                                        accionesTerminoViaje(
+                                            viajeId,
+                                            solicitudes,
+                                            navController,
+                                            userId,
+                                            idParadaActual
+                                        )
 
                                     }
 
@@ -535,7 +551,7 @@ fun obtenerCoordenadas(
                             },
                             modifier = Modifier
 
-                                .fillMaxHeight()
+                                .height(54.dp)
                                 .padding(5.dp)
                                 .weight(0.6f) // Ocupa el 80% del ancho disponible
                         ) {
@@ -547,18 +563,19 @@ fun obtenerCoordenadas(
                                 )
                             )
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
                         Button(
                             onClick = {
-                                paradasOrdenadasPasar=paradasOrdenadas
-                                verInformacionViaje=true
+                                paradasOrdenadasPasar = paradasOrdenadas
+                                verInformacionViaje = true
                             },
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color(137, 13, 88)
                             ),
                             modifier = Modifier
-                                .fillMaxHeight()
+
+                                .height(54.dp)
                                 .padding(5.dp)
 
 
@@ -574,76 +591,40 @@ fun obtenerCoordenadas(
 
                         if (botonNotificacionInicio) {
                             if (solicitudes != null) {
-                                for ((index, solicitud) in solicitudes!!.withIndex()) {
-
-                                    val notificacionData = NoticacionData(
-                                        notificacion_tipo = "vc",
-                                        notificacion_usu_origen = userId,
-                                        notificacion_usu_destino = solicitud.pasajero_id,
-                                        notificacion_id_viaje = viajeId,
-                                        notificacion_id_solicitud = solicitud.solicitud_id,
-                                        notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
-                                        notificacion_hora = obtenerHoraActual(),
-
-                                        )
-                                    if (!ejecutado) {
-                                        LaunchedEffect(Unit) {
-                                            conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
-                                                notEnviada = respuestaExitosa
-                                            }
-                                        }
-
-                                    }
-                                    if (index == solicitudes!!.size - 1) {
-                                        ejecutado = true
-                                    }
-                                }
-
+                                registrarNotificacionViaje(
+                                    tipoNot = "vc",
+                                    solicitudes!!,
+                                    userId,
+                                    viajeId
+                                )
                             }
                             botonNotificacionInicio = false
                         }
 
                         if (botonNotificacionParada) {
                             if (solicitudes != null) {
-                                for ((index, solicitud) in solicitudes!!.withIndex()) {
-                                    val paradaId=solicitud.parada_id
-                                    paradasOrdenadasPasar?.forEach {parada->
-                                        if (paradaId ==parada.first){
-                                            val notificacionData = NoticacionData(
-                                                notificacion_tipo = "llp",
-                                                notificacion_usu_origen = userId,
-                                                notificacion_usu_destino = solicitud.pasajero_id,
-                                                notificacion_id_viaje = viajeId,
-                                                notificacion_id_solicitud = solicitud.solicitud_id,
-                                                notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
-                                                notificacion_hora = obtenerHoraActual(),
-
-                                                )
-                                            if (!ejecutadoPar) {
-                                                LaunchedEffect(Unit) {
-                                                    conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
-                                                        notEnviada = respuestaExitosa
-                                                    }
-                                                }
-
-                                            }
-                                            if (index == solicitudes!!.size - 1) {
-                                                ejecutadoPar = true
-                                            }
-
-                                        }
-                                    }
-
-                                }
+                                registrarNotificacionViaje(
+                                    tipoNot = "llp",
+                                    solicitudes!!,
+                                    userId,
+                                    viajeId
+                                )
                             }
                             botonNotificacionParada = false
                         }
+                        if (botonNotificacionFin) {
+                            if (solicitudes != null) {
+                                registrarNotificacionViaje(
+                                    tipoNot = "vt",
+                                    solicitudes!!,
+                                    userId,
+                                    viajeId
+                                )
+                            }
+                            botonNotificacionFin = false
+                        }
 
                     }
-
-
-                    //Aqui
-
 
                 }
             }
@@ -663,10 +644,17 @@ fun obtenerCoordenadas(
     if (!cargando) {
         lineaCargando(text = "Cargando Mapa....")
     }
-    if(verInformacionViaje){
+    if (verInformacionViaje) {
         //Pantalla para ver la lista de paradas, con sus pasajeros y si validaron o no su identidad
 
-        paradasOrdenadasPasar?.let { verInformacionViajeComenzada(navController = navController, userid = userId, paradasOrdenadas = it, viajeId = viajeId) }
+        paradasOrdenadasPasar?.let {
+            verInformacionViajeComenzada(
+                navController = navController,
+                userid = userId,
+                paradasOrdenadas = it,
+                viajeId = viajeId
+            )
+        }
     }
 }
 

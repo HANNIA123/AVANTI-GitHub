@@ -3,6 +3,7 @@ package com.example.curdfirestore.Viaje.Funciones
 import androidx.navigation.NavController
 import com.example.avanti.SolicitudData
 import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
+import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParadaPorViaje
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
 import com.example.curdfirestore.Viaje.ConsultasViaje.editarCampoViajeSinRuta
@@ -40,7 +41,7 @@ fun accionesComienzoViaje(viajeId:String,solicitudes:  List<SolicitudData>? ){
 
 }
 
-fun accionesTerminoViaje(viajeId: String, solicitudes:  List<SolicitudData>?, navController: NavController, userId:String){
+fun accionesTerminoViaje(viajeId: String, solicitudes:  List<SolicitudData>?, navController: NavController, userId:String, paradaId:String){
     editarCampoViajeSinRuta(viajeId, "viaje_iniciado", "no")
     actualizarCampoParadaPorViaje(
         viajeId,
@@ -52,6 +53,8 @@ fun accionesTerminoViaje(viajeId: String, solicitudes:  List<SolicitudData>?, na
         "para_viaje_comenzado",
         "no"
     )
+    actualizarCampoParada(paradaId, "par_llegada_pas", "no")
+
     solicitudes?.forEach {
         actualizarHorarioPas(
             it.horario_id,

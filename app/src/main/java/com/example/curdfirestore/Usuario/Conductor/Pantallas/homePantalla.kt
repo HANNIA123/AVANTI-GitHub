@@ -52,10 +52,14 @@ import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConRestaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConSumaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
+import com.example.curdfirestore.Usuario.Conductor.Pantallas.dialogoNoIniciarViaje
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
+import com.example.curdfirestore.Viaje.Pantallas.dialogoConfirmarEliminarViaje
 import com.example.curdfirestore.Viaje.Pantallas.mensajeNoViajes
 
 import com.example.curdfirestore.recuadroTitulos
@@ -79,191 +83,55 @@ fun homePantallaConductor(
     }
 
     val diaActual by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
-
+    var botonNoIniciar by remember {
+        mutableStateOf(false)
+    }
+    var texto by remember {
+        mutableStateOf("")
+    }
     var viajes by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
     conObtenerItinerarioCon(userId = userid) { resultado ->
         viajes = resultado
     }
 
-    if(viajes!=null) {
-        //verificar que no haya ningun viaje iniciado
-        val viajesIniciados= viajes!!.filter {it.viaje_iniciado=="si"}
 
-        if(viajesIniciados.isNotEmpty()) {
+    if (viajes != null) {
+        //verificar que no haya ningun viaje iniciado
+        val viajesIniciados = viajes!!.filter { it.viaje_iniciado == "si" }
+
+        if (viajesIniciados.isNotEmpty()) {
             val primerViajeIniciado = viajesIniciados.firstOrNull()
             obtenerCoordenadas(userId = userid, primerViajeIniciado!!.viaje_id, navController)
-        }
-else {
-            Scaffold(
-                bottomBar = {
-                    BottomAppBar(modifier = Modifier.height(50.dp)) {
-                        menuCon(navController = navController, userID = userid)
+        } else {
+            Box {
+                Scaffold(
+                    bottomBar = {
+                        BottomAppBar(modifier = Modifier.height(50.dp)) {
+                            menuCon(navController = navController, userID = userid)
+                        }
                     }
-                }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Color(239, 239, 239)
-                        )
-                        .height(maxh)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-
-                    cabecera("Inicio de viaje")
-//Contenido
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp)
+                            .background(
+                                Color(239, 239, 239)
+                            )
+                            .height(maxh)
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-                        recuadroTitulos(titulo = obtenerFechaHoyCompleto())
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Box(
+
+                        cabecera("Inicio de viaje")
+//Contenido
+                        Column(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
-                                .border(2.dp, Color.White)
-                                .background(Color.White)
                                 .fillMaxWidth()
-                                .padding(15.dp)
+                                .padding(start = 10.dp, end = 10.dp)
                         ) {
-                            Column() {
-                                Text(
-                                    text = "Próximos viajes",
-                                    style = TextStyle(
-                                        color = Color.Black,
-                                        fontSize = 20.sp,
-                                        textAlign = TextAlign.Start,
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    modifier = Modifier
-                                )
-
-                                Text(
-                                    text = "Solamente te mostramos los viajes " +
-                                            "programados para los próximos 30 minutos",
-                                    style = TextStyle(
-                                        color = Color(86, 86, 86),
-                                        fontSize = 18.sp,
-                                        textAlign = TextAlign.Justify,
-                                    ),
-
-                                    )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-
-                        val horaMinima = obtenerHoraActualConRestaDeMinutos(30)
-                        val horaMaxima = obtenerHoraActualConSumaDeMinutos(30)
-
-                        println("Dias: ${obtenerNombreDiaEnEspanol(diaActual)}  hora maxima $horaMaxima " +
-                                "hora minimaa   $horaMinima")
-                        val vvv=viajes!!.filter {
-                            it.viaje_dia== obtenerNombreDiaEnEspanol(diaActual)
-                        }
-
-                        val horamin = viajes!!.filter {
-                            it.viaje_dia == obtenerNombreDiaEnEspanol(
-                                diaActual
-                            ) && it.viaje_hora_partida >= horaMinima
-
-                        }
-
-
-
-                        val viajesFiltrados = viajes!!.filter {
-                            it.viaje_dia == obtenerNombreDiaEnEspanol(
-                                diaActual
-                            ) && it.viaje_hora_partida >= horaMinima && it.viaje_hora_partida <= horaMaxima
-
-                        }
-
-                        //Mostrar solo los viajes del dia y los que estan por empezar
-
-                        if (viajesFiltrados.isNotEmpty()) {
-                            val viajesProximos =
-                                viajesFiltrados.sortedBy { it.viaje_hora_partida }
-
-                            viajesProximos.forEach { viaje ->
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .border(2.dp, Color.White)
-                                        .background(Color.White)
-                                        .fillMaxWidth()
-                                        .padding(15.dp)
-                                ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(16.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            textoHoraViaje(hora = "${viaje.viaje_hora_partida} hrs")
-                                            Column(
-                                                modifier = Modifier
-                                                    .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
-                                            ) {
-                                                val trayecto =
-                                                    convertirTrayecto(viaje.viaje_trayecto)
-                                                textoInformacionViaje(
-                                                    etiqueta = "Trayecto",
-                                                    contenido = trayecto
-                                                )
-                                                textoInformacionViaje(
-                                                    etiqueta = "Pasajeros confirmados",
-                                                    contenido = viaje.viaje_num_pasajeros_con
-                                                )
-
-                                            }
-                                        }
-                                        Button(
-                                            colors = ButtonDefaults.buttonColors(
-                                                backgroundColor = Color(
-                                                    137,
-                                                    13,
-                                                    88
-                                                )
-                                            ),
-                                            onClick = {
-                                                navController.navigate( "empezar_viaje/$userid/${viaje.viaje_id}")
-                                                //Iniaciar Viaje
-                                                     /* conEditarCampoViaje(
-                                                          navController = navController,
-                                                          ruta = "empezar_viaje/$userid/${viaje.viaje_id}",
-                                                          viajeId = viaje.viaje_id,
-                                                          camposEditar = "viaje_iniciado",
-                                                          nuevoValor = "si"
-
-                                                      )*/
-                                            },
-                                            modifier = Modifier.width(180.dp)
-                                        ) {
-                                            Text(
-                                                text = "Ver viaje", style = TextStyle(
-                                                    fontSize = 18.sp,
-                                                    color = Color.White
-                                                )
-                                            )
-                                        }
-                                    }
-
-                                }
-                                Spacer(modifier = Modifier.height(15.dp))
-
-
-                            }
-
-
-                        } else {
+                            Spacer(modifier = Modifier.height(15.dp))
+                            recuadroTitulos(titulo = obtenerFechaHoyCompleto())
+                            Spacer(modifier = Modifier.height(10.dp))
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(10.dp))
@@ -272,20 +140,173 @@ else {
                                     .fillMaxWidth()
                                     .padding(15.dp)
                             ) {
-                                mensajeNoViajes()
+                                Column() {
+                                    Text(
+                                        text = "Próximos viajes",
+                                        style = TextStyle(
+                                            color = Color.Black,
+                                            fontSize = 20.sp,
+                                            textAlign = TextAlign.Start,
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        modifier = Modifier
+                                    )
+
+                                    Text(
+                                        text = "Solamente te mostramos los viajes " +
+                                                "programados para los próximos 30 minutos",
+                                        style = TextStyle(
+                                            color = Color(86, 86, 86),
+                                            fontSize = 18.sp,
+                                            textAlign = TextAlign.Justify,
+                                        ),
+
+                                        )
+                                }
                             }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+
+                            val horaMinima = obtenerHoraActualConRestaDeMinutos(30)
+                            val horaMaxima = obtenerHoraActualConSumaDeMinutos(30)
+
+                            println(
+                                "Dias: ${obtenerNombreDiaEnEspanol(diaActual)}  hora maxima $horaMaxima " +
+                                        "hora minimaa   $horaMinima"
+                            )
+                            val vvv = viajes!!.filter {
+                                it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual)
+                            }
+
+                            val horamin = viajes!!.filter {
+                                it.viaje_dia == obtenerNombreDiaEnEspanol(
+                                    diaActual
+                                ) && it.viaje_hora_partida >= horaMinima
+
+                            }
+
+
+                            val viajesFiltrados = viajes!!.filter {
+                                it.viaje_dia == obtenerNombreDiaEnEspanol(
+                                    diaActual
+                                ) && it.viaje_hora_partida >= horaMinima && it.viaje_hora_partida <= horaMaxima
+
+                            }
+
+                            //Mostrar solo los viajes del dia y los que estan por empezar
+
+                            if (viajesFiltrados.isNotEmpty()) {
+                                val viajesProximos =
+                                    viajesFiltrados.sortedBy { it.viaje_hora_partida }
+
+                                viajesProximos.forEach { viaje ->
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .border(2.dp, Color.White)
+                                            .background(Color.White)
+                                            .fillMaxWidth()
+                                            .padding(15.dp)
+                                    ) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(16.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                textoHoraViaje(hora = "${viaje.viaje_hora_partida} hrs")
+                                                Column(
+                                                    modifier = Modifier
+                                                        .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
+                                                ) {
+                                                    val trayecto =
+                                                        convertirTrayecto(viaje.viaje_trayecto)
+                                                    textoInformacionViaje(
+                                                        etiqueta = "Trayecto",
+                                                        contenido = trayecto
+                                                    )
+                                                    textoInformacionViaje(
+                                                        etiqueta = "Pasajeros confirmados",
+                                                        contenido = viaje.viaje_num_pasajeros_con
+                                                    )
+
+                                                }
+                                            }
+                                            Button(
+                                                colors = ButtonDefaults.buttonColors(
+                                                    backgroundColor = Color(
+                                                        137,
+                                                        13,
+                                                        88
+                                                    )
+                                                ),
+                                                onClick = {
+
+                                                    if(viaje.viaje_num_pasajeros_con=="0" || viaje.viaje_num_pasajeros_con=="" || viaje.viaje_num_pasajeros=="0"){
+                                                        texto="No puedes inciar este viaje porque no tienen ningún pasajero confirmado"
+                                                        botonNoIniciar=true
+                                                    }
+                                                    else{
+
+                                                        navController.navigate("empezar_viaje/$userid/${viaje.viaje_id}")
+                                                    }
+
+                                                },
+                                                modifier = Modifier.width(180.dp)
+                                            ) {
+                                                Text(
+                                                    text = "Ver viaje", style = TextStyle(
+                                                        fontSize = 18.sp,
+                                                        color = Color.White
+                                                    )
+                                                )
+                                            }
+                                        }
+
+                                    }
+                                    Spacer(modifier = Modifier.height(15.dp))
+
+
+                                }
+
+
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .border(2.dp, Color.White)
+                                        .background(Color.White)
+                                        .fillMaxWidth()
+                                        .padding(15.dp)
+                                ) {
+                                    mensajeNoViajes()
+                                }
+                            }
+
+
                         }
 
 
                     }
 
-
                 }
 
+
+
+                if (botonNoIniciar) {
+                    dialogoNoIniciarViaje(
+                        onDismiss = { botonNoIniciar = false },
+                        texto
+                    )
+                }
             }
         }
-
     }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
