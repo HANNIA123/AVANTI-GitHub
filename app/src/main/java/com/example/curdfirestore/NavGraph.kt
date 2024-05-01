@@ -31,6 +31,7 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.perfilPas
 import com.example.curdfirestore.Usuario.resetPassword
 import com.example.curdfirestore.Parada.Pantallas.generalParada
 import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
+import com.example.curdfirestore.Solicitud.Pantallas.verConductores
 import com.example.curdfirestore.Solicitud.Pantallas.verPasajeros
 import com.example.curdfirestore.Solicitud.Pantallas.verSolicitudesCon
 import com.example.curdfirestore.Usuario.Pasajero.Pantallas.homePantallaPasajero
@@ -480,11 +481,8 @@ fun NavGraph(
         composable( "ver_conductores_pasajero/{userid}"
         ) {
             val userId= it.arguments?.getString("userid")?:""
-            //verConductores(navController = navController, userid = userId)
+            verConductores(navController = navController, userid = userId)
         }
-
-
-
 
 
 
