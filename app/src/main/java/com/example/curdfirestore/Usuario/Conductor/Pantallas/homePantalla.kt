@@ -48,10 +48,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ViajeDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConRestaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConSumaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
+import com.example.avanti.ui.theme.Aplicacion.restarTreintaMinutosAHoraActual
+import com.example.avanti.ui.theme.Aplicacion.sumarTreintaMinutosAHoraActual
 import com.example.curdfirestore.ContadorViewModel
 import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
@@ -172,30 +175,27 @@ fun homePantallaConductor(
                             Spacer(modifier = Modifier.height(10.dp))
 
 
-                            val horaMinima = obtenerHoraActualConRestaDeMinutos(30)
-                            val horaMaxima = obtenerHoraActualConSumaDeMinutos(30)
+                            val horaMinima = restarTreintaMinutosAHoraActual()
+                            val horaMaxima = sumarTreintaMinutosAHoraActual()
+
+
 
                             println(
                                 "Dias: ${obtenerNombreDiaEnEspanol(diaActual)}  hora maxima $horaMaxima " +
                                         "hora minimaa   $horaMinima"
                             )
-                            val vvv = viajes!!.filter {
-                                it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual)
-                            }
 
-                            val horamin = viajes!!.filter {
-                                it.viaje_dia == obtenerNombreDiaEnEspanol(
-                                    diaActual
-                                ) && it.viaje_hora_partida >= horaMinima
 
+                            viajes!!.forEach {
+                                println("hora: ${it.viaje_hora_partida}")
+                                println("Convertir ${convertirStringAHora(it.viaje_hora_partida)}")
                             }
 
 
                             val viajesFiltrados = viajes!!.filter {
-                                it.viaje_dia == obtenerNombreDiaEnEspanol(
-                                    diaActual
-                                ) && it.viaje_hora_partida >= horaMinima && it.viaje_hora_partida <= horaMaxima
-
+                                it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
+                                        convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima) &&
+                                        convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
                             }
 
                             //Mostrar solo los viajes del dia y los que estan por empezar

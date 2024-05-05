@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -74,35 +75,24 @@ fun obtenerHoraActual(): String {
     return horaActual.format(formatter)
 }
 
-
 @RequiresApi(Build.VERSION_CODES.O)
-fun obtenerHoraActualConRestaDeMinutos(minutosARestar: Long): String {
-    // Obtener la hora actual
-    val horaActual = LocalTime.now()
-
-    // Restar minutos a la hora actual
-    val horaConResta = horaActual.minusMinutes(minutosARestar)
-    println("Hora actua $horaActual")
-
-    // Formatear la hora en un formato deseado (opcional)
-    val formato = DateTimeFormatter.ofPattern("HH:mm")
-    val horaFormateada = horaConResta.format(formato)
-
-    // Devolver la hora formateada
-    return horaFormateada
+fun sumarTreintaMinutosAHoraActual(): LocalTime {
+    val ahora = LocalDateTime.now()
+    val horaDespues = ahora.plusMinutes(30)
+    return horaDespues.toLocalTime()
 }
 @RequiresApi(Build.VERSION_CODES.O)
-fun obtenerHoraActualConSumaDeMinutos(minutosASumar: Long): String {
-    // Obtener la hora actual
-    val horaActual = LocalTime.now()
+fun restarTreintaMinutosAHoraActual(): LocalTime {
+    val ahora = LocalDateTime.now()
+    val horaDespues = ahora.minusMinutes(30)
 
-    // Sumar minutos a la hora actual
-    val horaConSuma = horaActual.plusMinutes(minutosASumar)
-
-    // Formatear la hora en un formato deseado (opcional)
-    val formato = DateTimeFormatter.ofPattern("HH:mm")
-    val horaFormateada = horaConSuma.format(formato)
-
-    // Devolver la hora formateada
-    return horaFormateada
+    return horaDespues.toLocalTime()
 }
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun convertirStringAHora(horaString: String): LocalTime {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    return LocalTime.parse(horaString, formatter)
+}
+

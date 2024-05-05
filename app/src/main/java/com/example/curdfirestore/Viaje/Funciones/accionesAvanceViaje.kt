@@ -1,6 +1,5 @@
 package com.example.curdfirestore.Viaje.Funciones
 
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.avanti.SolicitudData
 import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
@@ -10,13 +9,10 @@ import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParadaPor
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitudPorBusqueda
 import com.example.curdfirestore.Viaje.ConsultasViaje.editarCampoViajeSinRuta
-import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
 import kotlinx.coroutines.runBlocking
 
 
 fun accionesComienzoViaje(viajeId: String, solicitudes: List<SolicitudData>?) {
-
-
     //Enviar notificaciones de comienzo de viaje
 
     //El conductor comenzo el viaje, enviar notificacion al pasajero
@@ -46,7 +42,6 @@ fun accionesComienzoViaje(viajeId: String, solicitudes: List<SolicitudData>?) {
     editarCampoViajeSinRuta(viajeId, "viaje_iniciado", "si")
 
 }
-
 
 
 fun accionesTerminoViaje(
