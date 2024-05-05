@@ -41,37 +41,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ViajeDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
-import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConRestaDeMinutos
-import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConSumaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.avanti.ui.theme.Aplicacion.restarTreintaMinutosAHoraActual
 import com.example.avanti.ui.theme.Aplicacion.sumarTreintaMinutosAHoraActual
 import com.example.curdfirestore.ContadorViewModel
-import com.example.curdfirestore.MainActivity
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.dialogoNoIniciarViaje
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
-import com.example.curdfirestore.Viaje.Pantallas.dialogoConfirmarEliminarViaje
 import com.example.curdfirestore.Viaje.Pantallas.mensajeNoViajes
-
 import com.example.curdfirestore.recuadroTitulos
 import com.example.curdfirestore.textoHoraViaje
 import com.example.curdfirestore.textoInformacionViaje
 import java.time.LocalDate
-import java.time.LocalTime
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
