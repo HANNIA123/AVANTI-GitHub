@@ -54,6 +54,7 @@ import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
 import com.example.avanti.ui.theme.Aplicacion.lineaGrisModificada
 import com.example.curdfirestore.ContadorViewModel
+import com.example.curdfirestore.Horario.Pantallas.Monitoreo.dialogoViajeFinalizo
 import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
@@ -134,6 +135,10 @@ fun obtenerCoordenadas(
     }
 
     var huellaIngresada by remember {
+        mutableStateOf(false)
+    }
+
+    var viajeFinalizado by remember {
         mutableStateOf(false)
     }
 
@@ -428,12 +433,7 @@ fun obtenerCoordenadas(
                             paradasOrdenadas.forEach { parada ->
                                 val parLatLng = convertirStringALatLng(parada.second.par_ubicacion)
                                 if (parLatLng != null) {
-                                    val direccionPar =
-                                        convertirStringALatLng(parada.second.par_ubicacion)?.let { it1 ->
-                                            convertCoordinatesToAddressRec(
-                                                coordenadas = it1
-                                            )
-                                        }
+
 
 
                                     Marker(
@@ -620,6 +620,7 @@ fun obtenerCoordenadas(
                                                 idParadaActual
                                             )
 
+                                            viajeFinalizado=true
                                         }
 
                                     }
@@ -815,6 +816,14 @@ fun obtenerCoordenadas(
                 viajeId = viajeId
             )
         }
+    }
+    if (viajeFinalizado) {
+        dialogoViajeFinalizo(
+            onDismiss = { viajeFinalizado = false },
+            "El viaje ha finalizado",
+            userId,
+            navController
+        )
     }
 }
 

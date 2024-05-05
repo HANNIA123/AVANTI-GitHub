@@ -52,6 +52,7 @@ import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabeceraAtrasRuta
 import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarPasajero
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
 import com.example.curdfirestore.Usuario.Conductor.menuCon
@@ -74,6 +75,7 @@ fun verInformacionViajeComenzada(
     }
 
     var listaSolicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+    var botonReportar by remember{ mutableStateOf(false) }
     conObtenerSolicitudesConductor(userId = userid) { solicitudes ->
         listaSolicitudes = solicitudes
     }
@@ -202,24 +204,17 @@ fun verInformacionViajeComenzada(
                                                         modifier = Modifier
                                                             // Alineación horizontal centrada
                                                             .clickable {
+                                                                       botonReportar=true
                                                                 // Función para reportar
                                                             },
                                                         horizontalArrangement = Arrangement.Center
                                                     ) {
-                                                        Icon(
-                                                            imageVector = Icons.Filled.Warning,
-                                                            contentDescription = "Reportar",
-                                                            modifier = Modifier.size(25.dp),
-                                                            tint = Color(180, 13, 13),
-                                                        )
-
-                                                        Spacer(modifier = Modifier.width(10.dp))
 
                                                         Text(
                                                             text = "Reportar",
                                                             style = TextStyle(
                                                                 color = Color(180, 13, 13),
-                                                                fontSize = 15.sp,
+                                                                fontSize = 16.sp,
                                                                 fontWeight = FontWeight.Bold
                                                             ),
                                                             modifier = Modifier.align(Alignment.CenterVertically)
@@ -261,7 +256,7 @@ fun verInformacionViajeComenzada(
                                                         Icon(
                                                             painter = painterResource(id = R.drawable.marcador),
                                                             contentDescription = "marker",
-                                                            tint = color,
+                                                            tint = Color.Black,
                                                             modifier = Modifier.size(25.dp)
 
                                                         )
@@ -330,6 +325,19 @@ fun verInformacionViajeComenzada(
 
 
     }
+    if(botonReportar){
+     /*   dialogoReportarPasajero(
+            onDismiss = { botonReportar = false },
+            usuarioPas!!,
+            userid,
+            pasajero_id,
+            navController
+        )
+
+      */
+
+    }
+
 
 
 }

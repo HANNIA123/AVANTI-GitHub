@@ -75,7 +75,8 @@ data class HorarioData(
     var horario_id:String="",
     var horario_trayecto: String="",
     var horario_solicitud:String="",
-    var horario_status: String="" //AGREGADO 23/12/23
+    var horario_status: String="" ,
+    var horario_iniciado:String=""
 )
 
 data class HorarioDataReturn(

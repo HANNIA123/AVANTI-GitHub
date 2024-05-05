@@ -55,7 +55,7 @@ import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaRT
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitud
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudByHorarioRT
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
 import com.example.curdfirestore.Usuario.Pasajero.menuDesplegablePas
@@ -182,7 +182,7 @@ fun verUbicacionMonitoreo(
     val infHorario = conObtenerHorarioId(horarioId = horarioId)
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
 
-    val solicitud = conObtenerSolicitud(horarioId = horarioId)
+    val solicitud = conObtenerSolicitudByHorarioRT(horarioId = horarioId)
 
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
@@ -255,7 +255,6 @@ fun verUbicacionMonitoreo(
                                 for (i in 0..(totalParadas + 2)) {
                                     val color: Color
                                     if (viajeComenzado.isEmpty()) {
-                                        println("No ha comenzado")
                                         color = Color(222, 222, 222)
                                     } else {
                                         val numeros = listParadasRecorridas.size
@@ -413,7 +412,7 @@ fun verUbicacionMonitoreo(
                             modifier = Modifier.size(48.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            androidx.compose.material.Icon(
+                          Icon(
                                 Icons.Default.Warning,
                                 contentDescription = null,
                                 tint = Color.White

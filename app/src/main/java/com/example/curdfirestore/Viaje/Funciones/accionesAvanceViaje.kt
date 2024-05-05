@@ -52,6 +52,8 @@ fun accionesTerminoViaje(
         editarCampoViajeSinRuta(viajeId, "viaje_iniciado", "no")
         actualizarCampoParadaPorViaje(viajeId, "par_recorrido", "no")
         actualizarCampoParadaPorViaje(viajeId, "para_viaje_comenzado", "no")
+        actualizarCampoParadaPorViaje(viajeId, "par_llegada_pas", "no")
+
         actualizarCampoParada(paradaId, "par_llegada_pas", "no")
 
         solicitudes?.forEach {

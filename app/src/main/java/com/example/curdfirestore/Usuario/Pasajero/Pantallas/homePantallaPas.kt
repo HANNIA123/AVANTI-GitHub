@@ -49,6 +49,7 @@ import com.example.avanti.ui.theme.Aplicacion.obtenerDiaDeLaSemanaActual
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
 import com.example.curdfirestore.AuthViewModel
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPas
+import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPasRT
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorHorario
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 
@@ -66,14 +67,10 @@ fun homePantallaPasajero(
 ) {
     // Obtén el Painter desde la ruta específica
     val painter: Painter = painterResource(R.drawable.hecho)
-
-    var horarios by remember { mutableStateOf<List<HorarioDataReturn>?>(null) }
     var solicitud by remember { mutableStateOf<List<SolicitudData>?>(null) }
 
 
-    conObtenerItinerarioPas(userId = userid) { resultado ->
-        horarios = resultado
-    }
+    val horarios= conObtenerItinerarioPasRT(userId = userid)
 
 
     BoxWithConstraints {
@@ -129,13 +126,13 @@ fun homePantallaPasajero(
                 )
 
             }
-            if (horarios != null) {
+          horarios?.let {
                 val horarioIniciado =
-                    horarios!!.filter { it.horario_iniciado == "si" }.firstOrNull()
+                    horarios.filter { it.second.horario_iniciado == "si" }.firstOrNull()
                 if (horarioIniciado != null) {
 
                     conObtenerSolicitudesPorHorario(
-                        horarioIniciado.horario_id,
+                        horarioIniciado.first,
                         "Aceptada"
                     ) { resultado ->
                         solicitud = resultado
