@@ -37,6 +37,7 @@ import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.Usuario.LoginViewModel
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.curdfirestore.AuthViewModel
 
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 
@@ -46,11 +47,11 @@ var maxh=0.dp
 @Composable
 fun cuentaPantallaCon(
     navController: NavController,
-    userID:String
+    userID:String,
+    authViewModel: AuthViewModel
 ){
     val usuario= conObtenerUsuarioId(correo = userID)
 
-    val viewModel= LoginViewModel()
 
     BoxWithConstraints{
         maxh = this.maxHeight-50.dp
@@ -172,9 +173,9 @@ cabecera(titulo = "Cuenta")
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        viewModel.signOut()
+                        authViewModel.signOut()
                         navController.navigate(route = "login")
-                        println("Se ha cerrado")
+
                     }) {
                     Icon(
                         imageVector = Icons.Filled.ExitToApp,

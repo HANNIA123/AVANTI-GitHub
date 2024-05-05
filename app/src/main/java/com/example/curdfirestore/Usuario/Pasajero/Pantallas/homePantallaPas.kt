@@ -47,6 +47,7 @@ import com.example.curdfirestore.R
 
 import com.example.avanti.ui.theme.Aplicacion.obtenerDiaDeLaSemanaActual
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
+import com.example.curdfirestore.AuthViewModel
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPas
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorHorario
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
@@ -61,6 +62,7 @@ import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 fun homePantallaPasajero(
     navController: NavController,
     userid: String,
+
 ) {
     // Obtén el Painter desde la ruta específica
     val painter: Painter = painterResource(R.drawable.hecho)

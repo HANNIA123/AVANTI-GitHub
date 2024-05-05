@@ -19,7 +19,6 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -42,16 +40,13 @@ import com.example.avanti.SolicitudData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
-import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaRT
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.ConsultasConductor.conObtenerVehiculoId
-import com.example.curdfirestore.textInMarker
 import com.example.curdfirestore.textInfPasajeros
 import com.example.curdfirestore.textInfViaje
-
 import com.example.curdfirestore.textoNegrita
-import com.example.curdfirestore.textoNormal
+
 
 @Composable
 fun dialogoVerInfViajeIniciado(
@@ -231,8 +226,6 @@ fun dialogoVerInfViajeIniciado(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Column {
-
-
                                             textInfViaje(
                                                 Label = "Vehículo: ",
                                                 Text = "${vehiculo.vehi_marca} ${vehiculo.vehi_color}",
@@ -242,7 +235,7 @@ fun dialogoVerInfViajeIniciado(
 
                                             textInfViaje(
                                                 Label = "Placas: ",
-                                                Text = "${vehiculo.vehi_marca} ${vehiculo.vehi_color}",
+                                                Text = "${vehiculo.vehi_placas}",
                                                 color = Color.Black,
                                                 tam = tam
                                             )
@@ -277,8 +270,6 @@ fun dialogoVerInfViajeIniciado(
                         }
 
                     }
-
-
 
                     Spacer(modifier = Modifier.height(20.dp))
 

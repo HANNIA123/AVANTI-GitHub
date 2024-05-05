@@ -83,6 +83,14 @@ fun accionesTerminoViaje(viajeId: String, solicitudes:  List<SolicitudData>?,
 
     )
 
+    actualizarCampoSolicitudPorBusqueda(
+        "parada_id",
+        paradaId,
+        "solicitud_validacion_pasajero",
+        "pendiente"
+
+    )
+
     navController.navigate("homeconductor/$userId")
 
 }

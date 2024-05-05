@@ -48,36 +48,26 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.SolicitudData
 import com.example.avanti.ui.theme.Aplicacion.lineaGrisModificada
-import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
+import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
-import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParadaPorViaje
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
-import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaRT
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
-import com.example.curdfirestore.Usuario.Conductor.Pantallas.dialogoNoIniciarViaje
-import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
-import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
 import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
 import com.example.curdfirestore.Usuario.Pasajero.menuDesplegablePas
-import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
-import com.example.curdfirestore.Viaje.ConsultasViaje.editarCampoViajeSinRuta
-import com.example.curdfirestore.Viaje.Funciones.UbicacionRealTime
-import com.example.curdfirestore.Viaje.Funciones.accionesComienzoViaje
-import com.example.curdfirestore.Viaje.Funciones.accionesTerminoViaje
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
-import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViaje
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViajePas
+import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
+import com.example.curdfirestore.Viaje.Pantallas.Huella.dialogoHuellaFallida
 import com.example.curdfirestore.lineaCargando
-import com.example.curdfirestore.textInfPasajeros
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -102,7 +92,17 @@ fun verUbicacionMonitoreo(
     paradaId: String,
     navController: NavController
 ) {
+    val activity1 = LocalContext.current as MainActivity
+    var botonNotificacionValidacion by remember {
+        mutableStateOf(false)
+    }
+    var textoDialogo by remember {
+        mutableStateOf("")
+    }
     var botonNotificacionParada by remember {
+        mutableStateOf(false)
+    }
+    var botonLlegada by remember {
         mutableStateOf(false)
     }
     var validar by remember {
@@ -170,6 +170,12 @@ fun verUbicacionMonitoreo(
     }
     var botonFinalizo by remember {
         mutableStateOf(false)
+    }
+    var huellaCorrecta by remember {
+        mutableStateOf(true)
+    }
+    var huellaIngresada by remember {
+        mutableStateOf(true)
     }
 
 
@@ -336,10 +342,6 @@ fun verUbicacionMonitoreo(
                     onMapLoaded = {
                         cargando = true
                     },
-                    /*cameraPositionState = CameraPositionState(CameraPosition(LatLng(animatedLatitude.value.toDouble(),
-                        animatedLongitude.value.toDouble()
-                    ), 16f, 0f,0f))
-                  */
                 ) {
                     Marker(
                         state = MarkerState(
@@ -367,7 +369,6 @@ fun verUbicacionMonitoreo(
                                     )
                                 ),
                                 title = "Punto de origen",
-
                                 icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
                             )
                         }
@@ -424,109 +425,160 @@ fun verUbicacionMonitoreo(
             }
 
 
-                parada?.let {
+            parada?.let {
 
-                    //Boton de llegada
-                    Row(
-                        modifier = Modifier   .background(Color.White)
-                            .fillMaxWidth()   .height(70.dp),
+                //Boton de llegada
+                Row(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .fillMaxWidth()
+                        .height(60.dp),
 
-                        horizontalArrangement = Arrangement.SpaceBetween, // Distribuye los elementos de forma equitativa en el eje horizontal
-                        verticalAlignment = Alignment.CenterVertically // Alin
+                    horizontalArrangement = Arrangement.SpaceBetween, // Distribuye los elementos de forma equitativa en el eje horizontal
+                    verticalAlignment = Alignment.CenterVertically // Alin
 
-                    ) {
-
-
-                        if (parada.par_llegada_pas != "si") {
-
-                            Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = Color(
-                                        137,
-                                        13,
-                                        88
-                                    )
-                                ),
-                                onClick = {
-                                    botonNotificacionParada = true
-                                    actualizarCampoParada(paradaId, "par_llegada_pas", "si")
-
-                                },
-                                modifier = Modifier
-                                    .height(54.dp)
-                                    .padding(5.dp)
-                                    .weight(0.6f) // Ocupa el 80% del ancho disponible
-                            ) {
-                                Text(
-                                    text = "Llegué a la parada",
-                                    style = TextStyle(
-                                        fontSize = 18.sp,
-                                        color = Color.White
-                                    )
-                                )
-                            }
-                        } else {
-                            //Verificar la validación, si ya es exitosa, entonces...
-                            Box(modifier = Modifier
-                                .padding(5.dp)
-                                .weight(0.6f)) {
-                                Text(
-                                    text = "En camino...",
-                                    style = TextStyle(
-                                        fontSize = 18.sp,
-                                        color = Color(
-                                            137,
-                                            13,
-                                            88
-                                        ),
-                                    )
-                                )
-                            }
-
-                        }
+                ) {
 
 
-
-                        Spacer(modifier = Modifier.width(10.dp))
+                    if (parada.par_llegada_pas != "si") {
 
                         Button(
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color(
+                                    137,
+                                    13,
+                                    88
+                                )
+                            ),
                             onClick = {
 
-                                verInformacionViaje = true
+                                autenticaHuella(
+                                    activity = activity1,
+                                    exitoso = {
+                                        huellaCorrecta = true
+                                        huellaIngresada = true
+
+                                    },
+                                    fallido = {
+                                        huellaCorrecta = false
+                                        huellaIngresada = true
+                                    },
+                                    maxIntentos = 3
+
+                                )
+                                botonLlegada = true
+
                             },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(137, 13, 88)
-                            ),
                             modifier = Modifier
                                 .height(54.dp)
                                 .padding(5.dp)
-
+                                .weight(0.6f) // Ocupa el 80% del ancho disponible
                         ) {
-
-                            Icon(
-                                Icons.Default.Info,
-                                contentDescription = null,
-                                tint = Color.White
+                            Text(
+                                text = "Llegué a la parada",
+                                style = TextStyle(
+                                    fontSize = 18.sp,
+                                    color = Color.White
+                                )
                             )
-
                         }
+                    } else {
+                        //Verificar la validación, si ya es exitosa, entonces...
+                        Box(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .weight(0.6f)
+                        ) {
+                            Text(
+                                text = "En camino...",
+                                style = TextStyle(
+                                    fontSize = 18.sp,
+                                    color = Color(
+                                        137,
+                                        13,
+                                        88
+                                    ),
+                                )
+                            )
+                        }
+
                     }
 
-                    if (botonNotificacionParada) {
-                        solicitud?.let {
-                            registrarNotificacionViajePas(
-                                tipoNot = "llp",
-                                solicitud,
-                                userId,
-                                viajeId
-                            )
+
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Button(
+                        onClick = {
+
+                            verInformacionViaje = true
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(137, 13, 88)
+                        ),
+                        modifier = Modifier
+                            .height(54.dp)
+                            .padding(5.dp)
+
+                    ) {
+
+                        Icon(
+                            Icons.Default.Info,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+
+                    }
+                }
+
+
+
+                if (botonLlegada) {
+                    botonNotificacionParada = true
+                    if(huellaIngresada){
+                        if (huellaCorrecta) {
+
+                            actualizarCampoSolicitud(solicitudId, "solicitud_validacion_pasajero", "si")
                         }
-                        botonNotificacionParada = false
+                        else{
+                            textoDialogo =
+                                "Tu identidad no ha sido validada.El coductor será notificado "
+                            actualizarCampoSolicitud(solicitudId, "solicitud_validacion_pasajero", "no")
+
+                        }
+                        actualizarCampoParada(paradaId, "par_llegada_pas", "si")
+
+                        botonNotificacionParada=true
+                        botonLlegada=false
                     }
 
 
                 }
 
+                if (botonNotificacionParada) {
+                    solicitud?.let {
+                        registrarNotificacionViajePas(
+                            tipoNot = "llp",
+                            solicitud,
+                            userId,
+                            viajeId
+                        )
+                    }
+                    botonNotificacionParada = false
+                }
+                if (botonNotificacionValidacion) {
+                    solicitud?.let {
+                        registrarNotificacionViajePas(
+                            tipoNot = "vi",
+                            solicitud,
+                            userId,
+                            viajeId
+                        )
+                    }
+                    botonNotificacionValidacion = false
+                }
+
+            }
 
 
         }
@@ -539,6 +591,13 @@ fun verUbicacionMonitoreo(
             userID = userId
         )
     }
+    if (huellaIngresada && !huellaCorrecta) {
+        dialogoHuellaFallida(
+            onDismiss = { huellaCorrecta = false },
+            text = textoDialogo
+        )
+    }
+
 
     if (verInformacionViaje) {
         solicitud?.let {

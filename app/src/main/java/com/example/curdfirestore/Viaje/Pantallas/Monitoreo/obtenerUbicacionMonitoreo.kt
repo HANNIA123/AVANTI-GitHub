@@ -72,6 +72,8 @@ import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViaje
 import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
 import com.example.curdfirestore.Viaje.Pantallas.Huella.dialogoHuellaFallida
+import com.example.curdfirestore.iniciarContador
+import com.example.curdfirestore.iniciarContador1
 import com.example.curdfirestore.lineaCargando
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -184,6 +186,26 @@ fun obtenerCoordenadas(
     })
 
 
+    val referenciaBoton = Firebase.database.getReference(newUserId).child("InicioViaje")
+
+// Agregar un listener para obtener el valor de la variable
+    referenciaBoton.addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val valor = snapshot.getValue(Boolean::class.java)
+            if (valor != null) {
+                // Utiliza el valor como necesites
+                visibilidadInicioViaje = valor
+            }
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            // Manejar el error en caso de que ocurra
+        }
+    }
+    )
+    println("Visibiliodad $visibilidadInicioViaje")
+
+
     //Paradas en el mapa y control de ellas
     var boton by remember {
         mutableStateOf(false)
@@ -192,6 +214,9 @@ fun obtenerCoordenadas(
         mutableStateOf(false)
     }
     var botonNotificacionParada by remember {
+        mutableStateOf(false)
+    }
+    var botonNotificacionValida by remember {
         mutableStateOf(false)
     }
     var botonNotificacionFin by remember {
@@ -526,7 +551,7 @@ fun obtenerCoordenadas(
 
                     ) {
 
-                        if (visibilidadInicioViaje){
+                        if (visibilidadInicioViaje) {
                             Button(
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = Color(
@@ -615,7 +640,7 @@ fun obtenerCoordenadas(
                                 )
                             }
 
-                    }
+                        }
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Button(
@@ -647,22 +672,20 @@ fun obtenerCoordenadas(
                             if (huellaIngresada) {
                                 textoDialogo =
                                     "Tu identidad no ha sido validada.No puedes comenzar el viaje en este momento. "
-println("huella correcta $huellaCorrecta -----------")
-                              if(huellaCorrecta){
-                                  accionesComienzoViaje(
-                                      viajeId = viajeId,
-                                      solicitudes = solicitudes,
 
-                                      )
-                                  botonNotificacionInicio = true
-                              }
-                                else{
-                                  viewModel.iniciarContador(1)
-visibilidadInicioViaje=false
+                                if (huellaCorrecta) {
+                                    accionesComienzoViaje(
+                                        viajeId = viajeId,
+                                        solicitudes = solicitudes,
 
+                                        )
+                                    botonNotificacionInicio = true
+                                } else {
+                                    iniciarContador1(newUserId, context)
+                                    /*  viewModel.iniciarContador(1)
+    visibilidadInicioViaje=false*/
 
-
-                              }
+                                }
 
                                 botonInicioViaje = false
 
@@ -684,7 +707,7 @@ visibilidadInicioViaje=false
                                         "si"
 
                                     )
-
+                                    botonNotificacionValida = true
 
                                     //Enviar notificacion a los pasajeros
 
@@ -733,6 +756,17 @@ visibilidadInicioViaje=false
                             }
                             botonNotificacionParada = false
                         }
+                        if (botonNotificacionValida) {
+                            if (solicitudes != null) {
+                                registrarNotificacionViaje(
+                                    tipoNot = "vi",
+                                    solicitudes!!,
+                                    userId,
+                                    viajeId
+                                )
+                            }
+                            botonNotificacionValida = false
+                        }
                         if (botonNotificacionFin) {
                             if (solicitudes != null) {
                                 registrarNotificacionViaje(
@@ -762,7 +796,7 @@ visibilidadInicioViaje=false
     }
     if (huellaIngresada && !huellaCorrecta) {
         dialogoHuellaFallida(
-            onDismiss = { huellaCorrecta = true },
+            onDismiss = { huellaCorrecta = false },
             text = textoDialogo
         )
     }

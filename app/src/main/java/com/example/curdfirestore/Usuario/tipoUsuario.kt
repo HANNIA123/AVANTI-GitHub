@@ -18,7 +18,6 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.homePantallaPasajero
 fun obtenerTipoUsuario(
     navController: NavController,
     userId: String,
-    activity: MainActivity,
     viewModel: ContadorViewModel,
     authViewModel: AuthViewModel
 ) {
