@@ -6,11 +6,15 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
 import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
+import com.example.curdfirestore.AuthViewModel
+import com.example.curdfirestore.ContadorViewModel
 import com.example.curdfirestore.Horario.ConsultasHorario.conBuscarViajePas
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.verUbicacionMonitoreo
 import com.example.curdfirestore.Horario.Pantallas.generalViajePas
@@ -21,6 +25,7 @@ import com.example.curdfirestore.Parada.Pantallas.Editar.registrarParadaBarraEdi
 import com.example.curdfirestore.Horario.Pantallas.verItinerarioPas
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajero
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajeroSinPar
+import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
@@ -54,33 +59,57 @@ import com.google.firebase.messaging.FirebaseMessaging
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: ContadorViewModel,
+    authViewModel: AuthViewModel
+
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screens.Login.route
+        startDestination = Screens.Login.route,
+
     ) {
         // main screen
         composable(
             route = Screens.Login.route
         ) {
-            Login(navController = navController) {
-                navController.navigate("home/$it")
-                //-------------------FCM--------------------------------------------
-                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val token = task.result
-                        println("TOKEN")
-                        println(token)
-                        println("ID")
-                        println(it)
-                        sendTokenToServer(it, token)
-                    } else {
-                        println("FCM -> Error al obtener el token: ${task.exception}")
-                    }
-                }
 
-            }
+            println("INICIA Y ${authViewModel.isLoggedIn.value}")
+
+
+
+            if (authViewModel.isLoggedIn.value) {
+                println("autenticado")
+                val userId = authViewModel.currentUser!!.email
+
+
+
+                val activity = LocalContext.current as MainActivity
+                obtenerTipoUsuario(navController = navController, userId = userId.toString(), activity, viewModel, authViewModel)
+                // homePantallaConductor(navController = navController, userid = )
+
+            } else {
+                println("NOO autenticado")
+                Login(navController = navController) {
+                    navController.navigate("home/$it")
+                    //-------------------FCM--------------------------------------------
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val token = task.result
+                            println("TOKEN")
+                            println(token)
+                            println("ID")
+                            println(it)
+                            sendTokenToServer(it, token)
+                        } else {
+                            println("FCM -> Error al obtener el token: ${task.exception}")
+                        }
+                    }
+
+                }
+                  }
+
+
         }
         composable("reset_password") {
             resetPassword(navController = navController)
@@ -90,7 +119,8 @@ fun NavGraph(
             "home/{useid}"
         ) {
             val userId = it.arguments?.getString("useid") ?: ""
-            obtenerTipoUsuario(navController = navController, userId = userId)
+            val activity = LocalContext.current as MainActivity
+            obtenerTipoUsuario(navController = navController, userId = userId, activity, viewModel, authViewModel)
             // homePantallaConductor(navController = navController, userid = )
 
         }
@@ -98,7 +128,8 @@ fun NavGraph(
             "homeconductor/{useid}"
         ) {
             val userId = it.arguments?.getString("useid") ?: ""
-             homePantallaConductor(navController = navController, userid = userId)
+            val activity = LocalContext.current as MainActivity
+             homePantallaConductor(navController = navController, userid = userId, viewModel )
 
         }
 
@@ -372,9 +403,12 @@ fun NavGraph(
         //Ruta para iniciar el viaje
         composable("empezar_viaje/{correo}/{viajeid}"
         ) {
+            val activity = LocalContext.current as MainActivity
+            println("Tipo de activity: ${activity?.javaClass?.simpleName}")
+
             val userId = it.arguments?.getString("correo") ?: ""
             val viajeId = it.arguments?.getString("viajeid") ?: ""
-            obtenerCoordenadas(userId = userId, viajeId =viajeId, navController=navController)
+            obtenerCoordenadas(userId = userId, viajeId =viajeId, navController=navController, viewModel = viewModel)
         }
 
 

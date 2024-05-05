@@ -6,6 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
+import com.example.curdfirestore.AuthViewModel
+import com.example.curdfirestore.ContadorViewModel
+import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Usuario.Pasajero.Pantallas.homePantallaPasajero
 
 
@@ -15,7 +18,12 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.homePantallaPasajero
 fun obtenerTipoUsuario(
     navController: NavController,
     userId: String,
+    activity: MainActivity,
+    viewModel: ContadorViewModel,
+    authViewModel: AuthViewModel
 ) {
+    val currentUser = authViewModel.currentUser
+
 
     // Llamamos a la función obtenerUsuarioId y recibimos el usuario
     val usuario = conObtenerUsuarioId(userId)
@@ -25,7 +33,7 @@ fun obtenerTipoUsuario(
 
         if(usuario!!.usu_tipo=="Conductor"){
            // obtenerCoordenadas(userId)
-        homePantallaConductor(navController = navController, userid =userId )
+        homePantallaConductor(navController = navController, userid =userId, viewModel )
 
 
         }

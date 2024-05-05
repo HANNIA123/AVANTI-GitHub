@@ -193,7 +193,7 @@ fun verSolicitudesCon(
                                                         .size(70.dp)
                                                         .clip(CircleShape)
                                                 )
-                                                Spacer(modifier = Modifier.width(20.dp)) // Agrega un espacio entre el texto y la columna
+                                                Spacer(modifier = Modifier.width(20.dp))
 
                                                 Column {
                                                     Text(

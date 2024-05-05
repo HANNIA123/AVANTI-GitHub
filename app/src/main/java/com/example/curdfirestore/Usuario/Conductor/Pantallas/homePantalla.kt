@@ -52,6 +52,8 @@ import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConRestaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActualConSumaDeMinutos
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
+import com.example.curdfirestore.ContadorViewModel
+import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.dialogoNoIniciarViaje
@@ -76,6 +78,8 @@ import java.time.LocalTime
 fun homePantallaConductor(
     navController: NavController,
     userid: String,
+    viewModel: ContadorViewModel
+
 ) {
 
     BoxWithConstraints {
@@ -101,7 +105,7 @@ fun homePantallaConductor(
 
         if (viajesIniciados.isNotEmpty()) {
             val primerViajeIniciado = viajesIniciados.firstOrNull()
-            obtenerCoordenadas(userId = userid, primerViajeIniciado!!.viaje_id, navController)
+            obtenerCoordenadas(userId = userid, primerViajeIniciado!!.viaje_id, navController, viewModel)
         } else {
             Box {
                 Scaffold(
@@ -309,6 +313,7 @@ fun homePantallaConductor(
 
 }
 
+/*
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
@@ -317,3 +322,4 @@ fun MyScaffoldContentPreview() {
     homePantallaConductor(navController = navController, userid = "hannia")
 }
 
+*/

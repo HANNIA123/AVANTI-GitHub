@@ -1,15 +1,20 @@
 package com.example.curdfirestore.Viaje.Funciones
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.avanti.SolicitudData
 import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
+import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParadaPorViaje
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitudPorBusqueda
 import com.example.curdfirestore.Viaje.ConsultasViaje.editarCampoViajeSinRuta
+import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
 
 
 fun accionesComienzoViaje(viajeId:String,solicitudes:  List<SolicitudData>? ){
+
 
     //Enviar notificaciones de comienzo de viaje
 
@@ -41,7 +46,8 @@ fun accionesComienzoViaje(viajeId:String,solicitudes:  List<SolicitudData>? ){
 
 }
 
-fun accionesTerminoViaje(viajeId: String, solicitudes:  List<SolicitudData>?, navController: NavController, userId:String, paradaId:String){
+fun accionesTerminoViaje(viajeId: String, solicitudes:  List<SolicitudData>?,
+                         navController: NavController, userId:String, paradaId:String){
     editarCampoViajeSinRuta(viajeId, "viaje_iniciado", "no")
     actualizarCampoParadaPorViaje(
         viajeId,
@@ -68,6 +74,14 @@ fun accionesTerminoViaje(viajeId: String, solicitudes:  List<SolicitudData>?, na
         )
 
     }
+
+    actualizarCampoSolicitudPorBusqueda(
+        "parada_id",
+        paradaId,
+        "solicitud_validacion_conductor",
+        "pendiente"
+
+    )
 
     navController.navigate("homeconductor/$userId")
 

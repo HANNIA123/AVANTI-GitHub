@@ -2,7 +2,9 @@ package com.example.curdfirestore.Viaje.Pantallas.Monitoreo
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -32,6 +34,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,21 +46,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.avanti.NoticacionData
 import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
 import com.example.avanti.ui.theme.Aplicacion.lineaGrisModificada
-import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
-import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
-import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
+import com.example.curdfirestore.ContadorViewModel
+import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitudPorBusqueda
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
@@ -68,6 +70,8 @@ import com.example.curdfirestore.Viaje.Funciones.accionesTerminoViaje
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddressRec
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViaje
+import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
+import com.example.curdfirestore.Viaje.Pantallas.Huella.dialogoHuellaFallida
 import com.example.curdfirestore.lineaCargando
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -92,8 +96,15 @@ import kotlinx.coroutines.launch
 fun obtenerCoordenadas(
     userId: String,
     viajeId: String,
-    navController: NavController
+    navController: NavController,
+    viewModel: ContadorViewModel
 ) {
+    val contador by viewModel.contador.collectAsState()
+    println("Contador--------- $contador")
+
+
+    val activity1 = LocalContext.current as MainActivity
+
     var maxh by remember {
         mutableStateOf(0.dp)
     }
@@ -116,8 +127,18 @@ fun obtenerCoordenadas(
     var empezarUbicacion by remember {
         mutableStateOf(false)
     }
+    var textoDialogo by remember {
+        mutableStateOf("")
+    }
+
+    var huellaIngresada by remember {
+        mutableStateOf(false)
+    }
 
 
+    var visibilidadInicioViaje by remember {
+        mutableStateOf(true)
+    }
     val referencia = Firebase.database.getReference("ubicacion").child(viajeId)
 
 
@@ -176,17 +197,17 @@ fun obtenerCoordenadas(
     var botonNotificacionFin by remember {
         mutableStateOf(false)
     }
+    var botonInicioViaje by remember {
+        mutableStateOf(false)
+    }
+    var botonParadas by remember {
+        mutableStateOf(false)
+    }
     var verInformacionViaje by remember {
         mutableStateOf(false)
     }
-    var ejecutado by remember {
-        mutableStateOf(false)
-    }
-    var ejecutadoPar by remember {
-        mutableStateOf(false)
-    }
-    var notEnviada by remember {
-        mutableStateOf(false)
+    var huellaCorrecta by remember {
+        mutableStateOf(true)
     }
 
     var cargando by remember {
@@ -481,13 +502,11 @@ fun obtenerCoordenadas(
                         }
 
                     }
-                    println("Total de paradas $totalParadas")
-                    println("Numero parada actual $numParadaActual")
 
                     val textoBoton = if (viajeComenzado.isEmpty()) {
                         "Comenzar viaje"
                     } else {
-                        if (numParadaActual < totalParadas ) {
+                        if (numParadaActual < totalParadas) {
                             "Llegué a la parada"
                         } else {
                             "Finalizar viaje"
@@ -506,63 +525,97 @@ fun obtenerCoordenadas(
                         verticalAlignment = Alignment.CenterVertically // Alin
 
                     ) {
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(
-                                    137,
-                                    13,
-                                    88
-                                )
-                            ),
-                            onClick = {
-                                empezarUbicacion = true
-                                num = listParadasRecorridas.size
-                               // numParadaActual = listParadasRecorridas.size
-                                if (viajeComenzado.isEmpty()) {
-                                    accionesComienzoViaje(
-                                        viajeId = viajeId,
-                                        solicitudes = solicitudes
-                                    )
-                                    botonNotificacionInicio = true
 
-                                } else {
-                                    if (numParadaActual < totalParadas) {
-                                        idParadaActual = paradasOrdenadas[numParadaActual].first
-                                        actualizarCampoParada(idParadaActual, "par_recorrido", "si")
-                                        paradasOrdenadasPasar = paradasOrdenadas
-                                        botonNotificacionParada = true
+                        if (visibilidadInicioViaje){
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color(
+                                        137,
+                                        13,
+                                        88
+                                    )
+                                ),
+                                onClick = {
+
+                                    empezarUbicacion = true
+                                    num = listParadasRecorridas.size
+
+                                    // numParadaActual = listParadasRecorridas.size
+                                    if (viajeComenzado.isEmpty()) {
+
+
+                                        autenticaHuella(
+                                            activity = activity1,
+                                            exitoso = {
+                                                huellaCorrecta = true
+                                                huellaIngresada = true
+                                            },
+                                            fallido = {
+                                                huellaIngresada = true
+                                                huellaCorrecta = false
+                                            },
+                                            maxIntentos = 3
+                                        )
+
+
+                                        botonInicioViaje = true
 
                                     } else {
-                                        // Restablecer el status del viaje y las paradas
-                                        botonNotificacionFin = true
+                                        huellaIngresada = false
+                                        if (numParadaActual < totalParadas) {
 
-                                        accionesTerminoViaje(
-                                            viajeId,
-                                            solicitudes,
-                                            navController,
-                                            userId,
-                                            idParadaActual
-                                        )
+
+                                            idParadaActual = paradasOrdenadas[numParadaActual].first
+                                            paradasOrdenadasPasar = paradasOrdenadas
+                                            autenticaHuella(
+                                                activity = activity1,
+                                                exitoso = {
+                                                    huellaCorrecta = true
+                                                    huellaIngresada = true
+                                                },
+                                                fallido = {
+                                                    huellaIngresada = true
+                                                    huellaCorrecta = false
+                                                },
+                                                maxIntentos = 3
+                                            )
+
+                                            botonParadas = true
+
+
+                                        } else {
+                                            // Restablecer el status del viaje y las paradas
+                                            botonNotificacionFin = true
+
+                                            accionesTerminoViaje(
+                                                viajeId,
+                                                solicitudes,
+                                                navController,
+                                                userId,
+                                                idParadaActual
+                                            )
+
+                                        }
 
                                     }
 
-                                }
+                                },
+                                modifier = Modifier
 
-                            },
-                            modifier = Modifier
-
-                                .height(54.dp)
-                                .padding(5.dp)
-                                .weight(0.6f) // Ocupa el 80% del ancho disponible
-                        ) {
-                            Text(
-                                text = textoBoton,
-                                style = TextStyle(
-                                    fontSize = 18.sp,
-                                    color = Color.White
+                                    .height(54.dp)
+                                    .padding(5.dp)
+                                    .weight(0.6f) // Ocupa el 80% del ancho disponible
+                            ) {
+                                Text(
+                                    text = textoBoton,
+                                    style = TextStyle(
+                                        fontSize = 18.sp,
+                                        color = Color.White
+                                    )
                                 )
-                            )
-                        }
+                            }
+
+                    }
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Button(
@@ -586,6 +639,74 @@ fun obtenerCoordenadas(
                                 contentDescription = null,
                                 tint = Color.White
                             )
+
+                        }
+
+                        if (botonInicioViaje) {
+
+                            if (huellaIngresada) {
+                                textoDialogo =
+                                    "Tu identidad no ha sido validada.No puedes comenzar el viaje en este momento. "
+println("huella correcta $huellaCorrecta -----------")
+                              if(huellaCorrecta){
+                                  accionesComienzoViaje(
+                                      viajeId = viajeId,
+                                      solicitudes = solicitudes,
+
+                                      )
+                                  botonNotificacionInicio = true
+                              }
+                                else{
+                                  viewModel.iniciarContador(1)
+visibilidadInicioViaje=false
+
+
+
+                              }
+
+                                botonInicioViaje = false
+
+
+                            }
+
+                        }
+                        if (botonParadas) {
+
+                            if (huellaIngresada) {
+                                textoDialogo =
+                                    "Tu identidad no ha sido validada, el pasajero será notificado de esto. "
+                                if (huellaCorrecta) {
+                                    println("huella correcta y el id parada $idParadaActual")
+                                    actualizarCampoSolicitudPorBusqueda(
+                                        "parada_id",
+                                        idParadaActual,
+                                        "solicitud_validacion_conductor",
+                                        "si"
+
+                                    )
+
+
+                                    //Enviar notificacion a los pasajeros
+
+                                } else {
+                                    actualizarCampoSolicitudPorBusqueda(
+                                        "parada_id",
+                                        idParadaActual,
+                                        "solicitud_validacion_conductor",
+                                        "no"
+
+                                    )
+                                }
+                                actualizarCampoParada(
+                                    idParadaActual,
+                                    "par_recorrido",
+                                    "si"
+                                )
+
+
+                                botonNotificacionParada = true
+                                botonParadas = false
+                            }
 
                         }
 
@@ -632,12 +753,17 @@ fun obtenerCoordenadas(
     }
 
 
-
     if (boton) {
         menuDesplegableCon(
             onDismiss = { boton = false },
             navController,
             userID = userId
+        )
+    }
+    if (huellaIngresada && !huellaCorrecta) {
+        dialogoHuellaFallida(
+            onDismiss = { huellaCorrecta = true },
+            text = textoDialogo
         )
     }
 
@@ -659,6 +785,7 @@ fun obtenerCoordenadas(
 }
 
 
+/*
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
@@ -668,3 +795,4 @@ fun MyScaffoldContentPreviewMapa() {
 
 }
 
+*/
