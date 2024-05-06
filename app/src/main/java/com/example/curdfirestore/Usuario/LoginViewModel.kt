@@ -10,7 +10,10 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 
 
 class LoginViewModel: ViewModel () {
@@ -38,9 +41,30 @@ class LoginViewModel: ViewModel () {
                 Log.d("Logueo", "SignInWithEmailandPassword: ${ex.message}")
             }
         }
-    
 
-    fun signOut() = viewModelScope.launch {
+
+    fun signOut(email: String) = viewModelScope.launch {
+        try {
+
+            val token = FirebaseMessaging.getInstance().token.await()
+
+            println("TOKEEN EN CERRAR SESION $token")
+            println("EMAIL $email")
+
+
+            if (email != null) {
+                val usuarioRef = FirebaseFirestore.getInstance().collection("usuario").document(email)
+
+                usuarioRef.update("usu_token", FieldValue.delete()).await()
+
+                println("Campo 'usu_token' eliminado correctamente al cerrar sesión")
+
+            }
+        } catch (e: Exception) {
+            println("Error al obtener el token: $e")
+        }
+
+
         auth.signOut()
     }
 
