@@ -147,7 +147,7 @@ fun NavGraph(
 
         composable("modificar_password_conductor/{userid}") {
             val userId = it.arguments?.getString("userid") ?: ""
-            modificarPasswordCon(navController = navController, userId = userId)
+            modificarPasswordCon(navController = navController, userId = userId, authViewModel)
 
         }
 
@@ -416,7 +416,7 @@ fun NavGraph(
 
         composable("modificar_password_pasajero/{userid}") {
             val userId = it.arguments?.getString("userid") ?: ""
-            modificarPasswordPas(navController = navController, userId = userId)
+            modificarPasswordPas(navController = navController, userId = userId, authViewModel)
 
         }
 

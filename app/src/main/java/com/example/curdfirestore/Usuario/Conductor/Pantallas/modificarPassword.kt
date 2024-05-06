@@ -53,7 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.LoginViewModel
+import com.example.avanti.Usuario.eliminarToken
 import com.example.avanti.ui.theme.Aplicacion.tituloAtras
+import com.example.curdfirestore.AuthViewModel
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.google.firebase.auth.EmailAuthProvider
@@ -68,6 +70,7 @@ var maxhm=0.dp
 fun modificarPasswordCon(
     navController: NavController,
     userId: String,
+    authViewModel: AuthViewModel
 ) {
 
     val viewModel= LoginViewModel()
@@ -376,7 +379,8 @@ fun modificarPasswordCon(
                             confirmButton = {
                                 Button(
                                     onClick = {
-                                        viewModel.signOut(userId)
+                                        authViewModel.signOut()
+                                        eliminarToken(userId)
                                         navController.navigate(route = "login")
                                         showDialog = false
                                     },

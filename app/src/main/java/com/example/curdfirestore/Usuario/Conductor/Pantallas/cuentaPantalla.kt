@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.Usuario.LoginViewModel
+import com.example.avanti.Usuario.eliminarToken
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.curdfirestore.AuthViewModel
@@ -42,29 +43,30 @@ import com.example.curdfirestore.AuthViewModel
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 
 
-var maxh=0.dp
+var maxh = 0.dp
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun cuentaPantallaCon(
     navController: NavController,
-    userID:String,
+    userID: String,
     authViewModel: AuthViewModel
-){
-    val usuario= conObtenerUsuarioId(correo = userID)
+) {
+    val usuario = conObtenerUsuarioId(correo = userID)
 
 
-    BoxWithConstraints{
-        maxh = this.maxHeight-50.dp
+    BoxWithConstraints {
+        maxh = this.maxHeight - 50.dp
     }
 
     Scaffold(
         bottomBar = {
             BottomAppBar(modifier = Modifier.height(45.dp)) {
-menuCon(navController = navController, userID = userID)
+                menuCon(navController = navController, userID = userID)
                 //pruebaMenu(navController,userID)
             }
         }
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,8 +75,8 @@ menuCon(navController = navController, userID = userID)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
 
-            ){
-cabecera(titulo = "Cuenta")
+            ) {
+            cabecera(titulo = "Cuenta")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -83,125 +85,128 @@ cabecera(titulo = "Cuenta")
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 usuario?.let {
-                // Cargar y mostrar la imagen con Coil
-                CoilImage(
-                    url = usuario.usu_foto, modifier = Modifier
-                        .clip(CircleShape)
-                        .size(200.dp)
-                )
-
-                Text(
-                    text = "${usuario.usu_nombre} ${usuario.usu_primer_apellido} ${usuario.usu_segundo_apellido}",
-                    style = TextStyle(
-                        color = Color(71, 12, 107),
-                        fontSize = 28.sp,
-                        textAlign = TextAlign.Center
-
+                    // Cargar y mostrar la imagen con Coil
+                    CoilImage(
+                        url = usuario.usu_foto, modifier = Modifier
+                            .clip(CircleShape)
+                            .size(200.dp)
                     )
-                )
 
-
-                //Botones del inicio
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(
-                            238, 236, 239
-                        )
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        navController.navigate(route = "perfil_conductor/$userID")
-
-                    }) {
-                    Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(50.dp),
-                        tint = Color(137, 13, 88),
-                    )
                     Text(
-                        text = "Mi perfil",
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 30.dp),
+                        text = "${usuario.usu_nombre} ${usuario.usu_primer_apellido} ${usuario.usu_segundo_apellido}",
                         style = TextStyle(
-                            fontSize = 20.sp,
-                            color = Color(137, 13, 88),
+                            color = Color(71, 12, 107),
+                            fontSize = 28.sp,
+                            textAlign = TextAlign.Center
 
+                        )
+                    )
+
+
+                    //Botones del inicio
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(
+                                238, 236, 239
                             )
-                    )
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            navController.navigate(route = "perfil_conductor/$userID")
+
+                        }) {
+                        Icon(
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(50.dp),
+                            tint = Color(137, 13, 88),
+                        )
+                        Text(
+                            text = "Mi perfil",
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 30.dp),
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                color = Color(137, 13, 88),
+
+                                )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    //Notificaciones
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(
+                                238, 236, 239
+                            )
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            navController.navigate(route = "ver_notificaciones_conductor/$userID")
+                        }) {
+                        Icon(
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(50.dp),
+                            tint = Color(137, 13, 88),
+                        )
+                        Text(
+                            text = "Notificaciones",
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 30.dp),
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                color = Color(137, 13, 88),
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(
+                                238, 236, 239
+                            )
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+
+
+                            eliminarToken(userID)
+                            authViewModel.signOut()
+                            navController.navigate(route = "login")
+
+                        }) {
+                        Icon(
+                            imageVector = Icons.Filled.ExitToApp,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(50.dp),
+                            tint = Color(137, 13, 88),
+                        )
+                        Text(
+                            text = "Cerrar sesión",
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 30.dp),
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                color = Color(137, 13, 88),
+                            )
+                        )
+
+                    }
+
+                    //Fin de botones inicio
+
+
                 }
-                    Spacer(modifier=Modifier.height(10.dp))
-                //Notificaciones
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(
-                            238, 236, 239
-                        )
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        navController.navigate(route = "ver_notificaciones_conductor/$userID")
-                    }) {
-                    Icon(
-                        imageVector = Icons.Filled.Notifications,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(50.dp),
-                        tint = Color(137, 13, 88),
-                    )
-                    Text(
-                        text = "Notificaciones",
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 30.dp),
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            color = Color(137, 13, 88),
-                        )
-                    )
-                }
-                    Spacer(modifier=Modifier.height(10.dp))
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(
-                            238, 236, 239
-                        )
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        authViewModel.signOut()
-                        navController.navigate(route = "login")
-
-                    }) {
-                    Icon(
-                        imageVector = Icons.Filled.ExitToApp,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(50.dp),
-                        tint = Color(137, 13, 88),
-                    )
-                    Text(
-                        text = "Cerrar sesión",
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 30.dp),
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            color = Color(137, 13, 88),
-                        )
-                    )
-
-                }
-
-                //Fin de botones inicio
-
-
-            }
             }
         }
     }

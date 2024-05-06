@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.Usuario.LoginViewModel
+import com.example.avanti.Usuario.eliminarToken
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.curdfirestore.AuthViewModel
@@ -178,6 +179,7 @@ fun cuentaPantallaPas(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             authViewModel.signOut()
+                            eliminarToken(userID)
                             navController.navigate(route = "login")
                         }) {
                         Icon(

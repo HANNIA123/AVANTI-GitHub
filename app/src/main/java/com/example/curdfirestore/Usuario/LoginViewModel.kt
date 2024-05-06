@@ -44,25 +44,7 @@ class LoginViewModel: ViewModel () {
 
 
     fun signOut(email: String) = viewModelScope.launch {
-        try {
 
-            val token = FirebaseMessaging.getInstance().token.await()
-
-            println("TOKEEN EN CERRAR SESION $token")
-            println("EMAIL $email")
-
-
-            if (email != null) {
-                val usuarioRef = FirebaseFirestore.getInstance().collection("usuario").document(email)
-
-                usuarioRef.update("usu_token", FieldValue.delete()).await()
-
-                println("Campo 'usu_token' eliminado correctamente al cerrar sesión")
-
-            }
-        } catch (e: Exception) {
-            println("Error al obtener el token: $e")
-        }
 
 
         auth.signOut()
@@ -97,5 +79,27 @@ class LoginViewModel: ViewModel () {
 
 
 
+
+}
+
+fun eliminarToken(email:String){
+    try {
+        val usuarioRef = FirebaseFirestore.getInstance().collection("usuario").document(email)
+
+
+        val updates = hashMapOf<String, Any>(
+            "usu_token" to FieldValue.delete()
+        )
+
+        usuarioRef.update(updates).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                println("Campo usu_token eliminado correctamente de Firestore.")
+            } else {
+                println("Error al intentar eliminar el campo usu_token de Firestore: ${task.exception}")
+            }
+        }
+    } catch (e: Exception) {
+        println("Error al intentar eliminar el campo usu_token de Firestore: $e")
+    }
 
 }
