@@ -53,6 +53,7 @@ import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.avanti.ui.theme.Aplicacion.toLocalDate
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
+import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarPasajerosDeSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conActualizarLugares
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
@@ -88,9 +89,10 @@ fun verSolicitudesCon(
     var idPasajero by remember { mutableStateOf("") }
 
     var usuario by remember { mutableStateOf<UserData?>(null) }
+    var usuarioCon by remember { mutableStateOf<UserData?>(null) }
     var listaSolicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
 
-
+    usuarioCon = conObtenerUsuarioId(correo = userId)
     conObtenerSolicitudesConductor(userId = userId) { resultado ->
         // Asignar el resultado a la variable 'solicitudes'
         listaSolicitudes = resultado
@@ -321,6 +323,17 @@ fun verSolicitudesCon(
                             }
                         }
 
+                        //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
+                        enviarNotificacion(usuarioCon!!.usu_nombre, usuarioCon!!.usu_primer_apellido,
+                            usuario!!.usu_token, "sa", idPasajero,
+                            onSuccess = {
+                                println("Notificación enviada exitosamente")
+                            },
+                            onError = { errorMessage ->
+                                println(errorMessage)
+                            }
+                        )
+                        //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
 
 
                     } else {
