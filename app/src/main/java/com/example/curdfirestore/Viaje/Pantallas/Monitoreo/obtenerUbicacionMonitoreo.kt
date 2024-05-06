@@ -100,10 +100,7 @@ fun obtenerCoordenadas(
     userId: String,
     viajeId: String,
     navController: NavController,
-    viewModel: ContadorViewModel
 ) {
-    val contador by viewModel.contador.collectAsState()
-    println("Contador--------- $contador")
 
 
     val activity1 = LocalContext.current as MainActivity

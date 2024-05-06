@@ -26,6 +26,8 @@ import com.example.curdfirestore.Horario.Pantallas.verItinerarioPas
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajero
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajeroSinPar
 import com.example.curdfirestore.MainActivity
+import com.example.curdfirestore.Notificaciones.Pantallas.verNotificacionesCon
+import com.example.curdfirestore.Notificaciones.Pantallas.verNotificacionesPas
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
@@ -60,7 +62,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    viewModel: ContadorViewModel,
     authViewModel: AuthViewModel
 
 ) {
@@ -82,7 +83,6 @@ fun NavGraph(
                 obtenerTipoUsuario(
                     navController = navController,
                     userId = userId.toString(),
-                    viewModel,
                     authViewModel
                 )
                 // homePantallaConductor(navController = navController, userid = )
@@ -121,7 +121,6 @@ fun NavGraph(
             obtenerTipoUsuario(
                 navController = navController,
                 userId = userId,
-                viewModel,
                 authViewModel
             )
             // homePantallaConductor(navController = navController, userid = )
@@ -131,7 +130,7 @@ fun NavGraph(
             "homeconductor/{useid}"
         ) {
             val userId = it.arguments?.getString("useid") ?: ""
-            homePantallaConductor(navController = navController, userid = userId, viewModel)
+            homePantallaConductor(navController = navController, userid = userId)
 
         }
 
@@ -399,19 +398,18 @@ fun NavGraph(
                 userId = userId,
                 viajeId = viajeId,
                 navController = navController,
-                viewModel = viewModel
             )
         }
         composable(
             "ver_notificaciones_conductor/{usuario}"  //Funcion del conductor
         ) {
             val userID = it.arguments?.getString("usuario") ?: ""
-            /*
+
                         verNotificacionesCon(
                             navController = navController,
                             userID
                         )
-              */
+
         }
 
 
@@ -549,10 +547,10 @@ fun NavGraph(
         ) {
             val userID = it.arguments?.getString("usuario") ?: ""
 
-            /*  verNotificacionesPas(
+              verNotificacionesPas(
                   navController = navController,
-                  userID
-              )*/
+                  userID)
+
         }
 
         ///////////////////////////

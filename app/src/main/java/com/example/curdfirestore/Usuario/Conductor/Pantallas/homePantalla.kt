@@ -71,8 +71,7 @@ import java.time.LocalDate
 @Composable
 fun homePantallaConductor(
     navController: NavController,
-    userid: String,
-    viewModel: ContadorViewModel
+    userid: String
 
 ) {
 
@@ -99,7 +98,7 @@ fun homePantallaConductor(
 
         if (viajesIniciados.isNotEmpty()) {
             val primerViajeIniciado = viajesIniciados.firstOrNull()
-            obtenerCoordenadas(userId = userid, primerViajeIniciado!!.viaje_id, navController, viewModel)
+            obtenerCoordenadas(userId = userid, primerViajeIniciado!!.viaje_id, navController)
         } else {
             Box {
                 Scaffold(
