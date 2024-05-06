@@ -33,10 +33,12 @@ import com.example.avanti.HorarioData
 import com.example.avanti.NoticacionData
 import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.ConsultasHorario.conActualizarSolicitudHorario
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
+import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conRegistrarSolicitud
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
@@ -330,6 +332,10 @@ fun ventanaEnviarSolicitud(
         }
     }
 
+
+    val usuarioPas= conObtenerUsuarioId(correo = email)
+    val usuarioCon= conObtenerUsuarioId(correo = parada.user_id)
+
     if (boton == true && ejecutado == false) {
 
         val fecha_now = obtenerFechaFormatoddmmyyyy()
@@ -368,6 +374,19 @@ fun ventanaEnviarSolicitud(
                 }
             }
         }
+
+        //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
+
+        enviarNotificacion(usuarioPas!!.usu_nombre, usuarioPas.usu_segundo_apellido, usuarioCon!!.usu_token, "sr", parada.user_id,
+            onSuccess = {
+                println("Notificación enviada exitosamente")
+            },
+            onError = { errorMessage ->
+                println(errorMessage)
+            }
+        )
+
+        //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
 
         //GuardarNotificacion(noticacionData = notificacionData)
         ejecutado = true

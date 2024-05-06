@@ -45,5 +45,10 @@ interface ApiServiceNotificacion{
     @POST("$newUrl/api/notificacion/registrarnotificacion") // Reemplaza con la ruta de tu endpoint
     fun registrarNotificacion(@Body notificacionData: NoticacionData): Call<RespuestaApiNotificacion>
 
+    @GET("$newUrl/api/notificacion/obtenernotificaciones/{id}")
+    suspend fun obtenerNotificaciones(@Path("id") userId: String): List<NoticacionData>
+
+    @POST("$newUrl/api/notificacion/enviarnotificacionserver/{token}/{titulo}/{cuerpo}/{userId}") // Reemplaza con la ruta de tu endpoint
+    fun enviarNotificacionServer(@Path("token") token: String, @Path("titulo") titulo: String, @Path("cuerpo") cuerpo: String, @Path("userId") userId: String): Call<Void>
 
 }

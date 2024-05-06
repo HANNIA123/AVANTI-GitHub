@@ -35,10 +35,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.avanti.NoticacionData
 import com.example.avanti.SolicitudData
+import com.example.avanti.UserData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.ConsultasHorario.conEditarStatusHorario
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
+import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conActualizarSolicitudByStatus
 
@@ -62,6 +65,11 @@ fun dialogoConfirmarCancelacionP(
     var confirmN by remember {
         mutableStateOf(false)
     }
+    var usuarioPas by remember { mutableStateOf<UserData?>(null) }
+    var usuarioCon by remember { mutableStateOf<UserData?>(null) }
+
+    usuarioPas = conObtenerUsuarioId(correo = userId)
+    usuarioCon = conObtenerUsuarioId(correo = solicitud.conductor_id)
 
 
     val textoBot = if (horarioStatus == "Disponible") {
@@ -79,9 +87,13 @@ fun dialogoConfirmarCancelacionP(
 
     val tipoNot = if (newStatus == "Cancelado") {
         "cv" //viaje cancelado
+
     } else {
         "vd" //viaje disponible
     }
+
+
+
 
     val notificacionData = NoticacionData(
         notificacion_tipo = tipoNot,
@@ -111,6 +123,27 @@ fun dialogoConfirmarCancelacionP(
                     navController = navController,
                     horarioId = horarioId, userId = userId, nuevoStatus = newStatus
                 )
+
+                if(tipoNot=="cv") {
+                    enviarNotificacion(usuarioPas!!.usu_nombre, usuarioPas!!.usu_segundo_apellido, usuarioCon!!.usu_token, "cv", solicitud.conductor_id,
+                        onSuccess = {
+                            println("Notificación enviada exitosamente")
+                        },
+                        onError = { errorMessage ->
+                            println(errorMessage)
+                        }
+                    )
+                }else{
+                    enviarNotificacion(usuarioPas!!.usu_nombre, usuarioPas!!.usu_segundo_apellido, usuarioCon!!.usu_token, "vd", solicitud.conductor_id,
+                        onSuccess = {
+                            println("Notificación enviada exitosamente")
+                        },
+                        onError = { errorMessage ->
+                            println(errorMessage)
+                        }
+                    )
+                }
+
                 ejecutado = true
                 onDismiss()
 
