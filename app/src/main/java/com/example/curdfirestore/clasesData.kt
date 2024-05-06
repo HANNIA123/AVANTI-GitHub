@@ -43,8 +43,6 @@ data class ViajeData(
     var viaje_id: String="",
 
 
-
-
     )
 
 data class ViajeDataReturn(

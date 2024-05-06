@@ -55,6 +55,7 @@ import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitu
 
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
+import com.example.curdfirestore.Viaje.Funciones.solicitarPermiso
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -65,6 +66,8 @@ fun homePantallaPasajero(
     userid: String,
 
 ) {
+
+    solicitarPermiso()
     // Obtén el Painter desde la ruta específica
     val painter: Painter = painterResource(R.drawable.hecho)
     var solicitud by remember { mutableStateOf<List<SolicitudData>?>(null) }

@@ -51,7 +51,9 @@ import com.example.curdfirestore.Viaje.ConsultasViaje.conRegistrarViaje
 
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
+import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacion
 import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
+import com.example.curdfirestore.lineaCargando
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -68,12 +70,12 @@ import kotlinx.coroutines.withContext
 @Composable
 fun registrarOrigenConductor(
     navController: NavController,
-   userid: String,
+    userid: String,
     dia: String,
     horao: String,
     horad: String,
     lugares: String,
-    tarifa:String
+    tarifa: String
 ) {
     var maxh by remember {
         mutableStateOf(0.dp)
@@ -84,7 +86,9 @@ fun registrarOrigenConductor(
         maxh = this.maxHeight
     }
 
-
+    var cargando by remember {
+        mutableStateOf(false)
+    }
 
     var showPar by remember {
         mutableStateOf(false)
@@ -128,13 +132,16 @@ fun registrarOrigenConductor(
             .height(maxh)
     ) {
 
-        cabeceraConBotonCerrarViaje("Registrar origen", navController, userid)
+        cabeceraEditarAtras(
+            titulo = "Registrar destino",
+            navController = navController,
+            ruta = "general_viaje_conductor/$userid"
+        )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-
 
             Box(
                 modifier = Modifier
@@ -165,20 +172,19 @@ fun registrarOrigenConductor(
                         }
                     }
                     if (primeraVez == 0) {
-                        obtenerUbicacionInicial(
-                            navController = navController,
-                            userId = userid,
+                        obtenerUbicacion(context = context,
                             onUbicacionObtenida =
                             { nuevaUbicacion ->
                                 ubicacion = nuevaUbicacion
                             }
                         )
 
+
                     } else {
                         ubicacion = ubiMarker
 
                     }
-                    ubicacionpasar=ubicacion //aqui
+                    ubicacionpasar = ubicacion //aqui
 
                     if (ubicacion != "") {
                         val markerCoordenadasLatLng = convertirStringALatLng(ubicacion)
@@ -237,8 +243,8 @@ fun registrarOrigenConductor(
                         GoogleMap(
                             modifier = Modifier
                                 .fillMaxSize(),
-
-                            cameraPositionState = cameraPositionState
+                            cameraPositionState = cameraPositionState,
+                            onMapLoaded = { cargando = true }
                         ) {
 
                             if (selectedPlace == null) {
@@ -300,7 +306,7 @@ fun registrarOrigenConductor(
 
                     ubiMarker = mapaMarker(ubicacionMarker = "$newUbi")
                     TipoBusqueda = "marker"
-                    ubicacionpasar=ubiMarker //Esto
+                    ubicacionpasar = ubiMarker //Esto
 
                 }
                 if (valorMapa == "marker") {
@@ -357,18 +363,19 @@ fun registrarOrigenConductor(
 
                 Button(
                     modifier = Modifier
-                        .width(200.dp)
+                        .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp)
-                    ,
+                        .padding(40.dp, 10.dp, 40.dp, 20.dp),
+
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(137, 13, 88),
                     ),
                     onClick = {
                         boton = true
-                        showPar=true
+                        showPar = true
                     }) {
-                    Text(text = "Siguiente",
+                    Text(
+                        text = "Siguiente",
                         style = TextStyle(
                             fontSize = 20.sp
                         )
@@ -381,9 +388,12 @@ fun registrarOrigenConductor(
 
     }
 
-    if (boton == true && ejecutado == false) {
-        val comPantalla="muestra"
+    if (!cargando) {
+        lineaCargando(text = "Cargando Mapa....")
+    }
 
+    if (boton == true && ejecutado == false) {
+        val comPantalla = "muestra" //pregunta si agrega el origen o destino como parada
         val destino = "19.5114059,-99.1265259" //Coordenadas de UPIITA
         val viajeData = ViajeData(
             usu_id = userid,
@@ -403,11 +413,7 @@ fun registrarOrigenConductor(
             viaje_id = ""
         )
 
-conRegistrarViaje(navController, userid,viajeData, comPantalla)
-
-
-
-        //GuardarViaje(navController, userid, viajeData,comPantalla)
+        conRegistrarViaje(navController, userid, viajeData, comPantalla)
         ejecutado = true
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -66,6 +67,68 @@ fun cabeceraEditarAtras(titulo:String,
             ) {
                 Icon(
                     Icons.Filled.ArrowBack,
+                    contentDescription = "volver",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+
+            Text(
+                text = titulo,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+
+    }
+
+
+}
+
+@Composable
+fun cabeceraEditarCerrar(titulo:String,
+                        navController: NavController,
+                        ruta:String
+
+
+){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+    )
+    {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp),
+            painter = painterResource(id = R.drawable.fondorec),
+            contentDescription = "Fondo inicial",
+            contentScale = ContentScale.FillBounds
+        )
+        Row(
+            modifier = Modifier
+                .padding(18.dp, 10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+
+                onClick = {
+                    //  navController.navigate(route="general_viaje_conductor_editar/$userId/$viajeId")
+                    navController.navigate(route=ruta)
+
+                },
+                modifier = Modifier
+                    .padding(end = 16.dp) // Ajusta el espacio entre el icono y el texto
+            ) {
+                Icon(
+                    Icons.Filled.Close,
                     contentDescription = "volver",
                     tint = Color.White,
                     modifier = Modifier.size(30.dp)

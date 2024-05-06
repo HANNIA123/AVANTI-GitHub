@@ -134,7 +134,7 @@ fun cabeceraAtrasParada(titulo:String,
 
                         navController.navigate("ver_itinerario_conductor/$userid")
                     } else if (regresar == "inicioviaje") {
-                        navController.navigate("general_viaje_conductor/$userid")
+                        navController.navigate("viaje_inicio/$userid")
 
                     }
 

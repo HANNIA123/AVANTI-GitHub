@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -182,7 +183,7 @@ fun cabeceraConBotonCerrarViaje(titulo:String,
                     .padding(end = 16.dp) // Ajusta el espacio entre el icono y el texto
             ) {
                 Icon(
-                    Icons.Filled.Close,
+                    Icons.Filled.ArrowBack,
                     contentDescription = "volver",
                     tint = Color.White,
                     modifier = Modifier.size(35.dp)

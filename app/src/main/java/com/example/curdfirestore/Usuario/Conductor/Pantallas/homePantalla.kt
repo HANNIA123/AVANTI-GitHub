@@ -56,6 +56,7 @@ import com.example.curdfirestore.Usuario.Conductor.Pantallas.dialogoNoIniciarVia
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
+import com.example.curdfirestore.Viaje.Funciones.solicitarPermiso
 import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
 import com.example.curdfirestore.Viaje.Pantallas.mensajeNoViajes
 import com.example.curdfirestore.recuadroTitulos
@@ -75,7 +76,7 @@ fun homePantallaConductor(
     viewModel: ContadorViewModel
 
 ) {
-
+    solicitarPermiso()
     BoxWithConstraints {
         maxh = this.maxHeight - 50.dp
     }
@@ -93,183 +94,199 @@ fun homePantallaConductor(
     }
 
 
-    if (viajes != null) {
-        //verificar que no haya ningun viaje iniciado
+    viajes?.let{
         val viajesIniciados = viajes!!.filter { it.viaje_iniciado == "si" }
-
         if (viajesIniciados.isNotEmpty()) {
             val primerViajeIniciado = viajesIniciados.firstOrNull()
-            obtenerCoordenadas(userId = userid, primerViajeIniciado!!.viaje_id, navController, viewModel)
-        } else {
-            Box {
-                Scaffold(
-                    bottomBar = {
-                        BottomAppBar(modifier = Modifier.height(50.dp)) {
-                            menuCon(navController = navController, userID = userid)
-                        }
-                    }
+            obtenerCoordenadas(
+                userId = userid,
+                primerViajeIniciado!!.viaje_id,
+                navController,
+                viewModel
+            )
+        }
+    }
+
+
+    Box {
+        Scaffold(
+            bottomBar = {
+                BottomAppBar(modifier = Modifier.height(50.dp)) {
+                    menuCon(navController = navController, userID = userid)
+                }
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Color(239, 239, 239)
+                    )
+                    .height(maxh)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                cabecera("Inicio de viaje")
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp)
                 ) {
-                    Column(
+                    Spacer(modifier = Modifier.height(15.dp))
+                    recuadroTitulos(titulo = obtenerFechaHoyCompleto())
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Box(
                         modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .border(2.dp, Color.White)
+                            .background(Color.White)
                             .fillMaxWidth()
-                            .background(
-                                Color(239, 239, 239)
-                            )
-                            .height(maxh)
-                            .verticalScroll(rememberScrollState()),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                            .padding(15.dp)
                     ) {
-
-                        cabecera("Inicio de viaje")
-//Contenido
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp)
-                        ) {
-                            Spacer(modifier = Modifier.height(15.dp))
-                            recuadroTitulos(titulo = obtenerFechaHoyCompleto())
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Box(
+                        Column() {
+                            Text(
+                                text = "Próximos viajes",
+                                style = TextStyle(
+                                    color = Color.Black,
+                                    fontSize = 20.sp,
+                                    textAlign = TextAlign.Start,
+                                    fontWeight = FontWeight.Bold
+                                ),
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .border(2.dp, Color.White)
-                                    .background(Color.White)
-                                    .fillMaxWidth()
-                                    .padding(15.dp)
-                            ) {
-                                Column() {
-                                    Text(
-                                        text = "Próximos viajes",
-                                        style = TextStyle(
-                                            color = Color.Black,
-                                            fontSize = 20.sp,
-                                            textAlign = TextAlign.Start,
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        modifier = Modifier
-                                    )
-
-                                    Text(
-                                        text = "Solamente te mostramos los viajes " +
-                                                "programados para los próximos 30 minutos",
-                                        style = TextStyle(
-                                            color = Color(86, 86, 86),
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Justify,
-                                        ),
-
-                                        )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(10.dp))
-
-
-                            val horaMinima = restarTreintaMinutosAHoraActual()
-                            val horaMaxima = sumarTreintaMinutosAHoraActual()
-
-
-
-                            println(
-                                "Dias: ${obtenerNombreDiaEnEspanol(diaActual)}  hora maxima $horaMaxima " +
-                                        "hora minimaa   $horaMinima"
                             )
 
+                            Text(
+                                text = "Solamente te mostramos los viajes " +
+                                        "programados para los próximos 30 minutos",
+                                style = TextStyle(
+                                    color = Color(86, 86, 86),
+                                    fontSize = 18.sp,
+                                    textAlign = TextAlign.Justify,
+                                ),
 
-                            viajes!!.forEach {
-                                println("hora: ${it.viaje_hora_partida}")
-                                println("Convertir ${convertirStringAHora(it.viaje_hora_partida)}")
-                            }
+                                )
 
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                            val viajesFiltrados = viajes!!.filter {
-                                it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
-                                        convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima) &&
-                                        convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
-                            }
+                              if(viajes!=null){
 
-                            //Mostrar solo los viajes del dia y los que estan por empezar
-
-                            if (viajesFiltrados.isNotEmpty()) {
-                                val viajesProximos =
-                                    viajesFiltrados.sortedBy { it.viaje_hora_partida }
-
-                                viajesProximos.forEach { viaje ->
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(10.dp))
-                                            .border(2.dp, Color.White)
-                                            .background(Color.White)
-                                            .fillMaxWidth()
-                                            .padding(15.dp)
-                                    ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(16.dp),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                textoHoraViaje(hora = "${viaje.viaje_hora_partida} hrs")
-                                                Column(
-                                                    modifier = Modifier
-                                                        .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
-                                                ) {
-                                                    val trayecto =
-                                                        convertirTrayecto(viaje.viaje_trayecto)
-                                                    textoInformacionViaje(
-                                                        etiqueta = "Trayecto",
-                                                        contenido = trayecto
-                                                    )
-                                                    textoInformacionViaje(
-                                                        etiqueta = "Pasajeros confirmados",
-                                                        contenido = viaje.viaje_num_pasajeros_con
-                                                    )
-
-                                                }
-                                            }
-                                            Button(
-                                                colors = ButtonDefaults.buttonColors(
-                                                    backgroundColor = Color(
-                                                        137,
-                                                        13,
-                                                        88
-                                                    )
-                                                ),
-                                                onClick = {
-
-                                                    if(viaje.viaje_num_pasajeros_con=="0" || viaje.viaje_num_pasajeros_con=="" || viaje.viaje_num_pasajeros=="0"){
-                                                        texto="No puedes inciar este viaje porque no tienen ningún pasajero confirmado"
-                                                        botonNoIniciar=true
-                                                    }
-                                                    else{
-
-                                                        navController.navigate("empezar_viaje/$userid/${viaje.viaje_id}")
-                                                    }
-
-                                                },
-                                                modifier = Modifier.width(180.dp)
-                                            ) {
-                                                Text(
-                                                    text = "Ver viaje", style = TextStyle(
-                                                        fontSize = 18.sp,
-                                                        color = Color.White
-                                                    )
-                                                )
-                                            }
-                                        }
-
-                                    }
-                                    Spacer(modifier = Modifier.height(15.dp))
+                                  val horaMinima = restarTreintaMinutosAHoraActual()
+                                  val horaMaxima = sumarTreintaMinutosAHoraActual()
 
 
-                                }
 
 
-                            } else {
+
+                                  viajes!!.forEach {
+                                      println("hora: ${it.viaje_hora_partida}")
+                                      println("Convertir ${convertirStringAHora(it.viaje_hora_partida)}")
+                                  }
+
+
+                                  val viajesFiltrados = viajes!!.filter {
+                                      it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
+                                              convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima) &&
+                                              convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
+                                  }
+
+                                  //Mostrar solo los viajes del dia y los que estan por empezar
+
+                                  if (viajesFiltrados.isNotEmpty()) {
+                                      val viajesProximos =
+                                          viajesFiltrados.sortedBy { it.viaje_hora_partida }
+
+                                      viajesProximos.forEach { viaje ->
+                                          Box(
+                                              modifier = Modifier
+                                                  .clip(RoundedCornerShape(10.dp))
+                                                  .border(2.dp, Color.White)
+                                                  .background(Color.White)
+                                                  .fillMaxWidth()
+                                                  .padding(15.dp)
+                                          ) {
+                                              Column(
+                                                  horizontalAlignment = Alignment.CenterHorizontally
+                                              ) {
+                                                  Row(
+                                                      modifier = Modifier
+                                                          .fillMaxWidth()
+                                                          .padding(16.dp),
+                                                      verticalAlignment = Alignment.CenterVertically
+                                                  ) {
+                                                      textoHoraViaje(hora = "${viaje.viaje_hora_partida} hrs")
+                                                      Column(
+                                                          modifier = Modifier
+                                                              .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
+                                                      ) {
+                                                          val trayecto =
+                                                              convertirTrayecto(viaje.viaje_trayecto)
+                                                          textoInformacionViaje(
+                                                              etiqueta = "Trayecto",
+                                                              contenido = trayecto
+                                                          )
+                                                          textoInformacionViaje(
+                                                              etiqueta = "Pasajeros confirmados",
+                                                              contenido = viaje.viaje_num_pasajeros_con
+                                                          )
+
+                                                      }
+                                                  }
+                                                  Button(
+                                                      colors = ButtonDefaults.buttonColors(
+                                                          backgroundColor = Color(
+                                                              137,
+                                                              13,
+                                                              88
+                                                          )
+                                                      ),
+                                                      onClick = {
+
+                                                          if(viaje.viaje_num_pasajeros_con=="0" || viaje.viaje_num_pasajeros_con=="" || viaje.viaje_num_pasajeros=="0"){
+                                                              texto="No puedes inciar este viaje porque no tienen ningún pasajero confirmado"
+                                                              botonNoIniciar=true
+                                                          }
+                                                          else{
+
+                                                              navController.navigate("empezar_viaje/$userid/${viaje.viaje_id}")
+                                                          }
+
+                                                      },
+                                                      modifier = Modifier.width(180.dp)
+                                                  ) {
+                                                      Text(
+                                                          text = "Ver viaje", style = TextStyle(
+                                                              fontSize = 18.sp,
+                                                              color = Color.White
+                                                          )
+                                                      )
+                                                  }
+                                              }
+
+                                          }
+                                          Spacer(modifier = Modifier.height(15.dp))
+
+
+                                      }
+
+
+                                  } else {
+                                      Box(
+                                          modifier = Modifier
+                                              .clip(RoundedCornerShape(10.dp))
+                                              .border(2.dp, Color.White)
+                                              .background(Color.White)
+                                              .fillMaxWidth()
+                                              .padding(15.dp)
+                                      ) {
+                                          mensajeNoViajes()
+                                      }
+                                  }
+
+
+                              }
+
+                            else{
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
@@ -282,25 +299,25 @@ fun homePantallaConductor(
                                 }
                             }
 
-
                         }
-
 
                     }
 
                 }
 
-
-
-                if (botonNoIniciar) {
-                    dialogoNoIniciarViaje(
-                        onDismiss = { botonNoIniciar = false },
-                        texto
-                    )
-                }
             }
+
+        }
+        if (botonNoIniciar) {
+            dialogoNoIniciarViaje(
+                onDismiss = { botonNoIniciar = false },
+                texto
+            )
         }
     }
+
+
+
 
 }
 

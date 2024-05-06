@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -25,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +38,9 @@ import com.example.curdfirestore.R
 import com.example.curdfirestore.Viaje.ConsultasViaje.conRegistrarViaje
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
+import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacion
 import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
+import com.example.curdfirestore.lineaCargando
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -54,7 +54,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-@OptIn(ExperimentalComposeUiApi::class)
+
 @Composable
 fun registrarDestinoConductor(
     navController: NavController,
@@ -72,6 +72,10 @@ fun registrarDestinoConductor(
     BoxWithConstraints {
         maxh = this.maxHeight
     }
+
+  var cargando by remember {
+      mutableStateOf(false)
+  }
     var ubicacion by remember {
         mutableStateOf("")
     }
@@ -105,7 +109,11 @@ fun registrarDestinoConductor(
             .fillMaxWidth()
             .height(maxh)
     ) {
-        cabeceraConBotonCerrarViaje("Registrar destino", navController, userid)
+        cabeceraEditarAtras(
+            titulo = "Registrar destino",
+            navController = navController,
+            ruta = "general_viaje_conductor/$userid"
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,9 +124,9 @@ fun registrarDestinoConductor(
                     .height(maxh - 70.dp)
             ) {
                 if (valorMapa == "barra") {
-                    var searchResults = remember { mutableStateOf(emptyList<Place>()) }
+                    val searchResults = remember { mutableStateOf(emptyList<Place>()) }
                     val context = LocalContext.current
-                    var searchQuery = remember { mutableStateOf("") }
+                    val searchQuery = remember { mutableStateOf("") }
                     var selectedPlace by remember { mutableStateOf<Place?>(null) }
                     LaunchedEffect(searchQuery.value) {
                         // Lanzar un bloque coroutine para ejecutar la búsqueda de lugares
@@ -132,22 +140,20 @@ fun registrarDestinoConductor(
                             e.printStackTrace()
                         }
                     }
-                    println("YA cambiando a barra")
-                    println("Variable primer $primeraVez ---------")
+
                     if (primeraVez == 0) {
-                        obtenerUbicacionInicial(
-                            navController = navController,
-                            userId = userid,
+                        obtenerUbicacion(context = context,
                             onUbicacionObtenida =
                             { nuevaUbicacion ->
                                 ubicacion = nuevaUbicacion
                             }
                         )
+
                     } else {
                         ubicacion = ubiMarker
                     }
 
-                    ubicacionpasar=ubicacion
+                    ubicacionpasar = ubicacion
                     if (ubicacion != "") {
                         val markerCoordenadasLatLng = convertirStringALatLng(ubicacion)
                         var miUbic by remember {
@@ -155,8 +161,8 @@ fun registrarDestinoConductor(
                         }
 
                         if (markerCoordenadasLatLng != null) {
-                            var markerLat = markerCoordenadasLatLng.latitude
-                            var markerLon = markerCoordenadasLatLng.longitude
+                            val markerLat = markerCoordenadasLatLng.latitude
+                            val markerLon = markerCoordenadasLatLng.longitude
                             miUbic = LatLng(markerLat, markerLon)
                             // Hacer algo con las coordenadas LatLng
                             println("Latitud: ${markerCoordenadasLatLng.latitude}, Longitud: ${markerCoordenadasLatLng.longitude}")
@@ -174,7 +180,7 @@ fun registrarDestinoConductor(
                         //var miUbic = LatLng(19.389816, -99.110234)
                         var markerState = rememberMarkerState(position = miUbic)
                         direccion = convertCoordinatesToAddress(coordenadas = miUbic)
-                        var cameraPositionState = rememberCameraPositionState {
+                        val cameraPositionState = rememberCameraPositionState {
                             position = CameraPosition.fromLatLngZoom(markerState.position, 17f)
                         }
 
@@ -208,7 +214,8 @@ fun registrarDestinoConductor(
                         GoogleMap(
                             modifier = Modifier
                                 .fillMaxSize(),
-                            cameraPositionState = cameraPositionState
+                            cameraPositionState = cameraPositionState,
+                            onMapLoaded = {cargando=true}
                         ) {
                             if (selectedPlace == null) {
                                 Marker(
@@ -252,7 +259,7 @@ fun registrarDestinoConductor(
                             TipoBusqueda,
                             TextoBarra
                         )
-                     }
+                    }
 
                 } else {
                     var newUbi by remember {
@@ -264,9 +271,9 @@ fun registrarDestinoConductor(
                         newUbi = "$pasarlatitud,$pasarlongitud"
                     }
 
-                    ubiMarker = mapaMarkerDestino(ubicacionMarker = "$newUbi")
+                    ubiMarker = mapaMarkerDestino(ubicacionMarker = newUbi)
                     TipoBusqueda = "marker"
-                    ubicacionpasar=ubiMarker //Esto
+                    ubicacionpasar = ubiMarker //Esto
 
                 }
                 if (valorMapa == "marker") {
@@ -293,7 +300,7 @@ fun registrarDestinoConductor(
                                     valorMapa = "barra"
                                     primeraVez = primeraVez + 1
                                     TipoBusqueda = "barra"
-                                 }
+                                }
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Search,
@@ -315,12 +322,13 @@ fun registrarDestinoConductor(
                     }
                 }
 
+
+
                 Button(
                     modifier = Modifier
-                        .width(200.dp)
+                        .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp)
-                    ,
+                        .padding(40.dp, 10.dp, 40.dp, 20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(137, 13, 88),
                     ),
@@ -328,7 +336,8 @@ fun registrarDestinoConductor(
                         var ubicacionF = "$pasarlatitud,$pasarlongitud"
                         boton = true
                     }) {
-                    Text(text = "Siguiente",
+                    Text(
+                        text = "Siguiente",
                         style = TextStyle(
                             fontSize = 20.sp
                         )
@@ -336,15 +345,18 @@ fun registrarDestinoConductor(
                 }
 
 
-
-
-
             }
         }
 
     }
+
+    if (!cargando) {
+        lineaCargando(text = "Cargando Mapa....")
+    }
+
+
     if (boton == true && ejecutado == false) {
-        var comPantalla="muestra"
+        val comPantalla="muestra"
         val origen = "19.5114059,-99.1265259" //Coordenadas de UPIITA
         val viajeData = ViajeData(
             usu_id = userid,
