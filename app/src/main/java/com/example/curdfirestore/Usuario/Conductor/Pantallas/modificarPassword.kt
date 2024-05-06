@@ -364,7 +364,7 @@ fun modificarPasswordCon(
                     if (showDialog) {
                         AlertDialog(
                             onDismissRequest = {
-                                viewModel.signOut()
+                                viewModel.signOut(userId)
                                 navController.navigate(route = "login")
                             },
                             title = {
@@ -376,7 +376,7 @@ fun modificarPasswordCon(
                             confirmButton = {
                                 Button(
                                     onClick = {
-                                        viewModel.signOut()
+                                        viewModel.signOut(userId)
                                         navController.navigate(route = "login")
                                         showDialog = false
                                     },

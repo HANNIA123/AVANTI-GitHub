@@ -172,7 +172,7 @@ cabecera(titulo = "Cuenta")
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        viewModel.signOut()
+                        viewModel.signOut(userID)
                         navController.navigate(route = "login")
                         println("Se ha cerrado")
                     }) {

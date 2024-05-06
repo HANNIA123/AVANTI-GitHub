@@ -369,7 +369,7 @@ fun modificarPasswordPas(
                     if (showDialog) {
                         AlertDialog(
                             onDismissRequest = {
-                                viewModel.signOut()
+                                viewModel.signOut(userId)
                                 navController.navigate(route = "login")
                             },
                             title = {
@@ -381,7 +381,7 @@ fun modificarPasswordPas(
                             confirmButton = {
                                 Button(
                                     onClick = {
-                                        viewModel.signOut()
+                                        viewModel.signOut(userId)
                                         navController.navigate(route = "login")
                                         showDialog = false
                                     },

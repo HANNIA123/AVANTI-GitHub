@@ -145,7 +145,7 @@ fun cuentaPantallaPas(
                         ),
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            navController.navigate(route = "ver_notificaciones_conductor/$userID")
+                            navController.navigate(route = "ver_notificaciones_pasajero/$userID")
                         }) {
                         Icon(
                             imageVector = Icons.Filled.Notifications,
@@ -175,7 +175,7 @@ fun cuentaPantallaPas(
                         ),
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            viewModel.signOut()
+                            viewModel.signOut(userID)
                             navController.navigate(route = "login")
                             println("Se ha cerrado")
                         }) {
