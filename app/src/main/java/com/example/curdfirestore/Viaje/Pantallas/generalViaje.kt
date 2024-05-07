@@ -73,7 +73,7 @@ fun generalViajeCon(
     }
 
     val altura = maxh - 120.dp
-    val tamEspacio = ((altura - 407.dp) / 7) - 5.dp
+    val tamEspacio = ((altura - 479.dp) / 7) - 5.dp
 
     var selectedHoraInicio by remember {
         mutableStateOf("")

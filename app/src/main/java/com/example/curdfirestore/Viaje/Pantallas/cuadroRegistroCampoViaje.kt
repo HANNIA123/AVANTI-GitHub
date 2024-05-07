@@ -61,7 +61,8 @@ fun FilaIconoTexto(
         Text(
             text = mensaje,
             style = TextStyle(
-                color = Color(86, 86, 86)
+                color = Color(86, 86, 86),
+                fontSize = 12.sp
             )
 
         )
