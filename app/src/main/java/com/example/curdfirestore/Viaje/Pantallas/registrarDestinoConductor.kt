@@ -219,6 +219,7 @@ fun registrarDestinoConductor(
                         ) {
                             if (selectedPlace == null) {
                                 Marker(
+                                    draggable = true,
                                     state = markerState,
                                     title = "Destino",
                                     snippet = "Ubicación: $direccion",

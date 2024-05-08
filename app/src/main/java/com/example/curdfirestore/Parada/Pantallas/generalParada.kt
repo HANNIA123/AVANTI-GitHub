@@ -60,9 +60,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
-import com.example.curdfirestore.Viaje.Pantallas.FilaIconoTexto2
 import com.example.curdfirestore.Viaje.Pantallas.FilaIconoTexto3
-import com.example.curdfirestore.Viaje.Pantallas.dialogoSeleccionTrayecto
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState

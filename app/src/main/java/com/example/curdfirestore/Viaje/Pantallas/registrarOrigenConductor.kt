@@ -251,6 +251,7 @@ fun registrarOrigenConductor(
                                 Marker(
                                     state = markerState,
                                     title = "Origen",
+                                    draggable = true,
                                     snippet = "Ubicación: $direccion",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.marcador),
                                 )
