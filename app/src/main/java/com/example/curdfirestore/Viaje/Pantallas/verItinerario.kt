@@ -46,6 +46,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ViajeDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.lineaGris
+import com.example.avanti.ui.theme.Aplicacion.lineaGrisCompleta
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
@@ -214,7 +216,7 @@ fun verItinerarioCon(
 
                                     Row(
                                         modifier = Modifier
-                                            .fillMaxWidth(),
+                                            .fillMaxWidth().padding(10.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
@@ -264,7 +266,10 @@ fun verItinerarioCon(
                                             )
                                         }
                                     }
-                                    Spacer(modifier = Modifier.height(15.dp)) // Agrega un espacio entre el texto y la columna
+                                    Spacer(modifier = Modifier.height(5.dp)) // Agrega un espacio entre el texto y la columna
+
+                                    lineaGrisCompleta()
+                                    Spacer(modifier = Modifier.height(5.dp)) // Agrega un espacio entre el texto y la columna
 
                                 }
                             }

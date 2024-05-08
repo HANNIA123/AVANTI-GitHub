@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -36,6 +35,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -57,8 +57,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
+import com.example.curdfirestore.Viaje.Pantallas.FilaIconoTexto2
+import com.example.curdfirestore.Viaje.Pantallas.FilaIconoTexto3
+import com.example.curdfirestore.Viaje.Pantallas.dialogoSeleccionTrayecto
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -86,7 +90,7 @@ fun generalParada(
     BoxWithConstraints {
         maxh = this.maxHeight
     }
-    var viaje = conObtenerViajeId(viajeId = viajeId)
+    val viaje = conObtenerViajeId(viajeId = viajeId)
 
 
     val tamIcono = 55.dp
@@ -118,6 +122,13 @@ fun generalParada(
     var campoNombre by remember {
         mutableStateOf(false)
     }
+    var campoValidaHora by remember {
+        mutableStateOf(false)
+    }
+    var infoViaje by remember {
+        mutableStateOf(false)
+    }
+
     if (selectedHora != "") {
         horaFin = "$selectedHora hrs"
     }
@@ -128,7 +139,10 @@ fun generalParada(
 
     LaunchedEffect(horaFin) {
         campoHoraF = false
+        campoValidaHora = false
     }
+
+
 
     Scaffold()
     {
@@ -149,6 +163,15 @@ fun generalParada(
 
                 ) {
 
+                viaje?.let {
+                    if (viaje.viaje_paradas != "0") {
+
+                    } else {
+
+                    }
+
+                }
+
                 cabeceraAtrasParada(
                     titulo = "Registro de parada",
                     navController = navController,
@@ -157,8 +180,8 @@ fun generalParada(
                     viajeid = viajeId
                 )
 
-                val alturaT = maxh - 70.dp - 60.dp
-                val espacio = 50.dp
+                val alturaT = maxh - 70.dp - 60.dp - 210.dp - 10.dp - 55.dp - 60.dp - 10.dp - 190.dp
+                val espacio = (alturaT / 3) - 20.dp
                 Column(
                     modifier = Modifier
                         .padding(30.dp)
@@ -176,20 +199,12 @@ fun generalParada(
                             .fillMaxHeight()
                     ) {
 
-                        Spacer(modifier = Modifier.height(20.dp))
-                       /* Text(
-                            text = "Ingresa los datos para las paradas de tu viaje.",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                color = Color(86, 86, 86),
-                                textAlign = TextAlign.Justify
-
-                            )
-                        )*/
+                        Spacer(modifier = Modifier.height(10.dp))
 
 
-                        Box(contentAlignment = Alignment.Center, modifier=Modifier.fillMaxWidth()
-                        ){
+                        Box(
+                            contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()
+                        ) {
 
 
                             Image(
@@ -203,7 +218,7 @@ fun generalParada(
                         }
 
 
-                        Spacer(modifier = Modifier.height(30.dp))
+                        Spacer(modifier = Modifier.height(espacio))
 
                         Text(
                             text = "Nombre para identificar a esta parada",
@@ -227,7 +242,8 @@ fun generalParada(
                                 onValueChange = { newText -> nombre = newText },
                                 modifier = Modifier
                                     .background(Color.White)
-                                    .fillMaxWidth(),
+                                    .fillMaxWidth()
+                                    .height(60.dp),
 
                                 textStyle = TextStyle(
                                     fontSize = 20.sp,
@@ -278,52 +294,58 @@ fun generalParada(
                         )
                         Spacer(modifier = Modifier.height(5.dp))
 
+                        FilaIconoTexto3(
+                            icono = R.drawable.clock,
+                            texto = horaFin,
+                            onClick = {
+                                timeDialogStateFin.show()
+                                isDialogOpenFin = true
+                            },
+                            mostrarTextoError = campoHoraF,
+                            mensaje = "*Por favor ingresa el horario"
+
+                        )
+
+                        if (campoValidaHora) {
+                            Text(
+                                text = "*Verifica el horario de la parada",
+                                style = TextStyle(
+                                    color = Color(86, 86, 86),
+                                    fontSize = 12.sp
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .border(
-                                    1.dp,
-                                    Color.LightGray
-                                )
                                 .clickable {
-                                    timeDialogStateFin.show()
-                                    isDialogOpenFin = true
-                                }
+                                    infoViaje = true
+                                },
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = horaFin,
-                                modifier = Modifier
-                                    .weight(1f) // Ocupa todo el espacio disponible en la fila
-                                    .padding(15.dp),
-                                style = TextStyle(
-                                    fontSize = 20.sp,
-                                    color = Color.Black
-                                )
-                            )
-                            // Spacer(modifier = Modifier.weight(1f)) // Espacio flexible para alinear el icono al final
                             Icon(
-                                painter = painterResource(id = R.drawable.clock),
-                                contentDescription = "Icono horario",
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = "Icono",
                                 modifier = Modifier
-                                    .size(tamIcono)
+                                    .size(40.dp)
                                     .padding(10.dp, 5.dp),
-                                tint = Color(137, 13, 86)
+                                tint = Color(86, 86, 86)
                             )
-                        }
 
-
-
-                        if (campoHoraF) {
                             Text(
-                                text = "*Por favor ingresa el horario ",
+                                text = "Ver mi viaje",
                                 style = TextStyle(
-                                    color = Color(86, 86, 86)
+                                    fontSize = 16.sp,
+                                    color = Color(86, 86, 86),
+                                    textAlign = TextAlign.Justify
                                 )
-
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(90.dp))
+                        Spacer(modifier = Modifier.height(espacio))
                         Button(
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color(
@@ -369,6 +391,16 @@ fun generalParada(
                 }
             }
 
+            if (infoViaje) {
+                viaje?.let {
+                    dialogoInfViajeParada(
+                        onDismiss = { infoViaje = false },
+                        viaje = viaje
+                    )
+                }
+            }
+
+
         }
 
         Box(
@@ -405,8 +437,6 @@ fun generalParada(
 
 
 
-
-
         if (botonSiguiente) {
             //Validar que haya llenado todos los campos
 
@@ -423,12 +453,27 @@ fun generalParada(
                 }
 
             } else {
-                //  navController.navigate(route = "registrar_origen_conductor/$userId/$diaCon/$selectedHoraInicio/$selectedHoraFin/$selectedLugares/$selectedTarifa")
-                navController.navigate("registrar_parada_barra/$userId/$viajeId/$nombre/$selectedHora")
-                println("Campos completos de parada")
+
+                viaje?.let {
+                    val horaIni = convertirStringAHora(viaje.viaje_hora_llegada)
+                    val horaFin = convertirStringAHora(viaje.viaje_hora_partida)
+                    val horaPar = convertirStringAHora(selectedHora)
+
+                    println("hora Ini $horaIni fin $horaFin")
+                    if (
+                        (horaFin.isBefore(horaPar) && horaIni.isAfter(horaPar)) || horaPar==horaIni || horaPar==horaFin) {
+
+                        navController.navigate("registrar_parada_barra/$userId/$viajeId/$nombre/$selectedHora")
+                    } else {
+                        campoValidaHora = true
+
+                    }
+
+                }
+
+
             }
 
-            botonSiguiente = false
 
         }
 

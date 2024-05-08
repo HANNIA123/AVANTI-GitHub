@@ -122,3 +122,61 @@ fun FilaIconoTexto2(
             )
     }
 }
+
+@Composable
+fun FilaIconoTexto3(
+    icono: Int, // Recibe el recurso de icono
+    texto: String, // Recibe el texto a mostrar
+    onClick: () -> Unit, // Recibe la acción a realizar al hacer clic en la fila
+    mostrarTextoError: Boolean = false,
+    mensaje:String// Opcional: indica si se debe mostrar el texto de error// Opcional: indica si se debe mostrar el texto de error
+) {
+    val tamIcono = 55.dp
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp) // Altura deseada de la fila
+            .border(
+                width = 1.dp ,
+                color = Color.LightGray
+            )
+            .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+        text = texto,
+        modifier = Modifier
+            .weight(1f) // Ocupa todo el espacio disponible en la fila
+            .padding(15.dp),
+        style = TextStyle(
+            fontSize = 20.sp,
+            color = Color.Black
+        )
+    )
+        Icon(
+            painter = painterResource(id = icono),
+            contentDescription = "Icono",
+            modifier = Modifier
+                .size(tamIcono)
+                .padding(10.dp, 5.dp),
+            tint = Color(137, 13, 86)
+        )
+
+
+
+
+    }
+
+    if (mostrarTextoError) {
+        Text(
+            text = mensaje,
+            style = TextStyle(
+                color = Color(86, 86, 86)
+            )
+
+        )
+    }
+}
+

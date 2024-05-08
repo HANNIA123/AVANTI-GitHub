@@ -123,6 +123,7 @@ fun cabeceraAtrasParada(titulo:String,
         Row(
             modifier = Modifier
                 .padding(18.dp, 10.dp)
+                .height(55.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -132,7 +133,8 @@ fun cabeceraAtrasParada(titulo:String,
                 onClick = {
                     if (regresar == "vermapa") {
 
-                        navController.navigate("ver_itinerario_conductor/$userid")
+navController.popBackStack()
+                       // navController.navigate("ver_itinerario_conductor/$userid")
                     } else if (regresar == "inicioviaje") {
                         navController.navigate("viaje_inicio/$userid")
 

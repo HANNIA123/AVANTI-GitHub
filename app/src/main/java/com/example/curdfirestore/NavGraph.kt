@@ -232,7 +232,6 @@ fun NavGraph(
                 navController = navController,
                 correo = userID,
 
-
                 viajeId = viajeID
             )
 

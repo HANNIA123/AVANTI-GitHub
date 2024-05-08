@@ -292,6 +292,17 @@ fun lineaGris() {
 
     )
 }
+@Composable
+fun lineaGrisCompleta() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth().padding(3.dp)
+            .height(1.dp)
+            //.align(Alignment.CenterHorizontally)
+            .background(Color(222, 222, 222))
+
+    )
+}
 
 @Composable
 fun lineaGrisModificada(width: Dp, height: Dp, color: Color) {
