@@ -23,7 +23,7 @@ import com.example.curdfirestore.ui.theme.CURDFirestoreTheme
 class MainActivity : FragmentActivity() {
 
     private lateinit var navController: NavHostController
-    private lateinit var viewModel: ContadorViewModel
+
     private val authViewModel: AuthViewModel by viewModels()
 
 
@@ -32,8 +32,6 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         val savedStateHandle = SavedStateHandle() // Opcionalmente puedes pasar un SavedStateHandle personalizado aquí
         val viewModelFactory = ContadorViewModelFactory(savedStateHandle)
-
-        viewModel = ViewModelProvider(this, viewModelFactory).get(ContadorViewModel::class.java)
 
         setContent {
             CURDFirestoreTheme {
@@ -45,7 +43,6 @@ class MainActivity : FragmentActivity() {
                     navController = rememberNavController()
                     NavGraph(
                         navController = navController,
-                        viewModel = viewModel,
                         authViewModel
                     )
                 }

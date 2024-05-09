@@ -18,7 +18,6 @@ import com.example.curdfirestore.Usuario.Pasajero.Pantallas.homePantallaPasajero
 fun obtenerTipoUsuario(
     navController: NavController,
     userId: String,
-    viewModel: ContadorViewModel,
     authViewModel: AuthViewModel
 ) {
     val currentUser = authViewModel.currentUser
@@ -32,7 +31,7 @@ fun obtenerTipoUsuario(
 
         if(usuario!!.usu_tipo=="Conductor"){
            // obtenerCoordenadas(userId)
-        homePantallaConductor(navController = navController, userid =userId, viewModel )
+        homePantallaConductor(navController = navController, userid =userId )
 
 
         }

@@ -10,7 +10,10 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
 
 
 class LoginViewModel: ViewModel () {
@@ -38,9 +41,12 @@ class LoginViewModel: ViewModel () {
                 Log.d("Logueo", "SignInWithEmailandPassword: ${ex.message}")
             }
         }
-    
 
-    fun signOut() = viewModelScope.launch {
+
+    fun signOut(email: String) = viewModelScope.launch {
+
+
+
         auth.signOut()
     }
 
@@ -73,5 +79,27 @@ class LoginViewModel: ViewModel () {
 
 
 
+
+}
+
+fun eliminarToken(email:String){
+    try {
+        val usuarioRef = FirebaseFirestore.getInstance().collection("usuario").document(email)
+
+
+        val updates = hashMapOf<String, Any>(
+            "usu_token" to FieldValue.delete()
+        )
+
+        usuarioRef.update(updates).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                println("Campo usu_token eliminado correctamente de Firestore.")
+            } else {
+                println("Error al intentar eliminar el campo usu_token de Firestore: ${task.exception}")
+            }
+        }
+    } catch (e: Exception) {
+        println("Error al intentar eliminar el campo usu_token de Firestore: $e")
+    }
 
 }

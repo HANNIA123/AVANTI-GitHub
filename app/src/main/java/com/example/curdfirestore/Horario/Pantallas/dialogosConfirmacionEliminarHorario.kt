@@ -35,11 +35,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.avanti.NoticacionData
 import com.example.avanti.SolicitudData
+import com.example.avanti.UserData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.ConsultasHorario.conEditarStatusHorario
 import com.example.curdfirestore.Horario.ConsultasHorario.eliminarHorario
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
+import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conActualizarSolicitudByStatus
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.eliminarSolicitudPorHorarioId
@@ -242,6 +245,8 @@ fun dialogoConfirmarEliminarHorarioSEA(
 
 ) {
 
+
+
     var eliminar by remember {
         mutableStateOf(false)
     }
@@ -251,6 +256,12 @@ fun dialogoConfirmarEliminarHorarioSEA(
     var confirmN by remember {
         mutableStateOf(false)
     }
+
+    var usuarioPas by remember { mutableStateOf<UserData?>(null) }
+    var usuarioCon by remember { mutableStateOf<UserData?>(null) }
+
+    usuarioPas = conObtenerUsuarioId(correo = userId)
+    usuarioCon = conObtenerUsuarioId(correo = solicitud.conductor_id)
 
     val notificacionData = NoticacionData(
         notificacion_tipo = "ve",
@@ -270,8 +281,22 @@ fun dialogoConfirmarEliminarHorarioSEA(
                     confirmN = respuestaExitosa
                 }
                 eliminarHorario(documentId = horarioId,navController, userId)
-                eliminarSolicitudPorHorarioId(horarioId)
                 aumentarLugaresDeViaje(viajeId)
+                eliminarSolicitudPorHorarioId(horarioId)
+
+                //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
+                enviarNotificacion(usuarioPas!!.usu_nombre, usuarioPas!!.usu_primer_apellido,
+                    usuarioCon!!.usu_token, "ve", solicitud.conductor_id,
+                    onSuccess = {
+                        println("Notificación enviada exitosamente")
+                    },
+                    onError = { errorMessage ->
+                        println(errorMessage)
+                    }
+                )
+                //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
+
+
                 ejecutado = true
                 onDismiss()
 
