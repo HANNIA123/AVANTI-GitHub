@@ -180,14 +180,14 @@ fun homePantallaConductor(
                                     println("hora: ${it.viaje_hora_partida}")
                                     println("Convertir ${convertirStringAHora(it.viaje_hora_partida)}")
                                 }
-
+println("hora limite $horaMinima and $horaMaxima")
 
                                 val viajesFiltrados = viajes!!.filter {
                                     it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
-                                            convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima) &&
-                                            convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
-                                }
+                                    convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima)  && convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
 
+                                }
+                                        //convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima)  && convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
                                 //Mostrar solo los viajes del dia y los que estan por empezar
 
                                 if (viajesFiltrados.isNotEmpty()) {

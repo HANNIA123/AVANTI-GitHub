@@ -614,7 +614,8 @@ fun obtenerCoordenadas(
                                                 solicitudes,
                                                 navController,
                                                 userId,
-                                                idParadaActual
+                                                idParadaActual,
+                                                paradasOrdenadasPasar
                                             )
 
                                             viajeFinalizado=true
