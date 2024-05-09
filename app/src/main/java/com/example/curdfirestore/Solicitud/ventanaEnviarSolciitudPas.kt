@@ -350,6 +350,9 @@ fun ventanaEnviarSolicitud(
             horario_trayecto = horario.horario_trayecto,
             solicitud_status = "Pendiente",
             solicitud_date = fecha_now,
+         solicitud_viaje_iniciado="no",
+         solicitud_validacion_pasajero="pendiente",
+         solicitud_validacion_conductor= "pendiente"
 
 
             )

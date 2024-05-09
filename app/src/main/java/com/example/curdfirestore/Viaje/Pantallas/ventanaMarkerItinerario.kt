@@ -131,31 +131,7 @@ fun ventanaMarkerItinerario(
 
                         val solicitudes = conObtenerSolicitudesPorViajeRT(viajeId = viajeId)
                         println("iddd ${marker.marker_id}")
-                        solicitudes?.let {
 
-                            solicitudes.forEach { solicitud ->
-                                if (solicitud.first == marker.marker_id) {
-                                    val user =
-                                        conObtenerUsuarioId(correo = solicitud.second.pasajero_id)
-                                    user?.let {
-                                        Row() {
-                                            CoilImage(
-                                                url = user.usu_foto,
-                                                modifier = Modifier
-                                                    .size(70.dp)
-                                                    .clip(CircleShape)
-
-                                            )
-                                            textInMarker(Label = "Nombre", Text = user.usu_nombre)
-                                        }
-
-                                    }
-                                }
-
-                            }
-
-
-                        }
 
 
                     }

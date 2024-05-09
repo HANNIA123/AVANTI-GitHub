@@ -73,7 +73,6 @@ import java.time.LocalDate
 fun homePantallaConductor(
     navController: NavController,
     userid: String,
-    viewModel: ContadorViewModel
 
 ) {
     solicitarPermiso()
@@ -101,8 +100,7 @@ fun homePantallaConductor(
             obtenerCoordenadas(
                 userId = userid,
                 primerViajeIniciado!!.viaje_id,
-                navController,
-                viewModel
+                navController
             )
         }
     }

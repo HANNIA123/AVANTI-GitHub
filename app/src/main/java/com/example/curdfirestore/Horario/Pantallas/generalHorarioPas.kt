@@ -268,12 +268,12 @@ fun generalViajePas(
                             contentDescription = "Calendario",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(220.dp),
+                                .height(210.dp),
                             tint = Color(137, 13, 86))
 
 
                     }
-
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     FilaIconoTexto2(
                         icono = R.drawable.calendar,

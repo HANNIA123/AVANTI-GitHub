@@ -60,7 +60,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    viewModel: ContadorViewModel,
     authViewModel: AuthViewModel
 
 ) {
@@ -79,7 +78,7 @@ fun NavGraph(
                 println("autenticado")
                 val userId = authViewModel.currentUser!!.email
 
-                obtenerTipoUsuario(navController = navController, userId = userId.toString(), viewModel, authViewModel)
+                obtenerTipoUsuario(navController = navController, userId = userId.toString(), authViewModel)
                 // homePantallaConductor(navController = navController, userid = )
 
             } else {
@@ -113,7 +112,7 @@ fun NavGraph(
             "home/{useid}"
         ) {
             val userId = it.arguments?.getString("useid") ?: ""
-            obtenerTipoUsuario(navController = navController, userId = userId, viewModel, authViewModel)
+            obtenerTipoUsuario(navController = navController, userId = userId, authViewModel)
             // homePantallaConductor(navController = navController, userid = )
 
         }
@@ -121,7 +120,7 @@ fun NavGraph(
             "homeconductor/{useid}"
         ) {
             val userId = it.arguments?.getString("useid") ?: ""
-             homePantallaConductor(navController = navController, userid = userId, viewModel )
+             homePantallaConductor(navController = navController, userid = userId )
 
         }
 
@@ -386,7 +385,7 @@ fun NavGraph(
 
             val userId = it.arguments?.getString("correo") ?: ""
             val viajeId = it.arguments?.getString("viajeid") ?: ""
-            obtenerCoordenadas(userId = userId, viajeId =viajeId, navController=navController, viewModel = viewModel)
+            obtenerCoordenadas(userId = userId, viajeId =viajeId, navController=navController)
         }
 
 
