@@ -75,7 +75,7 @@ fun verInformacionViajeComenzada(
     }
 
     var listaSolicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
-    var botonReportar by remember{ mutableStateOf(false) }
+    var botonReportar by remember { mutableStateOf(false) }
     conObtenerSolicitudesConductor(userId = userid) { solicitudes ->
         listaSolicitudes = solicitudes
     }
@@ -143,9 +143,7 @@ fun verInformacionViajeComenzada(
                         ) {
 
 
-
                             paradasOrdenadas.forEach { parada ->
-
 
 
                                 textTituloInfSolcitud("${parada.second.par_nombre}  -  ${parada.second.par_hora} hrs")
@@ -156,7 +154,9 @@ fun verInformacionViajeComenzada(
                                     conObtenerSolicitudesPorViajeRT(viajeId = parada.second.viaje_id)
                                 solicitudes?.forEach { solicitud ->
 
-                                    if (solicitud.second.parada_id == paradaId && solicitud.second.solicitud_activa_pas != "no") {
+                                    if (solicitud.second.parada_id == paradaId && solicitud.second.solicitud_activa_pas != "no"
+                                        && solicitud.second.solicitud_status=="Aceptada"
+                                        ) {
                                         val pasajero =
                                             conObtenerUsuarioId(correo = solicitud.second.pasajero_id)
                                         val nombreCampo =
@@ -204,7 +204,7 @@ fun verInformacionViajeComenzada(
                                                         modifier = Modifier
                                                             // Alineación horizontal centrada
                                                             .clickable {
-                                                                       botonReportar=true
+                                                                botonReportar = true
                                                                 // Función para reportar
                                                             },
                                                         horizontalArrangement = Arrangement.Center
@@ -286,13 +286,10 @@ fun verInformacionViajeComenzada(
                                                     }
 
 
-
-                                            }
+                                                }
                                             }
                                         }
-                                    }
-
-                                    else {
+                                    } else {
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             verticalAlignment = Alignment.CenterVertically
@@ -325,19 +322,18 @@ fun verInformacionViajeComenzada(
 
 
     }
-    if(botonReportar){
-     /*   dialogoReportarPasajero(
-            onDismiss = { botonReportar = false },
-            usuarioPas!!,
-            userid,
-            pasajero_id,
-            navController
-        )
+    if (botonReportar) {
+        /*   dialogoReportarPasajero(
+               onDismiss = { botonReportar = false },
+               usuarioPas!!,
+               userid,
+               pasajero_id,
+               navController
+           )
 
-      */
+         */
 
     }
-
 
 
 }
