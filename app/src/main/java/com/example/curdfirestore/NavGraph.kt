@@ -26,6 +26,8 @@ import com.example.curdfirestore.Horario.Pantallas.verItinerarioPas
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajero
 import com.example.curdfirestore.Horario.Pantallas.verMapaViajePasajeroSinPar
 import com.example.curdfirestore.MainActivity
+import com.example.curdfirestore.Notificaciones.Pantallas.verNotificacionesCon
+import com.example.curdfirestore.Notificaciones.Pantallas.verNotificacionesPas
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.modificarPasswordCon
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.perfilConductor
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
@@ -67,7 +69,7 @@ fun NavGraph(
         navController = navController,
         startDestination = Screens.Login.route,
 
-    ) {
+        ) {
         // main screen
         composable(
             route = Screens.Login.route
@@ -78,7 +80,11 @@ fun NavGraph(
                 println("autenticado")
                 val userId = authViewModel.currentUser!!.email
 
-                obtenerTipoUsuario(navController = navController, userId = userId.toString(), authViewModel)
+                obtenerTipoUsuario(
+                    navController = navController,
+                    userId = userId.toString(),
+                    authViewModel
+                )
                 // homePantallaConductor(navController = navController, userid = )
 
             } else {
@@ -100,7 +106,7 @@ fun NavGraph(
                     }
 
                 }
-                  }
+            }
 
 
         }
@@ -120,7 +126,7 @@ fun NavGraph(
             "homeconductor/{useid}"
         ) {
             val userId = it.arguments?.getString("useid") ?: ""
-             homePantallaConductor(navController = navController, userid = userId )
+            homePantallaConductor(navController = navController, userid = userId)
 
         }
 
@@ -129,7 +135,11 @@ fun NavGraph(
             "cuenta_conductor/{userid}"
         ) {
             val userId = it.arguments?.getString("userid") ?: ""
-            cuentaPantallaCon(navController = navController, userID = userId, authViewModel = authViewModel)
+            cuentaPantallaCon(
+                navController = navController,
+                userID = userId,
+                authViewModel = authViewModel
+            )
 
         }
         composable("viaje_inicio/{userid}") {
@@ -146,7 +156,11 @@ fun NavGraph(
 
         composable("modificar_password_conductor/{userid}") {
             val userId = it.arguments?.getString("userid") ?: ""
-            modificarPasswordCon(navController = navController, userId = userId, authViewModel = authViewModel)
+            modificarPasswordCon(
+                navController = navController,
+                userId = userId,
+                authViewModel = authViewModel
+            )
 
         }
 
@@ -360,14 +374,16 @@ fun NavGraph(
                 userid = userId
             )
         }
+        composable(
+            "ver_notificaciones_conductor/{usuario}"  //Funcion del conductor
+        ) {
+            val userID = it.arguments?.getString("usuario") ?: ""
 
-
-
-
-
-
-
-
+            verNotificacionesCon(
+                navController = navController,
+                userID
+            )
+        }
 
         //ver solicitudes Hannia --- 346-356
         composable("ver_solicitudes_conductor/{userid}") {
@@ -378,14 +394,15 @@ fun NavGraph(
             )
         }
         //Ruta para iniciar el viaje
-        composable("empezar_viaje/{correo}/{viajeid}"
+        composable(
+            "empezar_viaje/{correo}/{viajeid}"
         ) {
             val activity = LocalContext.current as MainActivity
             println("Tipo de activity: ${activity?.javaClass?.simpleName}")
 
             val userId = it.arguments?.getString("correo") ?: ""
             val viajeId = it.arguments?.getString("viajeid") ?: ""
-            obtenerCoordenadas(userId = userId, viajeId =viajeId, navController=navController)
+            obtenerCoordenadas(userId = userId, viajeId = viajeId, navController = navController)
         }
 
 
@@ -414,7 +431,11 @@ fun NavGraph(
 
         composable("modificar_password_pasajero/{userid}") {
             val userId = it.arguments?.getString("userid") ?: ""
-            modificarPasswordPas(navController = navController, userId = userId, authViewModel = authViewModel)
+            modificarPasswordPas(
+                navController = navController,
+                userId = userId,
+                authViewModel = authViewModel
+            )
 
         }
 
@@ -489,13 +510,24 @@ fun NavGraph(
 
         //ruta ver conductores 450-460 -- Caro
         //ruta ver conductores 450-460 -- Caro
-        composable( "ver_conductores_pasajero/{userid}"
+        composable(
+            "ver_conductores_pasajero/{userid}"
         ) {
-            val userId= it.arguments?.getString("userid")?:""
+            val userId = it.arguments?.getString("userid") ?: ""
             verConductores(navController = navController, userid = userId)
         }
 
+        composable(
+            "ver_notificaciones_pasajero/{usuario}"  //Funcion del pasajero
+        ) {
+            val userID = it.arguments?.getString("usuario") ?: ""
 
+            verNotificacionesPas(
+                navController = navController,
+                userID
+            )
+
+        }
 
 //Ruta para ver el avance del viaje
         composable(
@@ -505,20 +537,19 @@ fun NavGraph(
             val idviaje = it.arguments?.getString("idviaje") ?: ""
             val idHorario = it.arguments?.getString("idhorario") ?: ""
             val idsolicitud = it.arguments?.getString("idsolicitud") ?: ""
-            val idParada= it.arguments?.getString("idparada") ?: ""
+            val idParada = it.arguments?.getString("idparada") ?: ""
             verUbicacionMonitoreo(
                 userId = correo,
                 viajeId = idviaje,
                 horarioId = idHorario,
                 solicitudId = idsolicitud,
-                paradaId=idParada,
+                paradaId = idParada,
                 navController = navController
             )
 
 
         }
 
-        ///////////////////////////
 
     }
 }
