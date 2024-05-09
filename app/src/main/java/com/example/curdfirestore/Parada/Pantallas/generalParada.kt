@@ -161,14 +161,6 @@ fun generalParada(
 
                 ) {
 
-                viaje?.let {
-                    if (viaje.viaje_paradas != "0") {
-
-                    } else {
-
-                    }
-
-                }
 
                 cabeceraAtrasParada(
                     titulo = "Registro de parada",

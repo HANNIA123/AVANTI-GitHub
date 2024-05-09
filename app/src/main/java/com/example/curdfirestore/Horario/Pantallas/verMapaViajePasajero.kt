@@ -122,11 +122,6 @@ fun verMapaViajePasajero(
     val paradaId = solicitud?.parada_id
     var paradas = if (paradaId != null) conObtenerParadaId(paradaId) else null
 
-    println("SOLICITUDDDDDD $solicitud")
-    println("La parada es: $paradaId")
-    println("PARDADAAAS: $paradas")
-
-
 
 
 

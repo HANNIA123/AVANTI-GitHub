@@ -325,10 +325,10 @@ fun registrarDestinoPasajero(
 
                 Button(
                     modifier = Modifier
-                        .width(200.dp)
+                        .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp)
-                    ,
+                        .padding(43.dp, 10.dp, 43.dp, 20.dp),
+
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(137, 13, 88),
                     ),

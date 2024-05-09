@@ -38,6 +38,8 @@ fun conActualizarViaje(
 
                 }
                 else{
+                    Toast.makeText(navController.context, "Viaje actualizado ", Toast.LENGTH_SHORT).show()
+
                     navController.navigate(route = "ver_mapa_viaje/$viajeId/$userId")
                 }
 

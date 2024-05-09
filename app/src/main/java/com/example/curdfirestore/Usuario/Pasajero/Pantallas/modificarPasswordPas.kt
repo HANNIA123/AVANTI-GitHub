@@ -58,7 +58,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.LoginViewModel
+import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
 import com.example.avanti.ui.theme.Aplicacion.tituloAtras
+import com.example.curdfirestore.AuthViewModel
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
 import com.google.firebase.auth.EmailAuthProvider
@@ -73,9 +75,10 @@ var maxhm=0.dp
 fun modificarPasswordPas(
     navController: NavController,
     userId: String,
+    authViewModel: AuthViewModel
 ) {
 
-    val viewModel= LoginViewModel()
+
 
     var currentPassword by remember { mutableStateOf(TextFieldValue("")) }
     var newPassword by remember { mutableStateOf(TextFieldValue("")) }
@@ -123,8 +126,8 @@ fun modificarPasswordPas(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                tituloAtras(Titulo = "Cambiar\ncontraseña", navController)
 
+cabeceraConBotonAtras(titulo = "Contraseña", navController = navController)
                 Column(
                     modifier = Modifier
                         .padding(20.dp),
@@ -369,7 +372,7 @@ fun modificarPasswordPas(
                     if (showDialog) {
                         AlertDialog(
                             onDismissRequest = {
-                                viewModel.signOut()
+                                authViewModel.signOut()
                                 navController.navigate(route = "login")
                             },
                             title = {
@@ -381,7 +384,7 @@ fun modificarPasswordPas(
                             confirmButton = {
                                 Button(
                                     onClick = {
-                                        viewModel.signOut()
+                                        authViewModel.signOut()
                                         navController.navigate(route = "login")
                                         showDialog = false
                                     },

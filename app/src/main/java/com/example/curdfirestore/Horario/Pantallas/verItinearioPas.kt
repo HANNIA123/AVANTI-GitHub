@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.HorarioDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.lineaGrisCompleta
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPas
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitud
@@ -209,11 +210,12 @@ fun verItinerarioPas(
                                 val horariosOrdenados = horariosPorDia.sortedBy { it.horario_hora}
 
                                 horariosOrdenados.forEach {
-                                    var solicitud= conObtenerSolicitud(it.horario_id)
-                                    println("SOLICITUDDD EN ITINERARI $solicitud")
+                                    val solicitud= conObtenerSolicitud(it.horario_id)
+
                                     Row(
                                         modifier = Modifier
-                                            .fillMaxWidth(),
+                                            .fillMaxWidth()
+                                            .padding(10.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
@@ -280,7 +282,10 @@ fun verItinerarioPas(
 
 
                                     }
-                                    Spacer(modifier = Modifier.height(15.dp)) // Agrega un espacio entre el texto y la columna
+                                    Spacer(modifier = Modifier.height(5.dp)) // Agrega un espacio entre el texto y la columna
+
+                                    lineaGrisCompleta()
+                                    Spacer(modifier = Modifier.height(5.dp)) // Agrega un espacio entre el texto y la columna
 
 
                                 }

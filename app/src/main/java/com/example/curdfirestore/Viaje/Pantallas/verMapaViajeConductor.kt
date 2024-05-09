@@ -342,6 +342,7 @@ fun verMapaViajeConductor(
                             ventanaMarkerItinerario(
                                 navController,
                                 viajeId,
+                                viajeData,
                                 correo,
                                 infparadas!!,
                                 show,

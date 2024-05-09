@@ -223,6 +223,7 @@ fun registrarDestinoConductorEditar(
                                 Marker(
                                     state = markerState,
                                     title = "Destino",
+                                    draggable=true,
                                     snippet = "Ubicación: $direccion",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.marcador),
                                 )
@@ -326,9 +327,9 @@ fun registrarDestinoConductorEditar(
 
                 Button(
                     modifier = Modifier
-                        .width(200.dp)
+                        .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp),
+                        .padding(43.dp, 10.dp, 43.dp, 20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(137, 13, 88),
                     ),
@@ -368,7 +369,7 @@ fun registrarDestinoConductorEditar(
                 viaje_trayecto = "0",
                 viaje_status = conViaje.viaje_status,
                 viaje_num_lugares = lugares,
-                viaje_paradas = "0",
+                viaje_paradas = conViaje.viaje_paradas,
                 viaje_iniciado = "no",
                 viaje_tarifa = tarifa,
                 viaje_num_pasajeros = "0",

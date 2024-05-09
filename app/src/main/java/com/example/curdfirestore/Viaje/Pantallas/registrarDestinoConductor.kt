@@ -329,7 +329,7 @@ fun registrarDestinoConductor(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(40.dp, 10.dp, 40.dp, 20.dp),
+                        .padding(43.dp, 10.dp, 43.dp, 20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(137, 13, 88),
                     ),

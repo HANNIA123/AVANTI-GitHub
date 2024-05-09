@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -84,7 +85,7 @@ fun cuentaPantallaPas(
                     .padding(20.dp),
 
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 usuario?.let {
                     // Cargar y mostrar la imagen con Coil
@@ -105,6 +106,7 @@ fun cuentaPantallaPas(
 
                         )
                     )
+
 
                     //Botones del inicio
                     Button(
@@ -138,6 +140,7 @@ fun cuentaPantallaPas(
                                 )
                         )
                     }
+                    Spacer(modifier=Modifier.height(10.dp))
                     //Notificaciones
                     Button(
                         colors = ButtonDefaults.buttonColors(
@@ -168,7 +171,7 @@ fun cuentaPantallaPas(
                             )
                         )
                     }
-
+                    Spacer(modifier=Modifier.height(10.dp))
                     Button(
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color(

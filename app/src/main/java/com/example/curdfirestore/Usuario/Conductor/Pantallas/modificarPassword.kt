@@ -53,7 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.LoginViewModel
+import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
 import com.example.avanti.ui.theme.Aplicacion.tituloAtras
+import com.example.curdfirestore.AuthViewModel
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.google.firebase.auth.EmailAuthProvider
@@ -68,9 +70,10 @@ var maxhm=0.dp
 fun modificarPasswordCon(
     navController: NavController,
     userId: String,
+    authViewModel: AuthViewModel
 ) {
 
-    val viewModel= LoginViewModel()
+
 
     var currentPassword by remember { mutableStateOf(TextFieldValue("")) }
     var newPassword by remember { mutableStateOf(TextFieldValue("")) }
@@ -118,7 +121,9 @@ fun modificarPasswordCon(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                tituloAtras(Titulo = "Cambiar\ncontraseña", navController)
+
+                cabeceraConBotonAtras(titulo = "Contraseña", navController = navController)
+
 
                 Column(
                     modifier = Modifier
@@ -364,7 +369,7 @@ fun modificarPasswordCon(
                     if (showDialog) {
                         AlertDialog(
                             onDismissRequest = {
-                                viewModel.signOut()
+                                authViewModel.signOut()
                                 navController.navigate(route = "login")
                             },
                             title = {
@@ -376,8 +381,9 @@ fun modificarPasswordCon(
                             confirmButton = {
                                 Button(
                                     onClick = {
-                                        viewModel.signOut()
+                                        authViewModel.signOut()
                                         navController.navigate(route = "login")
+
                                         showDialog = false
                                     },
                                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(137, 13, 88))

@@ -35,7 +35,7 @@ fun botonesSolicitud(
                 backgroundColor = Color(140, 85, 209)
             ),
             onClick = { onAceptarClick() },
-            modifier = Modifier.width(100.dp)
+            modifier = Modifier.width(130.dp)
         ) {
             Text(
                 text = "Aceptar",
@@ -52,7 +52,7 @@ fun botonesSolicitud(
                 backgroundColor = Color(194, 192, 193)
             ),
             onClick = { onRechazarClick() },
-            modifier = Modifier.width(100.dp)
+            modifier = Modifier.width(130.dp)
         ) {
             Text(
                 text = "Rechazar",

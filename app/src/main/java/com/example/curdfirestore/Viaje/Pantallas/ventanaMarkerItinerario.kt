@@ -42,7 +42,10 @@ import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.BASE_URL
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
+import com.example.avanti.ViajeData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.textInMarker
 import retrofit2.Retrofit
@@ -53,6 +56,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 fun ventanaMarkerItinerario(
     navController: NavController,
     viajeId: String,
+    viaje: ViajeData,
     email: String,
     marker: MarkerItiData,
     show: Boolean,
@@ -100,6 +104,8 @@ fun ventanaMarkerItinerario(
                     )
                     //TextInMarker(Label = "Nombre: ", Text = marker.marker_titulo)
                 } else {
+
+
                     Text(
                         text = "Información sobre la parada",
                         modifier = Modifier.padding(2.dp),
@@ -111,6 +117,48 @@ fun ventanaMarkerItinerario(
 
                     )
                     textInMarker(Label = "Nombre de la parada: ", Text = marker.marker_titulo)
+                    if (viaje.viaje_num_pasajeros != "0") {
+                        Text(
+                            text = "Pasajeros: ",
+                            modifier = Modifier.padding(2.dp),
+                            style = TextStyle(
+                                Color(137, 13, 88),
+                                fontSize = 18.sp
+                            ),
+                            textAlign = TextAlign.Center
+
+                        )
+
+                        val solicitudes = conObtenerSolicitudesPorViajeRT(viajeId = viajeId)
+                        println("iddd ${marker.marker_id}")
+                        solicitudes?.let {
+
+                            solicitudes.forEach { solicitud ->
+                                if (solicitud.first == marker.marker_id) {
+                                    val user =
+                                        conObtenerUsuarioId(correo = solicitud.second.pasajero_id)
+                                    user?.let {
+                                        Row() {
+                                            CoilImage(
+                                                url = user.usu_foto,
+                                                modifier = Modifier
+                                                    .size(70.dp)
+                                                    .clip(CircleShape)
+
+                                            )
+                                            textInMarker(Label = "Nombre", Text = user.usu_nombre)
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+
+                        }
+
+
+                    }
 
                 }
 
@@ -146,7 +194,7 @@ fun ventanaMarkerItinerario(
 
 //                                    composable("general_parada_editar/{viajeid}/{userid}/{paradaid}") {
 
-                                   // println("-------------- general_parada_editar/$viajeId/$email/${marker.marker_id}----------")
+                                    // println("-------------- general_parada_editar/$viajeId/$email/${marker.marker_id}----------")
                                     navController.navigate("general_parada_editar/$viajeId/$email/${marker.marker_id}")
                                     //Editar parada
 
