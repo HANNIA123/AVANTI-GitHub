@@ -166,8 +166,8 @@ data class HistorialViajesData(
     var horario_id: String="",
     var hora_inicio_viaje: String="",
     var hora_fin_viaje: String="",
-    var validacion_pasajeros:List<String> = emptyList(),
-    var validacion_conductor_paradas: List<String> = emptyList(),
+    var validacion_pasajeros:List<Boolean> = emptyList(),
+    var validacion_conductor_paradas: List<Boolean> = emptyList(),
     var bloqueo_inicio_viaje: Boolean=false,
     var hora_bloqueo_viaje: String="",
     var id_viaje_iniciado:String=""

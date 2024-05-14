@@ -45,6 +45,7 @@ import com.example.avanti.HistorialViajesData
 import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.barraProgresoViaje
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.dialogoViajeFinalizo
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.mapaUbicacionConductor
@@ -55,6 +56,7 @@ import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSol
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerHistorialViajeRT
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
 import com.example.curdfirestore.Viaje.ConsultasViaje.editarDocumentoHistorial
 import com.example.curdfirestore.Viaje.ConsultasViaje.registrarHistorialViaje
@@ -221,7 +223,9 @@ fun obtenerCoordenadas(
     var idInicioViaje by remember {
         mutableStateOf("")
     }
-
+    var historial by remember {
+        mutableStateOf< HistorialViajesData?>(null)
+    }
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
     }
@@ -265,6 +269,13 @@ fun obtenerCoordenadas(
                         mutableStateOf(listParadasRecorridas.size)
                     }
                     numParadaActual = listParadasRecorridas.size
+
+                    println("Id historial $idInicioViaje")
+
+
+                    if(idInicioViaje!="") {
+                         historial = conObtenerHistorialViajeRT(viajeId = idInicioViaje)
+                    }
 
 
                     barraProgresoViaje(
@@ -418,6 +429,8 @@ fun obtenerCoordenadas(
                                         botonInicioViaje = true
 
                                     } else {
+                                        huellaIngresada=false
+
 
                                         if (numParadaActual < totalParadas) {
                                             idParadaActual = paradasOrdenadas[numParadaActual].first
@@ -450,6 +463,13 @@ fun obtenerCoordenadas(
                                                 idParadaActual,
                                                 paradasOrdenadasPasar
                                             )
+
+                                            val nuevosValores = mapOf(
+                                                "hora_fin_viaje" to obtenerHoraActual(),
+                                            )
+                                            editarDocumentoHistorial(idInicioViaje, nuevosValores)
+
+
 
                                             viajeFinalizado = true
                                         }
@@ -566,17 +586,12 @@ fun obtenerCoordenadas(
                         //--------Acciones en las paradas---------
                         if (botonParadas) {
                             if (huellaIngresada) {
-
-                                val nuevosValores = mapOf(
-                                    "bloqueo_inicio_viaje" to true,
-                                    "fecha_bloqueo_viaje" to obtenerFechaFormatoddmmyyyy(),
-                                    "hora_bloqueo_viaje" to obtenerHoraActualSec()
-                                )
-                                editarDocumentoHistorial(idInicioViaje, nuevosValores)
+                                var validacionBoolean=false
 
                                 textoDialogo =
                                     "Tu identidad no ha sido validada, el pasajero será notificado de esto. "
                                 if (huellaCorrecta) {
+                                    validacionBoolean=true
                                     println("huella correcta y el id parada $idParadaActual")
                                     actualizarCampoSolicitudPorBusqueda(
                                         "parada_id",
@@ -585,9 +600,6 @@ fun obtenerCoordenadas(
                                         "si"
                                     )
                                     botonNotificacionValida = true
-
-
-
 
                                 } else {
                                     dialogoAutFall = true
@@ -599,6 +611,17 @@ fun obtenerCoordenadas(
 
                                     )
                                 }
+
+                                historial?.let {
+
+                                    val listaParadasVal= historial!!.validacion_conductor_paradas
+                                    val newLista= listaParadasVal.plus(validacionBoolean)
+                                    val nuevosValores = mapOf(
+                                        "validacion_conductor_paradas" to newLista,
+                                    )
+                                    editarDocumentoHistorial(idInicioViaje, nuevosValores)
+                                }
+
                                 actualizarCampoParada(
                                     idParadaActual,
                                     "par_recorrido",

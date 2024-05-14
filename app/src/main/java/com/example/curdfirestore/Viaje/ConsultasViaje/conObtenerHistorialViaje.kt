@@ -27,7 +27,7 @@ fun conObtenerHistorialViajeRT(
 
         viajeRef.addSnapshotListener { snapshot, error ->
             if (error != null) {
-                println("Error al obtener viaje: $error")
+                println("Error al obtener historiaaal: $error")
                 return@addSnapshotListener
             }
 
