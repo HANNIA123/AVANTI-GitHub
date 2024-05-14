@@ -409,7 +409,8 @@ fun registrarOrigenConductorEditar(
                 viaje_tarifa = tarifa,
                 viaje_num_pasajeros = "0",
                 viaje_num_pasajeros_con = "0",
-                viaje_id = ""
+                viaje_id = "",
+                viaje_id_iniciado = ""
             )
 
 

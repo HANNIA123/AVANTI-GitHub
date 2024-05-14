@@ -411,7 +411,8 @@ fun registrarOrigenConductor(
             viaje_tarifa = tarifa,
             viaje_num_pasajeros = "0",
             viaje_num_pasajeros_con = "0",
-            viaje_id = ""
+            viaje_id = "",
+            viaje_id_iniciado = ""
         )
 
         conRegistrarViaje(navController, userid, viajeData, comPantalla)
