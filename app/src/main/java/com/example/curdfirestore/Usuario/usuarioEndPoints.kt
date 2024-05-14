@@ -9,8 +9,8 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 
-public var BASE_URL = "http://192.168.1.8:3000/"
-//public var BASE_URL = "https://us-central1-avanti-c4ba7.cloudfunctions.net/app/"
+//public var BASE_URL = "http://192.168.20.173:3000/"
+public var BASE_URL = "https://us-central1-avanti-c4ba7.cloudfunctions.net/app/"
 
 object RetrofitClientUsuario {
     val apiService: ApiServiceUsuario by lazy {
@@ -23,8 +23,8 @@ object RetrofitClientUsuario {
 }
 
 
-//const val newUrl = "https://us-central1-avanti-c4ba7.cloudfunctions.net/app"
-const val newUrl = ""
+const val newUrl = "https://us-central1-avanti-c4ba7.cloudfunctions.net/app"
+//const val newUrl = ""
 
 interface ApiServiceUsuario {
     @GET("$newUrl/api/usuario/obtener/{id}")

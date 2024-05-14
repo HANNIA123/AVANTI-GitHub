@@ -2,11 +2,7 @@ package com.example.curdfirestore.Viaje.Pantallas.Monitoreo
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.biometric.BiometricPrompt
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,8 +10,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -34,11 +28,9 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,35 +40,33 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.avanti.HistorialViajesData
 import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
-import com.example.avanti.ui.theme.Aplicacion.lineaGrisModificada
-import com.example.curdfirestore.ContadorViewModel
+import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.curdfirestore.Horario.Pantallas.Monitoreo.barraProgresoViaje
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.dialogoViajeFinalizo
+import com.example.curdfirestore.Horario.Pantallas.Monitoreo.mapaUbicacionConductor
 import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
-import com.example.curdfirestore.R
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitudPorBusqueda
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
+import com.example.curdfirestore.Viaje.ConsultasViaje.editarDocumentoHistorial
+import com.example.curdfirestore.Viaje.ConsultasViaje.registrarHistorialViaje
 import com.example.curdfirestore.Viaje.Funciones.UbicacionRealTime
 import com.example.curdfirestore.Viaje.Funciones.accionesComienzoViaje
 import com.example.curdfirestore.Viaje.Funciones.accionesTerminoViaje
-import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddressRec
-import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
+import com.example.curdfirestore.Viaje.Funciones.obtenerHoraActualSec
+import com.example.curdfirestore.Viaje.Funciones.registrarHistorialBloqueo
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViaje
 import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
 import com.example.curdfirestore.Viaje.Pantallas.Huella.dialogoHuellaFallida
-import com.example.curdfirestore.iniciarContador
-import com.example.curdfirestore.iniciarContador1
 import com.example.curdfirestore.lineaCargando
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -86,11 +76,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.maps.android.compose.CameraPositionState
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -101,7 +87,6 @@ fun obtenerCoordenadas(
     viajeId: String,
     navController: NavController,
 ) {
-
 
     val activity1 = LocalContext.current as MainActivity
 
@@ -120,13 +105,11 @@ fun obtenerCoordenadas(
     }
 
     val context = LocalContext.current
-    val newUserId = userId.substringBefore('@')
+
     var validar by remember {
         mutableStateOf(false)
     }
-    var empezarUbicacion by remember {
-        mutableStateOf(false)
-    }
+
     var textoDialogo by remember {
         mutableStateOf("")
     }
@@ -138,11 +121,10 @@ fun obtenerCoordenadas(
     var viajeFinalizado by remember {
         mutableStateOf(false)
     }
-
-
-    var visibilidadInicioViaje by remember {
-        mutableStateOf(true)
+    var dialogoAutFall by remember {
+        mutableStateOf(false)
     }
+
     val referencia = Firebase.database.getReference("ubicacion").child(viajeId)
 
 
@@ -186,26 +168,6 @@ fun obtenerCoordenadas(
             println("Error al obtener los datos: ${databaseError.message}")
         }
     })
-
-
-    val referenciaBoton = Firebase.database.getReference(newUserId).child("InicioViaje")
-
-// Agregar un listener para obtener el valor de la variable
-    referenciaBoton.addValueEventListener(object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val valor = snapshot.getValue(Boolean::class.java)
-            if (valor != null) {
-                // Utiliza el valor como necesites
-                visibilidadInicioViaje = valor
-            }
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            // Manejar el error en caso de que ocurra
-        }
-    }
-    )
-    println("Visibiliodad $visibilidadInicioViaje")
 
 
     //Paradas en el mapa y control de ellas
@@ -256,6 +218,9 @@ fun obtenerCoordenadas(
         mutableStateOf<List<Pair<String, ParadaData>>?>(null)
     }
 
+    var idInicioViaje by remember {
+        mutableStateOf("")
+    }
 
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
@@ -280,6 +245,13 @@ fun obtenerCoordenadas(
 
             infViaje?.let {
                 listaParadasCom?.let {
+                    idInicioViaje = infViaje.viaje_id_iniciado
+                    var botonActivo by remember {
+                        mutableStateOf(true)
+                    }
+                    var hisCreado by remember {
+                        mutableStateOf(false)
+                    }
 
                     val paradasOrdenadas = listaParadasCom.sortedBy { it.second.par_hora }
                     val totalParadas = paradasOrdenadas.size
@@ -292,85 +264,22 @@ fun obtenerCoordenadas(
                     var num by remember {
                         mutableStateOf(listParadasRecorridas.size)
                     }
-
                     numParadaActual = listParadasRecorridas.size
-                    val animationDurationMillis = 2000
-                    val scope = rememberCoroutineScope()
-                    var currentLatLng by remember { mutableStateOf(latLng) }
 
-                    val animatedLatitude by animateDpAsState(
-                        targetValue = currentLatLng.latitude.toDouble().dp,
-                        animationSpec = tween(durationMillis = animationDurationMillis), label = ""
+
+                    barraProgresoViaje(
+                        totalParadas = totalParadas,
+                        viajeComenzado = viajeComenzado,
+                        maxw = maxw,
+                        listParadasRecorridas = listParadasRecorridas
                     )
-                    val animatedLongitude by animateDpAsState(
-                        targetValue = currentLatLng.longitude.toDouble().dp,
-                        animationSpec = tween(durationMillis = animationDurationMillis), label = ""
-                    )
-
-                    LaunchedEffect(Unit) {
-                        while (true) {
-                            val newLatitude = latLng.latitude
-                            val newLongitude = latLng.longitude
-                            scope.launch {
-                                currentLatLng = LatLng(newLatitude, newLongitude)
-                            }
-                            delay(3000)
-                        }
-                    }
-
-
-                    val lineH = 3.dp
-                    // Variable para almacenar el valor máximo de width
-
-                    val lineaW = maxw / (totalParadas + 2)
-
-                    Column(
-                        modifier = Modifier
-                            .height(45.dp)
-                            .background(Color.White)
-                            .padding(10.dp)
-                    ) {
-
-
-                        Text(
-                            "Progreso del viaje...", fontSize = 12.sp,
-                            color = Color(165, 165, 165)
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Row() {
-
-
-                            for (i in 0..(totalParadas + 2)) {
-                                val color: Color
-                                if (viajeComenzado.isEmpty()) {
-                                    println("No ha comenzado")
-                                    color = Color(222, 222, 222)
-                                } else {
-                                    val numeros = listParadasRecorridas.size
-                                    if (i <= numeros) {
-                                        color = Color.Blue
-                                    } else {
-                                        color = Color(222, 222, 222)
-                                    }
-                                }
-                                lineaGrisModificada(
-                                    width = lineaW,
-                                    height = lineH,
-                                    color = color
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                            }
-
-
-                        }
-                    }
 
 
 
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(maxh - 175.dp)
+                            .height(maxh - 181.dp)
                     ) {
                         val cameraPosition = remember {
                             CameraPosition(
@@ -381,7 +290,6 @@ fun obtenerCoordenadas(
                             )
                         }
                         val cameraPositionState = remember { CameraPositionState(cameraPosition) }
-
                         val zoomLevel = rememberSaveable { mutableStateOf(cameraPosition.zoom) }
 
                         LaunchedEffect(Unit) {
@@ -394,102 +302,21 @@ fun obtenerCoordenadas(
                                         cameraPosition.tilt,
                                         cameraPosition.bearing
                                     )
-                                    delay(8000)
+                                    delay(9000)
                                 } else {
-
-
                                     delay(500)
                                 }
                             }
                         }
 
-
-                        GoogleMap(
-                            modifier = Modifier
-                                .fillMaxSize(),
+                        mapaUbicacionConductor(
                             cameraPositionState = cameraPositionState,
-                            onMapLoaded = {
-                                cargando = true
-                            },
-                            /*cameraPositionState = CameraPositionState(CameraPosition(LatLng(animatedLatitude.value.toDouble(),
-                                        animatedLongitude.value.toDouble()
-                                    ), 16f, 0f,0f))
-                                  */
-                        ) {
-                            Marker(
-                                state = MarkerState(
-                                    position = LatLng(
-                                        latLng.latitude,
-                                        latLng.longitude
-                                    )
-                                ),
-                                title = "Tu ubicación",
-                                icon = BitmapDescriptorFactory.fromResource(R.drawable.autooficial),
-                            )
+                            cargando = { cargando = true },
+                            latLng = latLng,
+                            paradasOrdenadas = paradasOrdenadas,
+                            infViaje = infViaje
+                        )
 
-                            paradasOrdenadas.forEach { parada ->
-                                val parLatLng = convertirStringALatLng(parada.second.par_ubicacion)
-                                if (parLatLng != null) {
-
-
-
-                                    Marker(
-                                        state = MarkerState(
-                                            position = LatLng(
-                                                parLatLng.latitude,
-                                                parLatLng.longitude
-                                            )
-                                        ),
-                                        title = "Parada ${parada.second.par_nombre}",
-                                        //snippet = "Dirección: $direccionPar",
-                                        icon = BitmapDescriptorFactory.fromResource(R.drawable.paradas),
-                                    )
-                                }
-
-
-                            }
-
-                            val origenLatLng = convertirStringALatLng(infViaje.viaje_origen)
-                            val destinoLatLng = convertirStringALatLng(infViaje.viaje_destino)
-                            val direccionOri = origenLatLng?.let { it1 ->
-                                convertCoordinatesToAddressRec(
-                                    it1
-                                )
-                            }
-                            val direccionDes = destinoLatLng?.let { it1 ->
-                                convertCoordinatesToAddressRec(
-                                    it1
-                                )
-                            }
-
-                            if (origenLatLng != null) {
-                                Marker(
-                                    state = MarkerState(
-                                        position = LatLng(
-                                            origenLatLng.latitude,
-                                            origenLatLng.longitude
-                                        )
-                                    ),
-                                    title = "Origen",
-                                    //  snippet = "Dirección: $direccionOri",
-                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
-                                )
-                            }
-                            if (destinoLatLng != null) {
-                                Marker(
-                                    state = MarkerState(
-                                        position = LatLng(
-                                            destinoLatLng.latitude,
-                                            destinoLatLng.longitude
-                                        )
-                                    ),
-                                    title = "Punto de llegada",
-                                    //snippet = "Ubicación: $direccionDes",
-                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
-                                )
-                            }
-
-                        }
 
                         //boton flotante
                         Box(
@@ -536,7 +363,20 @@ fun obtenerCoordenadas(
                     }
 
 
-                    //Boton de llegada
+
+                    if (idInicioViaje != "") { // existe
+
+                        hisCreado = true
+                        registrarHistorialBloqueo(
+                            idInicioViaje = idInicioViaje,
+                            botonActivo = { botonActivo = true },
+                            botonNoActivo = { botonActivo = false },
+
+
+                            )
+                    }
+
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -547,8 +387,8 @@ fun obtenerCoordenadas(
                         verticalAlignment = Alignment.CenterVertically // Alin
 
                     ) {
+                        if (botonActivo) {
 
-                        if (visibilidadInicioViaje) {
                             Button(
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = Color(
@@ -559,13 +399,9 @@ fun obtenerCoordenadas(
                                 ),
                                 onClick = {
 
-                                    empezarUbicacion = true
                                     num = listParadasRecorridas.size
-
                                     // numParadaActual = listParadasRecorridas.size
                                     if (viajeComenzado.isEmpty()) {
-
-
                                         autenticaHuella(
                                             activity = activity1,
                                             exitoso = {
@@ -579,14 +415,11 @@ fun obtenerCoordenadas(
                                             maxIntentos = 3
                                         )
 
-
                                         botonInicioViaje = true
 
                                     } else {
-                                        huellaIngresada = false
+
                                         if (numParadaActual < totalParadas) {
-
-
                                             idParadaActual = paradasOrdenadas[numParadaActual].first
                                             paradasOrdenadasPasar = paradasOrdenadas
                                             autenticaHuella(
@@ -618,15 +451,14 @@ fun obtenerCoordenadas(
                                                 paradasOrdenadasPasar
                                             )
 
-                                            viajeFinalizado=true
+                                            viajeFinalizado = true
                                         }
 
                                     }
 
                                 },
                                 modifier = Modifier
-
-                                    .height(54.dp)
+                                    .height(60.dp)
                                     .padding(5.dp)
                                     .weight(0.6f) // Ocupa el 80% del ancho disponible
                             ) {
@@ -638,6 +470,23 @@ fun obtenerCoordenadas(
                                     )
                                 )
                             }
+
+                        } else {
+                            huellaIngresada = false
+                            Text(
+                                text = "Viaje bloqueado, espera 1 min",
+                                style = TextStyle(
+                                    fontSize = 18.sp,
+                                    color = Color(
+                                        137,
+                                        13,
+                                        88
+                                    )
+                                ),
+                                modifier = Modifier
+                                    .padding(5.dp)
+                            )
+
 
                         }
                         Spacer(modifier = Modifier.width(12.dp))
@@ -652,7 +501,7 @@ fun obtenerCoordenadas(
                             ),
                             modifier = Modifier
 
-                                .height(54.dp)
+                                .height(60.dp)
                                 .padding(5.dp)
 
 
@@ -666,35 +515,65 @@ fun obtenerCoordenadas(
 
                         }
 
+                        //--------Acciones al iniciar el viaje---------
                         if (botonInicioViaje) {
+                            println("boton inicio")
 
                             if (huellaIngresada) {
+                                println("huella ingresada")
+
                                 textoDialogo =
-                                    "Tu identidad no ha sido validada.No puedes comenzar el viaje en este momento. "
+                                    "Tu identidad no ha sido validada. No puedes comenzar el viaje en este momento. "
 
                                 if (huellaCorrecta) {
+
                                     accionesComienzoViaje(
                                         viajeId = viajeId,
                                         solicitudes = solicitudes,
+                                        conductorId = userId,
+                                        hisCreado = hisCreado,
+                                        idInicioViaje = idInicioViaje
 
-                                        )
+                                    )
                                     botonNotificacionInicio = true
                                 } else {
-                                    iniciarContador1(newUserId, context)
-                                    /*  viewModel.iniciarContador(1)
-    visibilidadInicioViaje=false*/
-
+                                    dialogoAutFall = true
+                                    if (!hisCreado) {
+                                        val viajeIniciado = HistorialViajesData(
+                                            conductor_id = userId,
+                                            validacion_conductor_inicio = false,
+                                            bloqueo_inicio_viaje = true,
+                                            viaje_id = viajeId,
+                                            fecha_bloqueo_viaje = obtenerFechaFormatoddmmyyyy(),
+                                            hora_bloqueo_viaje = obtenerHoraActualSec()
+                                        )
+                                        registrarHistorialViaje(viajeIniciado)
+                                    } else {
+                                        val nuevosValores = mapOf(
+                                            "bloqueo_inicio_viaje" to true,
+                                            "fecha_bloqueo_viaje" to obtenerFechaFormatoddmmyyyy(),
+                                            "hora_bloqueo_viaje" to obtenerHoraActualSec()
+                                        )
+                                        editarDocumentoHistorial(idInicioViaje, nuevosValores)
+                                    }
                                 }
 
                                 botonInicioViaje = false
-
-
                             }
-
                         }
-                        if (botonParadas) {
 
+
+                        //--------Acciones en las paradas---------
+                        if (botonParadas) {
                             if (huellaIngresada) {
+
+                                val nuevosValores = mapOf(
+                                    "bloqueo_inicio_viaje" to true,
+                                    "fecha_bloqueo_viaje" to obtenerFechaFormatoddmmyyyy(),
+                                    "hora_bloqueo_viaje" to obtenerHoraActualSec()
+                                )
+                                editarDocumentoHistorial(idInicioViaje, nuevosValores)
+
                                 textoDialogo =
                                     "Tu identidad no ha sido validada, el pasajero será notificado de esto. "
                                 if (huellaCorrecta) {
@@ -704,13 +583,14 @@ fun obtenerCoordenadas(
                                         idParadaActual,
                                         "solicitud_validacion_conductor",
                                         "si"
-
                                     )
                                     botonNotificacionValida = true
 
-                                    //Enviar notificacion a los pasajeros
+
+
 
                                 } else {
+                                    dialogoAutFall = true
                                     actualizarCampoSolicitudPorBusqueda(
                                         "parada_id",
                                         idParadaActual,
@@ -724,7 +604,6 @@ fun obtenerCoordenadas(
                                     "par_recorrido",
                                     "si"
                                 )
-
 
                                 botonNotificacionParada = true
                                 botonParadas = false
@@ -793,9 +672,9 @@ fun obtenerCoordenadas(
             userID = userId
         )
     }
-    if (huellaIngresada && !huellaCorrecta) {
+    if (dialogoAutFall) {
         dialogoHuellaFallida(
-            onDismiss = { huellaCorrecta = false },
+            onDismiss = { dialogoAutFall = false },
             text = textoDialogo
         )
     }
@@ -826,14 +705,3 @@ fun obtenerCoordenadas(
 }
 
 
-/*
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun MyScaffoldContentPreviewMapa() {
-    val navController = rememberNavController()
-    obtenerCoordenadas(userId = "hannia", viajeId = "viajeId", navController = navController)
-
-}
-
-*/

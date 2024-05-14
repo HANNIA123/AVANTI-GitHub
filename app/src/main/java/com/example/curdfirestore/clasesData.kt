@@ -41,6 +41,7 @@ data class ViajeData(
     var viaje_num_pasajeros:String="",
     var viaje_num_pasajeros_con:String="",
     var viaje_id: String="",
+    var viaje_id_iniciado: String="",
 
 
     )
@@ -60,7 +61,8 @@ data class ViajeDataReturn(
     var viaje_iniciado:String="",
     var viaje_tarifa:String="",
     var viaje_num_pasajeros:String="",
-    var viaje_num_pasajeros_con:String=""
+    var viaje_num_pasajeros_con:String="",
+    var viaje_id_iniciado: String="",
 )
 
 
@@ -145,21 +147,28 @@ data class NoticacionData(
 
     )
 
-data class verPasajerosData(
-    var solicitud_id: String="",
-    var usuario_id: String="",
-    var viaje_id: String="",
-    var nombre_completo: String="",
-    var URL_imagen: String="",
-    var hora_viaje: String="",
-    var dia_viaje: String="",
-    var status_sol:String=""
-)
-
 data class ReporteData(
     var repor_u_reportado: String="",
     var repor_u_que_reporta: String="",
     var repor_motivo: String="",
     var repor_detalles: String ="",
     var repor_fecha: String="",
+)
+
+data class HistorialViajesData(
+    var validacion_conductor_inicio:Boolean=false,
+    var viaje_id: String="",
+    val viaje_iniciado: Boolean=false,
+    val fecha_inicio_viaje:String="",
+    val fecha_bloqueo_viaje:String="",
+    var conductor_id: String="",
+    var pasajeros_id: List<String> = emptyList(),
+    var horario_id: String="",
+    var hora_inicio_viaje: String="",
+    var hora_fin_viaje: String="",
+    var validacion_pasajeros:List<String> = emptyList(),
+    var validacion_conductor_paradas: List<String> = emptyList(),
+    var bloqueo_inicio_viaje: Boolean=false,
+    var hora_bloqueo_viaje: String="",
+    var id_viaje_iniciado:String=""
 )

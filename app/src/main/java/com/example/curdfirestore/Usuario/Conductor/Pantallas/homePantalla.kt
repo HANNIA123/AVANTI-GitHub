@@ -75,6 +75,8 @@ fun homePantallaConductor(
 
 ) {
     solicitarPermiso()
+
+
     BoxWithConstraints {
         maxh = this.maxHeight - 50.dp
     }
@@ -174,21 +176,17 @@ fun homePantallaConductor(
 
 
 
-
-
-                                viajes!!.forEach {
-                                    println("hora: ${it.viaje_hora_partida}")
-                                    println("Convertir ${convertirStringAHora(it.viaje_hora_partida)}")
-                                }
-println("hora limite $horaMinima and $horaMaxima")
-
                                 val viajesFiltrados = viajes!!.filter {
-                                    it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
-                                    convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima)  && convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
+                                    it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual)
 
                                 }
-                                        //convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima)  && convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
-                                //Mostrar solo los viajes del dia y los que estan por empezar
+
+
+                               /* val viajesFiltrados = viajes!!.filter {
+                                    it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
+                                            convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima)  && convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
+
+                                }*/
 
                                 if (viajesFiltrados.isNotEmpty()) {
                                     val viajesProximos =

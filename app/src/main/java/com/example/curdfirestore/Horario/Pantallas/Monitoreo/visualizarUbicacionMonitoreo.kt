@@ -299,7 +299,7 @@ fun verUbicacionMonitoreo(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(maxh - 175.dp)
+                    .height(maxh - 181.dp)
             ) {
                 val cameraPosition = remember {
                     CameraPosition(
@@ -469,7 +469,7 @@ fun verUbicacionMonitoreo(
 
                             },
                             modifier = Modifier
-                                .height(54.dp)
+                                .height(60.dp)
                                 .padding(5.dp)
                                 .weight(0.6f) // Ocupa el 80% del ancho disponible
                         ) {
@@ -516,7 +516,7 @@ fun verUbicacionMonitoreo(
                             backgroundColor = Color(137, 13, 88)
                         ),
                         modifier = Modifier
-                            .height(54.dp)
+                            .height(60.dp)
                             .padding(5.dp)
 
                     ) {

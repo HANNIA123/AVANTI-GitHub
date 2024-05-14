@@ -107,6 +107,24 @@ fun convertirStringATime(horaString: String): LocalTime {
     return LocalTime.parse(horaString, formatter)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+fun convertirStringATimeSec(horaString: String): LocalTime {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    return LocalTime.parse(horaString, formatter)
+}
+
+fun obtenerHoraActualSec(): String {
+    // Obtiene la hora actual
+    val horaActual = LocalTime.now()
+    // Define el formato de hora que deseas (hh:mm:ss)
+    val formato = DateTimeFormatter.ofPattern("HH:mm:ss")
+
+    // Formatea la hora actual con el formato deseado
+    val horaFormateada = horaActual.format(formato)
+
+    return horaFormateada
+}
+
 //Para el registro de viajes
 @Composable
 

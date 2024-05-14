@@ -54,7 +54,6 @@ import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
-import com.example.avanti.verPasajerosData
 import com.example.curdfirestore.Reportes.Pantallas.dialogoBorrarPasajero
 import com.example.curdfirestore.Reportes.Pantallas.dialogoContactoPasajero
 import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarPasajero
