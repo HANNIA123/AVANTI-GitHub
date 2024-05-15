@@ -33,3 +33,32 @@ fun conObtenerItinerarioCon(
         }
     }
 }
+@Composable
+fun conObtenerItinerarioConSus(
+    userId: String,
+    fin:() -> Unit// Función de devolución de llamada para el resultado
+): List<ViajeDataReturn>? {
+
+    var finD by rememberSaveable { mutableStateOf(false) }
+    var text by remember { mutableStateOf("") }
+    var viajes by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
+
+    LaunchedEffect(key1 = true) {
+        try {
+            val resultadoViajes = RetrofitClientViaje.apiService.obtenerItinerarioCon(userId)
+            viajes = resultadoViajes
+        } catch (e: Exception) {
+            text = "Error al obtener viaje: $e"
+        } finally {
+            println(text)
+            fin()
+            finD=true
+
+        }
+    }
+    return if (finD) {
+        viajes
+    } else {
+        null
+    }
+}

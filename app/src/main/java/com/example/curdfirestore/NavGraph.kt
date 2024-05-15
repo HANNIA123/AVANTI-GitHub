@@ -41,6 +41,7 @@ import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Solicitud.Pantallas.verConductores
 import com.example.curdfirestore.Solicitud.Pantallas.verPasajeros
 import com.example.curdfirestore.Solicitud.Pantallas.verSolicitudesCon
+import com.example.curdfirestore.Usuario.Conductor.Pantallas.homeNoIniciado
 import com.example.curdfirestore.Usuario.Pasajero.Pantallas.homePantallaPasajero
 import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
@@ -129,6 +130,7 @@ fun NavGraph(
             homePantallaConductor(navController = navController, userid = userId)
 
         }
+
 
         //Pantallas entrando con conductor
         composable(

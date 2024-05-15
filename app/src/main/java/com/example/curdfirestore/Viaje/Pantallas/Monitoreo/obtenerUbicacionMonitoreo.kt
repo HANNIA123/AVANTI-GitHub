@@ -384,8 +384,10 @@ fun obtenerCoordenadas(
                             botonNoActivo = { botonActivo = false },
 
 
+
                             )
                     }
+
 
 
                     Row(
@@ -398,6 +400,7 @@ fun obtenerCoordenadas(
                         verticalAlignment = Alignment.CenterVertically // Alin
 
                     ) {
+
                         if (botonActivo) {
 
                             Button(
@@ -409,7 +412,6 @@ fun obtenerCoordenadas(
                                     )
                                 ),
                                 onClick = {
-
                                     num = listParadasRecorridas.size
                                     // numParadaActual = listParadasRecorridas.size
                                     if (viajeComenzado.isEmpty()) {
@@ -429,7 +431,7 @@ fun obtenerCoordenadas(
                                         botonInicioViaje = true
 
                                     } else {
-                                        huellaIngresada=false
+                                        huellaIngresada = false
 
 
                                         if (numParadaActual < totalParadas) {
@@ -492,6 +494,7 @@ fun obtenerCoordenadas(
                             }
 
                         } else {
+
                             huellaIngresada = false
                             Text(
                                 text = "Viaje bloqueado, espera 1 min",
@@ -509,6 +512,8 @@ fun obtenerCoordenadas(
 
 
                         }
+
+
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Button(

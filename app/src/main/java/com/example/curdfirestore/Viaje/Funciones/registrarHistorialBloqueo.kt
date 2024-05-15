@@ -14,6 +14,7 @@ fun registrarHistorialBloqueo(idInicioViaje: String,
                               botonNoActivo : () -> Unit,
 
 
+
                               ){
 
     val handler = Handler()
