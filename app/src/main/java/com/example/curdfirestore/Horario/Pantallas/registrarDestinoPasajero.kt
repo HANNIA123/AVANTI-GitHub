@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -33,17 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.HorarioData
-import com.example.avanti.ViajeData
 import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
 import com.example.curdfirestore.Horario.ConsultasHorario.conRegistrarHorario
 import com.example.curdfirestore.NivelAplicacion.SearchBar
 import com.example.curdfirestore.NivelAplicacion.searchPlaces
 import com.example.curdfirestore.R
-import com.example.curdfirestore.Viaje.ConsultasViaje.conRegistrarViaje
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
-import com.example.curdfirestore.Viaje.Pantallas.cabeceraConBotonCerrarViaje
 import com.example.curdfirestore.Viaje.Pantallas.mapaMarkerDestino
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -64,14 +60,7 @@ fun registrarDestinoPasajero(
     dia: String,
     horao: String,
 
-) {
-
-
-    println("userid $userid")
-    println("dia $dia")
-    println("horao $horao")
-
-
+    ) {
     var maxh by remember {
         mutableStateOf(0.dp)
     }
@@ -113,7 +102,6 @@ fun registrarDestinoPasajero(
             .height(maxh)
     ) {
         cabeceraConBotonAtras(titulo = "Registrar destino", navController = navController)
-        //cabeceraConBotonCerrarHorario("Registrar destino", navController, userid)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -124,9 +112,9 @@ fun registrarDestinoPasajero(
                     .height(maxh - 70.dp)
             ) {
                 if (valorMapa == "barra") {
-                    var searchResults = remember { mutableStateOf(emptyList<Place>()) }
+                    val searchResults = remember { mutableStateOf(emptyList<Place>()) }
                     val context = LocalContext.current
-                    var searchQuery = remember { mutableStateOf("") }
+                    val searchQuery = remember { mutableStateOf("") }
                     var selectedPlace by remember { mutableStateOf<Place?>(null) }
                     LaunchedEffect(searchQuery.value) {
                         // Lanzar un bloque coroutine para ejecutar la búsqueda de lugares
@@ -140,8 +128,7 @@ fun registrarDestinoPasajero(
                             e.printStackTrace()
                         }
                     }
-                    println("YA cambiando a barra")
-                    println("Variable primer $primeraVez ---------")
+
                     if (primeraVez == 0) {
                         obtenerUbicacionInicial(
                             navController = navController,
@@ -155,7 +142,7 @@ fun registrarDestinoPasajero(
                         ubicacion = ubiMarker
                     }
 
-                    ubicacionpasar=ubicacion
+                    ubicacionpasar = ubicacion
                     if (ubicacion != "") {
                         val markerCoordenadasLatLng = convertirStringALatLng(ubicacion)
                         var miUbic by remember {
@@ -163,23 +150,16 @@ fun registrarDestinoPasajero(
                         }
 
                         if (markerCoordenadasLatLng != null) {
-                            var markerLat = markerCoordenadasLatLng.latitude
-                            var markerLon = markerCoordenadasLatLng.longitude
+                            val markerLat = markerCoordenadasLatLng.latitude
+                            val markerLon = markerCoordenadasLatLng.longitude
                             miUbic = LatLng(markerLat, markerLon)
-                            // Hacer algo con las coordenadas LatLng
-                            println("Latitud: ${markerCoordenadasLatLng.latitude}, Longitud: ${markerCoordenadasLatLng.longitude}")
-                        } else {
-                            // La conversión falló
-                            println("Error al convertir la cadena a LatLng")
                         }
 
-
-                        //miUbic = LatLng(markerLat, markerLon)
 
                         var direccion by remember {
                             mutableStateOf("")
                         }
-                        //var miUbic = LatLng(19.389816, -99.110234)
+
                         var markerState = rememberMarkerState(position = miUbic)
                         direccion = convertCoordinatesToAddress(coordenadas = miUbic)
                         var cameraPositionState = rememberCameraPositionState {
@@ -272,9 +252,9 @@ fun registrarDestinoPasajero(
                         newUbi = "$pasarlatitud,$pasarlongitud"
                     }
 
-                    ubiMarker = mapaMarkerDestino(ubicacionMarker = "$newUbi")
+                    ubiMarker = mapaMarkerDestino(ubicacionMarker = newUbi)
                     TipoBusqueda = "marker"
-                    ubicacionpasar=ubiMarker //Esto
+                    ubicacionpasar = ubiMarker //Esto
 
                 }
                 if (valorMapa == "marker") {
@@ -333,10 +313,10 @@ fun registrarDestinoPasajero(
                         containerColor = Color(137, 13, 88),
                     ),
                     onClick = {
-                        var ubicacionF = "$pasarlatitud,$pasarlongitud"
                         boton = true
                     }) {
-                    Text(text = "Siguiente",
+                    Text(
+                        text = "Siguiente",
                         style = TextStyle(
                             fontSize = 20.sp
                         )
@@ -344,20 +324,17 @@ fun registrarDestinoPasajero(
                 }
 
 
-
-
-
             }
         }
 
     }
     if (boton == true && ejecutado == false) {
-        var comPantalla="muestra"
+        val comPantalla = "muestra"
         val origen = "19.5114059,-99.1265259" //Coordenadas de UPIITA
         val horarioData = HorarioData(
             usu_id = userid,
             horario_dia = dia,
-            horario_hora= horao,
+            horario_hora = horao,
             horario_origen = origen,
             horario_destino = ubicacionpasar,
             horario_trayecto = "0",

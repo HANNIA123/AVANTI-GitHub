@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -33,17 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.HorarioData
-import com.example.avanti.ViajeData
 import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
 import com.example.curdfirestore.Horario.ConsultasHorario.conRegistrarHorario
 import com.example.curdfirestore.NivelAplicacion.SearchBar
 import com.example.curdfirestore.NivelAplicacion.searchPlaces
 import com.example.curdfirestore.R
-import com.example.curdfirestore.Viaje.ConsultasViaje.conRegistrarViaje
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
-import com.example.curdfirestore.Viaje.Pantallas.cabeceraConBotonCerrarViaje
 import com.example.curdfirestore.Viaje.Pantallas.mapaMarker
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -348,10 +344,10 @@ fun registrarOrigenPasajero(
 
                 Button(
                     modifier = Modifier
-                        .width(200.dp)
+                        .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp)
-                    ,
+                        .padding(43.dp, 10.dp, 43.dp, 20.dp),
+
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(137, 13, 88),
                     ),

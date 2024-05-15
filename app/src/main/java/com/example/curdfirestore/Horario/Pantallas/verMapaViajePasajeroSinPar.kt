@@ -2,81 +2,58 @@ package com.example.curdfirestore.Horario.Pantallas
 
 import android.annotation.SuppressLint
 
-import android.content.Context
-import android.os.Bundle
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.DpOffset
 
-import androidx.compose.ui.viewinterop.AndroidView
 import com.example.avanti.MarkerItiData
 import com.example.avanti.ParadaData
-import com.example.avanti.ViajeData
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
-import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadas
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
 import com.example.curdfirestore.Usuario.Pasajero.menuDesplegablePas
-import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
+
 import com.example.curdfirestore.Viaje.Funciones.calculateDistance
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Funciones.getDirections
 import com.example.curdfirestore.Viaje.Pantallas.MapViewContainer
-import com.example.curdfirestore.Viaje.Pantallas.ventanaMarkerItinerario
-import com.example.curdfirestore.textoGris
+
+import com.example.curdfirestore.lineaCargando
+
+import com.example.curdfirestore.textoNegro
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
+
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -84,7 +61,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun verMapaViajePasajeroSinPar(
     navController: NavController,
@@ -105,18 +81,18 @@ fun verMapaViajePasajeroSinPar(
         maxh = this.maxHeight
     }
 
-    var horarioData= conObtenerHorarioId(horarioId = horarioId)
+    val horarioData= conObtenerHorarioId(horarioId = horarioId)
 
-    var paradas by remember {
+    val paradas by remember {
         mutableStateOf<List<ParadaData>>(emptyList())
     }
     //Para la ventana de carga
     var isLoading by remember { mutableStateOf(true) }
 
 //Agregados
-    var filterviajes by remember { mutableStateOf<List<MarkerItiData>?>(null) }
+    val filterviajes by remember { mutableStateOf<List<MarkerItiData>?>(null) }
 
-    var listaActual = filterviajes?.toMutableList() ?: mutableListOf()
+    val listaActual = filterviajes?.toMutableList() ?: mutableListOf()
     val paradasPorMarcador = mutableMapOf<String, MarkerItiData>()
 
     var infparadas by remember { mutableStateOf<MarkerItiData?>(null) }
@@ -125,11 +101,12 @@ fun verMapaViajePasajeroSinPar(
 
     //Para el menú de opciones de viaje
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf("") }
 
     var showEliminar by rememberSaveable { mutableStateOf(false) }
 
-
+    if (isLoading) {
+        lineaCargando(text = "Cargando mapa...")
+    }
     horarioData?.let {
 
         //Convertir String a coordenadas  -- origen
@@ -142,12 +119,7 @@ fun verMapaViajePasajeroSinPar(
         if (markerCoordenadasLatLngO != null) {
             markerLatO = markerCoordenadasLatLngO.latitude
             markerLonO = markerCoordenadasLatLngO.longitude
-            // Hacer algo con las coordenadas LatLng
-            println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-        } else {
-            // La conversión falló
-            println("Error al convertir la cadena a LatLng")
-        }
+            }
 
 //Destino
         var markerLatD by remember { mutableStateOf(0.0) }
@@ -157,24 +129,12 @@ fun verMapaViajePasajeroSinPar(
         if (markerCoordenadasLatLngD != null) {
             markerLatD = markerCoordenadasLatLngD.latitude
             markerLonD = markerCoordenadasLatLngD.longitude
-            // Hacer algo con las coordenadas LatLng
-            //  println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-        } else {
-            // La conversión falló
-            println("Error al convertir la cadena a LatLng")
-        }
-
-
-
-
+         }
         Box {
-
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(maxh)
-
             ) {
                 cabeceraConMenuPas(
                     titulo = "Ver horario",
@@ -187,7 +147,7 @@ fun verMapaViajePasajeroSinPar(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(maxh - 140.dp)
+                        .height(maxh - 145.dp)
                 ) {
                     val origen = LatLng(markerLatO, markerLonO)
                     val destino = LatLng(markerLatD, markerLonD)
@@ -220,8 +180,7 @@ fun verMapaViajePasajeroSinPar(
                     )
 
                     var nparadas = paradas.sortedBy { it.par_hora }
-                    println("Paradas en desorden $paradas")
-                    println("Paradas por horario $nparadas")
+
 
                     for (parada in nparadas) {
                         var markerLat by remember { mutableStateOf(0.0) }
@@ -233,9 +192,6 @@ fun verMapaViajePasajeroSinPar(
                             markerLon = markerCoordenadasLatLng.longitude
                             // Hacer algo con las coordenadas LatLng
                             // println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-                        } else {
-                            // La conversión falló
-                            println("Error al convertir la cadena a LatLng")
                         }
                         val ubiParada = LatLng(markerLat, markerLon)
                         val nParada = MarkerItiData(
@@ -322,14 +278,14 @@ fun verMapaViajePasajeroSinPar(
                                 destination = "${destino.latitude},${destino.longitude}",
                                 waypointsString, apiKey
                             )
-                            println("Direction------ $directions")
+
                             // Agrega la ruta
                             val polylineOptions = PolylineOptions().addAll(directions)
                             googleMap.addPolyline(polylineOptions)
-                            // Modifica el nivel de zoom del mapa
-                            println("Markerrrrrrrrrrrrrrrrrrr ${markerPositions[0]} ")
+
+
                             val cameraUpdate =
-                                CameraUpdateFactory.newLatLngZoom(markerPositions[0], 13f)
+                                CameraUpdateFactory.newLatLngZoom(markerPositions[0], 14f)
                             // googleMap.moveCamera(cameraUpdate)
                             googleMap.animateCamera(cameraUpdate)
                             isLoading = false
@@ -340,13 +296,12 @@ fun verMapaViajePasajeroSinPar(
 
                     if (show) {
                         ventanaMarkerItinerarioPas(
-                            navController,
-                            horarioId,
-                            correo,
                             infparadas!!,
                             show,
-                            { show = false },
-                            {})
+                            null,
+                            horarioData.horario_trayecto,
+                            { show = false }
+                        )
                     }
 
 
@@ -375,8 +330,8 @@ fun verMapaViajePasajeroSinPar(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(70.dp)
-                        .padding(10.dp, 0.dp),
+                        .height(75.dp)
+                        .padding(10.dp, 3.dp),
                     horizontalArrangement = Arrangement.SpaceBetween, // Espacio entre los elementos en la fila
                     verticalAlignment = Alignment.CenterVertically // Alineación vertical de los elementos en la fila
                 ) {
@@ -385,17 +340,19 @@ fun verMapaViajePasajeroSinPar(
                         horizontalAlignment = Alignment.Start,
 
                         ) {
+
                         val trayecto = convertirTrayecto(horarioData.horario_trayecto)
-                        textoGris(Texto = horarioData.horario_dia, tamTexto = 16f)
-                        textoGris(Texto = trayecto, tamTexto = 16f)
+                        textoNegro(Texto = horarioData.horario_dia, tamTexto = 16f)
+                        textoNegro(Texto = trayecto, tamTexto = 16f)
                         if(horarioData.horario_trayecto == "0"){
-                            textoGris(Texto = "Horario de salida: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
+                            textoNegro(Texto = "Salida de UPIITA: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
                         }else{
-                            textoGris(Texto = "Horario de llegada: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
+                            textoNegro(Texto = "Llegada a UPIITA: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
                         }
 
-                    }
 
+
+                    }
 
 
 

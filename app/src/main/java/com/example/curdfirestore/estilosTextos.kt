@@ -20,7 +20,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -113,6 +112,18 @@ fun textoGris(Texto:String, tamTexto: Float){
             fontSize =tamTexto.sp,
             textAlign = TextAlign.Start,
             )
+    )
+}
+@Composable
+fun textoNegro(Texto:String, tamTexto: Float){
+
+    Text(
+        text = Texto,
+        style = TextStyle(
+            color = Color.Black,
+            fontSize =tamTexto.sp,
+            textAlign = TextAlign.Start,
+        )
     )
 }
 @Composable
