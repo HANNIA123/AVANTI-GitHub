@@ -135,6 +135,7 @@ fun verMapaViajePasajeroSinPar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(maxh)
+                    .background(Color.White)
             ) {
                 cabeceraConMenuPas(
                     titulo = "Ver horario",
@@ -331,7 +332,9 @@ fun verMapaViajePasajeroSinPar(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(75.dp)
-                        .padding(10.dp, 3.dp),
+                        .padding(10.dp, 3.dp)
+                        .background(Color.White),
+
                     horizontalArrangement = Arrangement.SpaceBetween, // Espacio entre los elementos en la fila
                     verticalAlignment = Alignment.CenterVertically // Alineación vertical de los elementos en la fila
                 ) {

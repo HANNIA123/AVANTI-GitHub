@@ -1,56 +1,40 @@
 package com.example.curdfirestore.Viaje.Pantallas
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import androidx.navigation.compose.composable
 import com.example.avanti.MarkerItiData
 import com.example.avanti.SolicitudData
-import com.example.avanti.UserData
-import com.example.avanti.Usuario.BASE_URL
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ViajeData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
-import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.textInMarker
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-
+import com.example.curdfirestore.textoNegrita
 
 @Composable
 fun ventanaMarkerItinerario(
@@ -59,67 +43,57 @@ fun ventanaMarkerItinerario(
     viaje: ViajeData,
     email: String,
     marker: MarkerItiData,
+    solicitudes: List<Pair<String, SolicitudData>>?,
     show: Boolean,
+trayecto:String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
 
-    var boton by remember { mutableStateOf(false) }
-
-    var ejecutado by remember { mutableStateOf(false) }
     if (show) {
-        Dialog(onDismissRequest = { onDismiss() }) {
-            Column(
-                modifier = Modifier
-                    .background(Color.White)
-                    .padding(10.dp)
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+
             ) {
+            Dialog(onDismissRequest = { onDismiss() }) {
+                Column(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(10.dp)
+                ) {
 
 
-                val addressP = convertCoordinatesToAddress(marker.marker_ubicacion)
+                    var addressP = convertCoordinatesToAddress(marker.marker_ubicacion)
 
 
-                if (marker.marker_titulo == "Origen") {
-                    Text(
-                        text = "Tu punto de partida",
-                        modifier = Modifier.padding(2.dp),
-                        style = TextStyle(
-                            Color(137, 13, 88),
-                            fontSize = 18.sp
-                        ),
-                        textAlign = TextAlign.Center
+                    if (marker.marker_titulo == "Origen") {
+                        if(trayecto=="0"){
+                            addressP="UPIITA-IPN"
+                        }
 
-                    )
-                    //TextInMarker(Label = "Nombre: ", Text = marker.marker_titulo)
-                } else if (marker.marker_titulo == "Destino") {
-                    Text(
-                        text = "Tu punto de llegada",
-                        modifier = Modifier.padding(2.dp),
-                        style = TextStyle(
-                            Color(137, 13, 88),
-                            fontSize = 18.sp
-                        ),
-                        textAlign = TextAlign.Center
-
-                    )
-                    //TextInMarker(Label = "Nombre: ", Text = marker.marker_titulo)
-                } else {
-
-
-                    Text(
-                        text = "Información sobre la parada",
-                        modifier = Modifier.padding(2.dp),
-                        style = TextStyle(
-                            Color(137, 13, 88),
-                            fontSize = 18.sp
-                        ),
-                        textAlign = TextAlign.Center
-
-                    )
-                    textInMarker(Label = "Nombre de la parada: ", Text = marker.marker_titulo)
-                    if (viaje.viaje_num_pasajeros != "0") {
                         Text(
-                            text = "Pasajeros: ",
+                            text = "Tu punto de partida",
+                            modifier = Modifier.padding(2.dp),
+                            style = TextStyle(
+                                Color(137, 13, 88),
+                                fontSize = 18.sp
+                            ),
+                            textAlign = TextAlign.Center
+
+                        )
+                        textInMarker(Label = "Ubicación: ", Text = addressP)
+                        textInMarker(Label = "Horario de salida: ", Text = "${marker.marker_hora} hrs")
+
+                        //TextInMarker(Label = "Nombre: ", Text = marker.marker_titulo)
+                    } else if (marker.marker_titulo == "Destino") {
+                        if(trayecto=="1"){
+                            addressP="UPIITA-IPN"
+                        }
+                        Text(
+                            text = "Tu punto de llegada",
                             modifier = Modifier.padding(2.dp),
                             style = TextStyle(
                                 Color(137, 13, 88),
@@ -129,90 +103,156 @@ fun ventanaMarkerItinerario(
 
                         )
 
-                        val solicitudes = conObtenerSolicitudesPorViajeRT(viajeId = viajeId)
-                        println("iddd ${marker.marker_id}")
+                        textInMarker(Label = "Ubicación: ", Text = addressP)
+                        textInMarker(Label = "Horario de llegada: ", Text = "${marker.marker_hora} hrs")
 
 
+                        //TextInMarker(Label = "Nombre: ", Text = marker.marker_titulo)
+                    } else {
+
+
+                        Text(
+                            text = "Información sobre la parada",
+                            modifier = Modifier.padding(2.dp),
+                            style = TextStyle(
+                                Color(137, 13, 88),
+                                fontSize = 18.sp
+                            ),
+                            textAlign = TextAlign.Center
+
+                        )
+                        textInMarker(Label = "Nombre de la parada: ", Text = marker.marker_titulo)
+                        textInMarker(Label = "Hora de encuentro: ",       Text = "${marker.marker_hora} hrs")
+
+
+                        textInMarker(Label = "Ubicación: ", Text = addressP)
+
+
+                        if (viaje.viaje_num_pasajeros != "0") {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            solicitudes?.let {
+                                Text(
+                                    text = "Pasajeros: ",
+                                    modifier = Modifier.padding(2.dp),
+                                    style = TextStyle(
+                                        Color(137, 13, 88),
+                                        fontSize = 18.sp
+                                    ),
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+
+
+
+
+                                solicitudes.forEach { solicitud ->
+                                    val pasajero =
+                                        conObtenerUsuarioId(correo = solicitud.second.pasajero_id)
+
+                                    pasajero?.let {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+
+                                        ) {
+                                            CoilImage(
+                                                url = pasajero.usu_foto,
+                                                modifier = Modifier
+                                                    .size(60.dp)
+                                                    .clip(CircleShape)
+                                            )
+
+                                            Spacer(modifier = Modifier.width(15.dp))
+                                            textoNegrita(
+                                                texto = "${pasajero.usu_nombre} ${pasajero.usu_primer_apellido}",
+                                                tam = 15.0f,
+                                                color = Color.Black
+                                            )
+                                        }
+
+
+                                    }
+
+                                }
+
+                            }
+
+
+                        }
 
                     }
 
-                }
-
-                textInMarker(Label = "Ubicación: ", Text = addressP)
-                textInMarker(Label = "Horario: ", Text = "${marker.marker_hora} hrs")
-
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(
-                                    137,
-                                    13,
-                                    88
-                                )
-                            ),
-                            onClick = {
 
-                                if (marker.marker_titulo == "Origen" || marker.marker_titulo == "Destino") {
-                                    navController.navigate("general_viaje_conductor_editar/$email/$viajeId")
-                                } else {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color(
+                                        137,
+                                        13,
+                                        88
+                                    )
+                                ),
+                                onClick = {
+
+                                    if (marker.marker_titulo == "Origen" || marker.marker_titulo == "Destino") {
+                                        navController.navigate("general_viaje_conductor_editar/$email/$viajeId")
+                                    } else {
 
 //                                    composable("general_parada_editar/{viajeid}/{userid}/{paradaid}") {
 
-                                    // println("-------------- general_parada_editar/$viajeId/$email/${marker.marker_id}----------")
-                                    navController.navigate("general_parada_editar/$viajeId/$email/${marker.marker_id}")
-                                    //Editar parada
+                                        // println("-------------- general_parada_editar/$viajeId/$email/${marker.marker_id}----------")
+                                        navController.navigate("general_parada_editar/$viajeId/$email/${marker.marker_id}")
+                                        //Editar parada
 
-                                }
-                                // Cerrar el diálogo cuando se hace clic en "Cerrar"
-                                onDismiss()
-                            }) {
-                            Text(
-                                text = "Editar", style = TextStyle(
-                                    fontSize = 15.sp,
-                                    color = Color.White
+                                    }
+                                    // Cerrar el diálogo cuando se hace clic en "Cerrar"
+                                    onDismiss()
+                                }) {
+                                Text(
+                                    text = "Editar", style = TextStyle(
+                                        fontSize = 15.sp,
+                                        color = Color.White
+                                    )
                                 )
-                            )
-                        }
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(
-                                    233,
-                                    168,
-                                    219
+                            }
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color(
+                                        233,
+                                        168,
+                                        219
+                                    )
+                                ),
+                                onClick = {
+                                    // Cerrar el diálogo cuando se hace clic en "Cerrar"
+                                    onDismiss()
+                                }) {
+                                Text(
+                                    text = "Cerrar", style = TextStyle(
+                                        fontSize = 15.sp,
+                                        color = Color.White
+                                    )
                                 )
-                            ),
-                            onClick = {
-                                // Cerrar el diálogo cuando se hace clic en "Cerrar"
-                                onDismiss()
-                            }) {
-                            Text(
-                                text = "Cerrar", style = TextStyle(
-                                    fontSize = 15.sp,
-                                    color = Color.White
-                                )
-                            )
-                        }
+                            }
 
+
+                        }
 
                     }
-
                 }
             }
         }
     }
-
-
 }
 

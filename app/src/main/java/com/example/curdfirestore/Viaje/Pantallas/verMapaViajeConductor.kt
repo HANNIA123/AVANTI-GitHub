@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -44,6 +43,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.example.avanti.MarkerItiData
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadas
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
@@ -52,8 +52,7 @@ import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Funciones.getDirections
 import com.example.curdfirestore.lineaCargando
-import com.example.curdfirestore.textoGris
-
+import com.example.curdfirestore.textoNegro
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -65,7 +64,6 @@ import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun verMapaViajeConductor(
     navController: NavController,
@@ -88,9 +86,9 @@ fun verMapaViajeConductor(
     }
 
 
-
-    var viajeData = conObtenerViajeId(viajeId = viajeId)
-    var paradas = conObtenerListaParadas(viajeId)
+    val viajeData = conObtenerViajeId(viajeId = viajeId)
+    val paradas = conObtenerListaParadas(viajeId)
+    val solicitudes= conObtenerSolicitudesPorViajeRT(viajeId)
 
     var viajeStatusF by remember {
         mutableStateOf("")
@@ -101,16 +99,15 @@ fun verMapaViajeConductor(
     var isLoading by remember { mutableStateOf(true) }
 
 //Agregados
-    var filterviajes by remember { mutableStateOf<List<MarkerItiData>?>(null) }
+    val filterviajes by remember { mutableStateOf<List<MarkerItiData>?>(null) }
 
-    var listaActual = filterviajes?.toMutableList() ?: mutableListOf()
+    val listaActual = filterviajes?.toMutableList() ?: mutableListOf()
     val paradasPorMarcador = mutableMapOf<String, MarkerItiData>()
 
     var infparadas by remember { mutableStateOf<MarkerItiData?>(null) }
     //dialogos
     var show by rememberSaveable { mutableStateOf(false) }
     var showCancelar by rememberSaveable { mutableStateOf(false) }
-    var notificacionCancelar by rememberSaveable { mutableStateOf(false) }
     var showEliminar by rememberSaveable { mutableStateOf(false) }
 
 
@@ -122,6 +119,10 @@ fun verMapaViajeConductor(
     //Para el menú de opciones de viaje
     var expanded by remember { mutableStateOf(false) }
 
+    if (isLoading) {
+        lineaCargando(text = "Cargando mapa...")
+    }
+
     viajeData?.let {
         paradas?.let {
 
@@ -130,11 +131,6 @@ fun verMapaViajeConductor(
             if (markerCoordenadasLatLngO != null) {
                 markerLatO = markerCoordenadasLatLngO.latitude
                 markerLonO = markerCoordenadasLatLngO.longitude
-                // Hacer algo con las coordenadas LatLng
-                println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-            } else {
-                // La conversión falló
-                println("Error al convertir la cadena a LatLng")
             }
 
 //Destino
@@ -147,9 +143,6 @@ fun verMapaViajeConductor(
                 markerLonD = markerCoordenadasLatLngD.longitude
                 // Hacer algo con las coordenadas LatLng
                 //  println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-            } else {
-                // La conversión falló
-                println("Error al convertir la cadena a LatLng")
             }
             BoxWithConstraints {
                 maxh = this.maxHeight
@@ -163,6 +156,7 @@ fun verMapaViajeConductor(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(maxh)
+                        .background(Color.White)
 
                 ) {
 
@@ -180,7 +174,7 @@ fun verMapaViajeConductor(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(maxh - 140.dp)
+                            .height(maxh - 145.dp)
                     ) {
                         val origen = LatLng(markerLatO, markerLonO)
                         val destino = LatLng(markerLatD, markerLonD)
@@ -250,9 +244,6 @@ fun verMapaViajeConductor(
                         val context = LocalContext.current
                         // Antes de cargar el mapa, muestra la ventana de carga
 
-                        if (isLoading) {
-                            lineaCargando(text = "Cargando mapa")
-                        }
 
                         MapViewContainer { googleMap: GoogleMap ->
                             // Habilita los controles de zoom
@@ -321,14 +312,14 @@ fun verMapaViajeConductor(
                                     destination = "${destino.latitude},${destino.longitude}",
                                     waypointsString, apiKey
                                 )
-                                println("Direction------ $directions")
+
                                 // Agrega la ruta
                                 val polylineOptions = PolylineOptions().addAll(directions)
                                 googleMap.addPolyline(polylineOptions)
                                 // Modifica el nivel de zoom del mapa
-                                println("Markerrrrrrrrrrrrrrrrrrr ${markerPositions[0]} ")
+
                                 val cameraUpdate =
-                                    CameraUpdateFactory.newLatLngZoom(markerPositions[0], 11f)
+                                    CameraUpdateFactory.newLatLngZoom(markerPositions[0], 14f)
                                 //googleMap.moveCamera(cameraUpdate)
                                 googleMap.animateCamera(cameraUpdate)
                                 //googleMap.animateCamera(cameraUpdate, 1000, null)
@@ -338,17 +329,7 @@ fun verMapaViajeConductor(
 
                         }
 
-                        if (show) {
-                            ventanaMarkerItinerario(
-                                navController,
-                                viajeId,
-                                viajeData,
-                                correo,
-                                infparadas!!,
-                                show,
-                                { show = false },
-                                {})
-                        }
+
 
                         val texBot = if (viajeData.viaje_status == "Disponible") {
                             "Cancelar viaje"
@@ -374,14 +355,12 @@ fun verMapaViajeConductor(
                             },
                             onOption3Click = {
 
-                                    navController.navigate("general_viaje_conductor_editar/$correo/$viajeId")
+                                navController.navigate("general_viaje_conductor_editar/$correo/$viajeId")
 
-
-                                // Opcion para editar el viaje
                             },
                             onOption4Click = {
                                 showEliminar = true
-                                // Opcion para ekiminar el viaje
+
                             }
 
                         )
@@ -397,8 +376,9 @@ fun verMapaViajeConductor(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(70.dp)
-                            .padding(10.dp, 0.dp),
+                            .height(75.dp)
+                            .padding(10.dp, 3.dp)
+                            .background(Color.White),
                         horizontalArrangement = Arrangement.SpaceBetween, // Espacio entre los elementos en la fila
                         verticalAlignment = Alignment.CenterVertically // Alineación vertical de los elementos en la fila
                     ) {
@@ -408,8 +388,8 @@ fun verMapaViajeConductor(
 
                             ) {
                             val trayecto = convertirTrayecto(viajeData.viaje_trayecto)
-                            textoGris(Texto = viajeData.viaje_dia, tamTexto = 16f)
-                            textoGris(Texto = trayecto, tamTexto = 16f)
+                            textoNegro(Texto = viajeData.viaje_dia, tamTexto = 16f)
+                            textoNegro(Texto = trayecto, tamTexto = 16f)
 
                         }
 
@@ -428,6 +408,20 @@ fun verMapaViajeConductor(
                     }
 
                 }
+                if (show) {
+                    ventanaMarkerItinerario(
+                        navController,
+                        viajeId,
+                        viajeData,
+                        correo,
+                        infparadas!!,
+                        solicitudes = solicitudes,
+                        show,
+                        trayecto = viajeData.viaje_trayecto,
+                        { show = false },
+                        {})
+                }
+
                 if (boton) {
                     menuDesplegableCon(
                         onDismiss = { boton = false },
@@ -437,14 +431,12 @@ fun verMapaViajeConductor(
                 }
 
 
-
-
                 if (showCancelar) {
                     dialogoConfirmarCancelacion(
                         onDismiss = {
                             showCancelar = false
 
-                                    },
+                        },
                         viajeId, correo, viajeStatusF,
                         navController
 
@@ -472,7 +464,7 @@ fun verMapaViajeConductor(
 
 @Composable
 fun MapViewContainer(mapReady: (GoogleMap) -> Unit) {
-    val context = LocalContext.current
+
 
     AndroidView(
         factory = { ctx: Context ->
