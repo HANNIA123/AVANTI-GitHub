@@ -7,14 +7,12 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.avanti.Usuario.Conductor.Pantallas.cuentaPantallaCon
 import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
 import com.example.curdfirestore.AuthViewModel
-import com.example.curdfirestore.ContadorViewModel
 import com.example.curdfirestore.Horario.ConsultasHorario.conBuscarViajePas
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.verUbicacionMonitoreo
 import com.example.curdfirestore.Horario.Pantallas.generalViajePas
@@ -41,7 +39,6 @@ import com.example.curdfirestore.Parada.Pantallas.registrarParadaBarra
 import com.example.curdfirestore.Solicitud.Pantallas.verConductores
 import com.example.curdfirestore.Solicitud.Pantallas.verPasajeros
 import com.example.curdfirestore.Solicitud.Pantallas.verSolicitudesCon
-import com.example.curdfirestore.Usuario.Conductor.Pantallas.homeNoIniciado
 import com.example.curdfirestore.Usuario.Pasajero.Pantallas.homePantallaPasajero
 import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
 import com.example.curdfirestore.Viaje.Pantallas.Editar.generalViajeConEditar
@@ -406,6 +403,7 @@ fun NavGraph(
             val viajeId = it.arguments?.getString("viajeid") ?: ""
             obtenerCoordenadas(userId = userId, viajeId = viajeId, navController = navController)
         }
+
 
 
         ///////////////////////////////////////

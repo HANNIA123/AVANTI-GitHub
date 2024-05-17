@@ -45,7 +45,6 @@ import com.example.avanti.ui.theme.Aplicacion.sumarTreintaMinutosAHoraActual
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
-import com.example.curdfirestore.Viaje.Funciones.solicitarPermiso
 import com.example.curdfirestore.Viaje.Pantallas.mensajeNoViajes
 import com.example.curdfirestore.recuadroTitulos
 import com.example.curdfirestore.textoHoraViaje
@@ -74,12 +73,6 @@ fun homeNoIniciado(
     conObtenerItinerarioCon(userId = userid) { resultado ->
         viajes = resultado
     }
-
-
-
-
-
-
 
     Box {
         Scaffold(
@@ -146,19 +139,21 @@ fun homeNoIniciado(
 
                                 val horaMinima = restarTreintaMinutosAHoraActual()
                                 val horaMaxima = sumarTreintaMinutosAHoraActual()
-
-
                                 val viajesFiltrados = viajes!!.filter {
                                     it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual)
 
+
                                 }
+                               /* val viajesFiltrados = viajes!!.filter {
+                                    it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
+                                            convertirStringAHora(it.viaje_hora_partida).isAfter(
+                                                horaMinima
+                                            ) && convertirStringAHora(it.viaje_hora_partida).isBefore(
+                                        horaMaxima
+                                    )
 
-
-                                /* val viajesFiltrados = viajes!!.filter {
-                                it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
-                                        convertirStringAHora(it.viaje_hora_partida).isAfter(horaMinima)  && convertirStringAHora(it.viaje_hora_partida).isBefore(horaMaxima)
-
-                            }*/
+                                }
+                                */
 
                                 if (viajesFiltrados.isNotEmpty()) {
                                     val viajesProximos =
@@ -247,6 +242,7 @@ fun homeNoIniciado(
                                             .fillMaxWidth()
                                             .padding(15.dp)
                                     ) {
+
                                         mensajeNoViajes()
                                     }
                                 }
@@ -261,6 +257,7 @@ fun homeNoIniciado(
                                         .fillMaxWidth()
                                         .padding(15.dp)
                                 ) {
+
                                     mensajeNoViajes()
                                 }
                             }

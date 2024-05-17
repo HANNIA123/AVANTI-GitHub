@@ -3,8 +3,6 @@ package com.example.curdfirestore.Horario.Pantallas.Monitoreo
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,8 +43,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.avanti.HistorialViajesData
 import com.example.avanti.SolicitudData
-import com.example.avanti.ui.theme.Aplicacion.lineaGrisModificada
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
 import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
@@ -59,7 +56,9 @@ import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitu
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
 import com.example.curdfirestore.Usuario.Pasajero.menuDesplegablePas
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerHistorialViajeRT
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
+import com.example.curdfirestore.Viaje.ConsultasViaje.editarDocumentoHistorial
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViajePas
 import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
@@ -147,6 +146,13 @@ fun verUbicacionMonitoreo(
     val listaParadasCom = conObtenerListaParadasRT(viajeId = viajeId)
     val infViaje = conObtenerViajeRT(viajeId = viajeId)
     val parada = conObtenerParadaRT(paradaId = paradaId)
+
+
+    var historial by remember { mutableStateOf<HistorialViajesData?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+
+
+
     var maxh by remember {
         mutableStateOf(0.dp)
     }
@@ -178,8 +184,12 @@ fun verUbicacionMonitoreo(
         mutableStateOf(true)
     }
 
+    var dialogoNoValida by remember {
+        mutableStateOf(false)
+    }
 
     val infHorario = conObtenerHorarioId(horarioId = horarioId)
+
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
 
     val solicitud = conObtenerSolicitudByHorarioRT(horarioId = horarioId)
@@ -187,8 +197,9 @@ fun verUbicacionMonitoreo(
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
     }
-
-
+ var idHis by remember {
+     mutableStateOf("")
+ }
 
     Box {
         Column(
@@ -207,9 +218,12 @@ fun verUbicacionMonitoreo(
                     boton = estaBoton
                 })
 
-
-
             infViaje?.let {
+                idHis = infViaje.viaje_id_iniciado
+                if(idHis!="") {
+                    historial = conObtenerHistorialViajeRT(viajeId = idHis)
+                }
+
                 if (infViaje.viaje_iniciado == "no") {
                     botonFinalizo = true
 
@@ -224,58 +238,24 @@ fun verUbicacionMonitoreo(
                     val viajeComenzado = paradasOrdenadas.filter {
                         it.second.para_viaje_comenzado == "si"
                     }
-                    val lineH = 3.dp
-                    // Variable para almacenar el valor máximo de width
-
-                    val lineaW = maxw / (totalParadas + 2)
-
-                    Column(
-                        modifier = Modifier
-                            .height(46.dp)
-                            .background(Color.White)
-                            .padding(10.dp)
-                    ) {
-                        parada?.let {
-                            val textollegada = when (parada.par_recorrido) {
-                                "si" -> "El conductor llegó a la parada"
-                                else -> "Conductor en camino"
-                            }
 
 
-
-
-                            Text(
-                                textollegada, fontSize = 13.sp,
-                                color = Color(86, 86, 86)
-                            )
-                            Spacer(modifier = Modifier.height(5.dp))
-                            Row() {
-
-
-                                for (i in 0..(totalParadas + 2)) {
-                                    val color: Color
-                                    if (viajeComenzado.isEmpty()) {
-                                        color = Color(222, 222, 222)
-                                    } else {
-                                        val numeros = listParadasRecorridas.size
-                                        if (i <= numeros) {
-                                            color = Color.Blue
-                                        } else {
-                                            color = Color(222, 222, 222)
-                                        }
-                                    }
-                                    lineaGrisModificada(
-                                        width = lineaW,
-                                        height = lineH,
-                                        color = color
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                }
-
-
-                            }
+                    parada?.let {
+                        val textollegada = when (parada.par_recorrido) {
+                            "si" -> "El conductor llegó a la parada"
+                            else -> "Conductor en camino"
                         }
+
+                        barraProgresoViaje(
+                            totalParadas = totalParadas,
+                            viajeComenzado = viajeComenzado,
+                            maxw = maxw,
+                            texto = textollegada,
+                            listParadasRecorridas = listParadasRecorridas
+                        )
+
                     }
+
                 }
 
             }
@@ -412,7 +392,7 @@ fun verUbicacionMonitoreo(
                             modifier = Modifier.size(48.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                          Icon(
+                            Icon(
                                 Icons.Default.Warning,
                                 contentDescription = null,
                                 tint = Color.White
@@ -488,8 +468,13 @@ fun verUbicacionMonitoreo(
                                 .padding(5.dp)
                                 .weight(0.6f)
                         ) {
+                            val textoVal = if (solicitud?.solicitud_validacion_pasajero == "si") {
+                                "Has sido validado"
+                            } else {
+                                "No has sido validado"
+                            }
                             Text(
-                                text = "En camino...",
+                                text = textoVal,
                                 style = TextStyle(
                                     fontSize = 18.sp,
                                     color = Color(
@@ -532,23 +517,53 @@ fun verUbicacionMonitoreo(
 
 
 
+
+
                 if (botonLlegada) {
                     botonNotificacionParada = true
-                    if(huellaIngresada){
-                        if (huellaCorrecta) {
+                    if (huellaIngresada) {
 
-                            actualizarCampoSolicitud(solicitudId, "solicitud_validacion_pasajero", "si")
-                        }
-                        else{
-                            textoDialogo =
-                                "Tu identidad no ha sido validada.El coductor será notificado "
-                            actualizarCampoSolicitud(solicitudId, "solicitud_validacion_pasajero", "no")
+                        if (historial != null) {
+                            val listaPasajerosVal = historial!!.validacion_pasajeros
+                            val listaIdPasajeros = historial!!.ids_pasajeros
+                            val newPasajero = listaIdPasajeros.plus(userId)
+                            if (huellaCorrecta) {
+                                actualizarCampoSolicitud(
+                                    solicitudId,
+                                    "solicitud_validacion_pasajero",
+                                    "si"
+                                )
+                                val newValidacion = listaPasajerosVal.plus(true)
+                                val nuevosValores = mapOf(
+                                    "validacion_pasajeros" to newValidacion,
+                                    "ids_pasajeros" to newPasajero,
+                                    "horario_id" to horarioId
+                                )
+                                editarDocumentoHistorial(idHis, nuevosValores)
 
+                            } else {
+                                textoDialogo =
+                                    "Tu identidad no ha sido validada.El coductor será notificado "
+                                dialogoNoValida = true
+                                actualizarCampoSolicitud(
+                                    solicitudId,
+                                    "solicitud_validacion_pasajero",
+                                    "no"
+                                )
+                                val newValidacion =
+                                    listaPasajerosVal.plus(false)
+
+                                val nuevosValores = mapOf(
+                                    "validacion_pasajeros" to newValidacion,
+                                    "ids_pasajeros" to newPasajero,
+                                    "horario_id" to horarioId
+                                )
+                                editarDocumentoHistorial(idHis, nuevosValores)
+                            }
                         }
                         actualizarCampoParada(paradaId, "par_llegada_pas", "si")
-
-                        botonNotificacionParada=true
-                        botonLlegada=false
+                        botonNotificacionParada = true
+                        botonLlegada = false
                     }
 
 
@@ -578,8 +593,6 @@ fun verUbicacionMonitoreo(
                 }
 
             }
-
-
         }
     }
 
@@ -590,13 +603,12 @@ fun verUbicacionMonitoreo(
             userID = userId
         )
     }
-    if (huellaIngresada && !huellaCorrecta) {
+    if (dialogoNoValida) {
         dialogoHuellaFallida(
-            onDismiss = { huellaCorrecta = false },
+            onDismiss = { dialogoNoValida = false },
             text = textoDialogo
         )
     }
-
 
     if (verInformacionViaje) {
         solicitud?.let {

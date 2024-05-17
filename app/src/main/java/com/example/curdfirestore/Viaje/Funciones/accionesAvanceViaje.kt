@@ -7,7 +7,6 @@ import com.example.avanti.SolicitudData
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
-import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParadaPorViaje
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
@@ -18,7 +17,8 @@ import com.example.curdfirestore.Viaje.ConsultasViaje.registrarHistorialViaje
 import kotlinx.coroutines.runBlocking
 
 
-fun accionesComienzoViaje(viajeId: String, solicitudes: List<SolicitudData>?, conductorId: String, hisCreado:Boolean, idInicioViaje:String) {
+fun accionesComienzoViaje(viajeId: String, solicitudes: List<SolicitudData>?,
+                          conductorId: String, hisCreado:Boolean, idInicioViaje:String) {
     //Enviar notificaciones de comienzo de viaje
 
     //El conductor comenzo el viaje, enviar notificacion al pasajero
@@ -56,7 +56,7 @@ fun accionesComienzoViaje(viajeId: String, solicitudes: List<SolicitudData>?, co
             bloqueo_inicio_viaje = false,
             fecha_inicio_viaje = obtenerFechaFormatoddmmyyyy(),
             viaje_iniciado = true,
-            viaje_id = viajeId
+            viaje_id = viajeId,
         )
         registrarHistorialViaje(viajeIniciado)
     }else{

@@ -24,12 +24,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +58,7 @@ import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarPasajero
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
-import com.example.curdfirestore.lineaCargando
+
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -126,6 +124,12 @@ fun verPasajeros(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 cabecera("Pasajeros")
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(25.dp))
 
 
                 Box(
@@ -189,6 +193,7 @@ fun verPasajeros(
                     }
 
                 }
+            }
                 Spacer(modifier = Modifier.height(10.dp))
                 //Contenido
                 Column(
@@ -215,6 +220,7 @@ fun verPasajeros(
                             Column {
                                 //Columna con informacion de los pasajeros/conductores
                                 if (listaSolicitudes != null) {
+
                                     val solicitudes = listaSolicitudes!!.filter {
                                         it.solicitud_status == "Aceptada"
                                     }
@@ -312,9 +318,11 @@ fun verPasajeros(
                                         }
 
                                     } else {
+
                                         mensajeNoPasajeros()
                                     }
                                 } else {
+
                                     mensajeNoPasajeros()
                                 }
                             }

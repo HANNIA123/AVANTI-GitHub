@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import com.example.avanti.Usuario.RetrofitClientViaje
 import com.example.avanti.ViajeDataReturn
 
+
 @Composable
 fun conObtenerItinerarioCon(
     userId: String,
@@ -26,8 +27,8 @@ fun conObtenerItinerarioCon(
             viajes = resultadoViajes
         } catch (e: Exception) {
             text = "Error al obtener viaje: $e"
-        } finally {
             println(text)
+        } finally {
             fin = true
             onResultReady(viajes) // Llamada a la función de devolución de llamada con el resultado
         }

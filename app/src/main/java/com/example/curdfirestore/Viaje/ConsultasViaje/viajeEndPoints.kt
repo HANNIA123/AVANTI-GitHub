@@ -1,7 +1,6 @@
 package com.example.avanti.Usuario
 
-import com.example.avanti.UserData
-import com.example.avanti.VehicleData
+
 import com.example.avanti.ViajeData
 import com.example.avanti.ViajeDataReturn
 import retrofit2.Call
@@ -61,6 +60,7 @@ interface ApiServiceViaje{
         @Path("id") viajeId: String,
         @Body viajeData: ViajeData
     ): Call<RespuestaApiViaje>
+
 
 
 }

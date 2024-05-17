@@ -22,6 +22,7 @@ fun barraProgresoViaje(
     totalParadas: Int,
     viajeComenzado: List<Pair<String, ParadaData>>,
     maxw: Dp,
+    texto: String,
     listParadasRecorridas:  List<Pair<String, ParadaData>>
 ) {
     val lineH = 3.dp
@@ -33,7 +34,7 @@ fun barraProgresoViaje(
             .padding(10.dp)
     ) {
         Text(
-            "Progreso del viaje...",
+            texto,
             fontSize = 12.sp,
             color = Color(165, 165, 165)
         )

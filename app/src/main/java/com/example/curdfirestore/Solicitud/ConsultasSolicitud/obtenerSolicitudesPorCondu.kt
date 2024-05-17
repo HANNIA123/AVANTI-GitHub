@@ -10,12 +10,14 @@ import androidx.compose.runtime.setValue
 import com.example.avanti.SolicitudData
 
 
+
 @Composable
 fun conObtenerSolicitudesConductor(
     userId: String,
     onResultReady: (List<SolicitudData>?) -> Unit // Función de devolución de llamada para el resultado
 ) {
-    println("id del conductor $userId")
+
+
     var fin by rememberSaveable { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
@@ -31,7 +33,7 @@ fun conObtenerSolicitudesConductor(
         } catch (e: Exception) {
             text = "Error al obtener Solicitud: $e"
         } finally {
-            println(text)
+
             fin = true
             onResultReady(solicitudes) // Llamada a la función de devolución de llamada con el resultado
         }

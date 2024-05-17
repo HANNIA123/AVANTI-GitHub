@@ -282,6 +282,7 @@ fun obtenerCoordenadas(
                         totalParadas = totalParadas,
                         viajeComenzado = viajeComenzado,
                         maxw = maxw,
+                        texto="Progreso del viaje...",
                         listParadasRecorridas = listParadasRecorridas
                     )
 
@@ -382,8 +383,6 @@ fun obtenerCoordenadas(
                             idInicioViaje = idInicioViaje,
                             botonActivo = { botonActivo = true },
                             botonNoActivo = { botonActivo = false },
-
-
 
                             )
                     }
@@ -542,11 +541,8 @@ fun obtenerCoordenadas(
 
                         //--------Acciones al iniciar el viaje---------
                         if (botonInicioViaje) {
-                            println("boton inicio")
 
                             if (huellaIngresada) {
-                                println("huella ingresada")
-
                                 textoDialogo =
                                     "Tu identidad no ha sido validada. No puedes comenzar el viaje en este momento. "
 
@@ -557,7 +553,8 @@ fun obtenerCoordenadas(
                                         solicitudes = solicitudes,
                                         conductorId = userId,
                                         hisCreado = hisCreado,
-                                        idInicioViaje = idInicioViaje
+                                        idInicioViaje = idInicioViaje,
+
 
                                     )
                                     botonNotificacionInicio = true

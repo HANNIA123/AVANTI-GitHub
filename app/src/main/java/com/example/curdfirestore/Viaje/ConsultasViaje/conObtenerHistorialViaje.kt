@@ -7,9 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.avanti.HistorialViajesData
-import com.example.avanti.ViajeData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun conObtenerHistorialViajeRT(
@@ -44,3 +44,4 @@ fun conObtenerHistorialViajeRT(
         null
     }
 }
+

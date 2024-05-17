@@ -127,6 +127,12 @@ fun verConductores(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 cabecera("Conductores")
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(25.dp))
 
 
                 Box(
@@ -190,6 +196,7 @@ fun verConductores(
                     }
 
                 }
+            }
                 Spacer(modifier = Modifier.height(10.dp))
                 //Contenido
                 Column(

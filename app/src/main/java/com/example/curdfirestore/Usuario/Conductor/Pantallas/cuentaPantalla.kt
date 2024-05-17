@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
-import com.example.avanti.Usuario.LoginViewModel
 import com.example.avanti.Usuario.eliminarToken
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
