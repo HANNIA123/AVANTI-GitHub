@@ -268,7 +268,7 @@ fun dialogoReportarConductor(
             repor_detalles = descripciontext,
             repor_fecha = fecha_now
         )
-        conRegistrarReporte(navController, reporteData)
+        conRegistrarReporte( reporteData)
         ejecutado = true
     }
 

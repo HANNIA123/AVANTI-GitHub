@@ -1,52 +1,24 @@
 package com.example.curdfirestore.Reportes.ConsultasReporte
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.navigation.NavController
 import com.example.avanti.ReporteData
-import com.example.avanti.Usuario.BASE_URL
-import com.example.curdfirestore.Reportes.ApiServiceReporte
-import com.example.curdfirestore.Reportes.RespuestaApiReporte
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
+fun conRegistrarReporte(reporteData: ReporteData) {
+    // Obtener una referencia a la base de datos de Firebase
+    val db: FirebaseFirestore = Firebase.firestore
 
-@Composable
-fun conRegistrarReporte(
-    navController: NavController,
-    reporteData: ReporteData
-){
-    var resp by remember { mutableStateOf("") }
-
-    val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()).build()
-    val apiService = retrofit.create(ApiServiceReporte::class.java)
-    val call: Call<RespuestaApiReporte> = apiService.enviarReporte(reporteData)
-
-    call.enqueue(object : Callback<RespuestaApiReporte> {
-        override fun onResponse(call: Call<RespuestaApiReporte>, response: Response<RespuestaApiReporte>) {
-            if (response.isSuccessful) {
-                // Manejar la respuesta exitosa aquí
-                val respuesta = response.body()?.message ?: "Mensaje nulo"
-
-                resp=respuesta
-
-            } else {
-                resp="Entro al else"
-            }
+    // Crear una referencia a la colección "viajes"
+    val viajesRef = db.collection("reporte")
+    // Agregar el objeto Viaje a la colección con un ID generado automáticamente
+    viajesRef.add(reporteData)
+        .addOnSuccessListener { documentReference ->
+            println("Viaje agregado correctamente a Firebase con ID: ${documentReference.id}")
+           // editarCampoViajeSinRuta(documentId = viaje.viaje_id, campo = "viaje_id_iniciado", valor=documentReference.id )
         }
-        override fun onFailure(call: Call<RespuestaApiReporte>, t: Throwable) {
-            TODO("Not yet implemented")
+        .addOnFailureListener { e ->
+            println("Error al agregar el viaje a Firebase: $e")
         }
-    }
-    )
 
 }
-
