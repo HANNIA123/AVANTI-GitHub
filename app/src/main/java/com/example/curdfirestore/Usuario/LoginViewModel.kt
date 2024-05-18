@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.example.curdfirestore.Notificaciones.Consultas.requestNotificationPermission
+import com.example.curdfirestore.Notificaciones.Consultas.showNotificationPermissionDialog
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import com.google.firebase.auth.FirebaseAuth
@@ -32,7 +34,7 @@ class LoginViewModel: ViewModel () {
                     if (task.isSuccessful) {
                         Log.d("Logueo", "Logueado!!")
                         home()
-
+                        showNotificationPermissionDialog(context)
                     } else {
                         errorCallback()
                     }
@@ -76,29 +78,27 @@ class LoginViewModel: ViewModel () {
         }
     }
 
-
-
-
-
 }
 
-fun eliminarToken(email:String){
+
+fun eliminarToken(email: String, onComplete: () -> Unit) {
     try {
         val usuarioRef = FirebaseFirestore.getInstance().collection("usuario").document(email)
-
 
         val updates = hashMapOf<String, Any>(
             "usu_token" to FieldValue.delete()
         )
 
-        usuarioRef.update(updates).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
+        usuarioRef.update(updates)
+            .addOnSuccessListener {
                 println("Campo usu_token eliminado correctamente de Firestore.")
-            } else {
-                println("Error al intentar eliminar el campo usu_token de Firestore: ${task.exception}")
+                onComplete()
             }
-        }
+            .addOnFailureListener { e ->
+                println("Error al intentar eliminar el campo usu_token de Firestore: $e")
+            }
     } catch (e: Exception) {
+        e.printStackTrace()
         println("Error al intentar eliminar el campo usu_token de Firestore: $e")
     }
 

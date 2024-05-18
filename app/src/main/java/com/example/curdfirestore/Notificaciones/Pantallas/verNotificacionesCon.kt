@@ -172,9 +172,14 @@ fun verNotificacionesCon(
                         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
                         // Ordenar la lista de notificaciones por fecha
-                        val notificacionOrdenada =
-                            notificaciones!!.sortedByDescending { dateFormat.parse(it.notificacion_fecha) }
+                        /*val notificacionOrdenada =
+                            notificaciones!!.sortedByDescending { dateFormat.parse(it.notificacion_fecha) }*/
 
+                        // Ordenar la lista de notificaciones por fecha y por hora
+                        val notificacionOrdenada = notificaciones!!.sortedWith(compareByDescending<NoticacionData> { dateFormat.parse(it.notificacion_fecha) }.thenByDescending {
+                            val (hora, minuto) = it.notificacion_hora.split(":").map { it.toInt() }
+                            hora * 60 + minuto
+                        })
 
                         for (notificacion in notificacionOrdenada!!) {
 
@@ -205,7 +210,6 @@ fun verNotificacionesCon(
 
                                     ) {
 
-
                                         Text(
                                             buildAnnotatedString {
                                                 withStyle(
@@ -217,8 +221,6 @@ fun verNotificacionesCon(
                                                     append("${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido} ")
                                                 }
 
-
-
                                                 withStyle(
                                                     style = SpanStyle(
                                                         fontSize = 15.sp
@@ -226,29 +228,36 @@ fun verNotificacionesCon(
                                                 ) {
                                                     append(TextoNotificacionVer(tipoNot = notificacion.notificacion_tipo))
                                                 }
-
-                                                appendLine()
-
-                                                withStyle(
-                                                    style = SpanStyle(
-                                                        fontSize = 13.sp,
-                                                        color = Color.Gray
-                                                    )
-                                                ) {
-                                                    append("${notificacion.notificacion_fecha}")
-                                                }
-
-
                                             }
                                         )
-
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = "${notificacion.notificacion_hora}",
+                                                style = TextStyle(
+                                                    fontSize = 13.sp,
+                                                    color = Color.Gray
+                                                ),
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            Text(
+                                                text = "${notificacion.notificacion_fecha}",
+                                                style = TextStyle(
+                                                    fontSize = 13.sp,
+                                                    color = Color.Gray
+                                                ),
+                                                textAlign = TextAlign.End
+                                            )
+                                        }
 
                                     }
 
                                 }
                                 //LineaGris()
-                            }
 
+}
                         }
                         isLoading = false
 

@@ -268,35 +268,28 @@ fun Login(
 
 
     if (boton == true) {
+        if (!ejecutado) {
 
-        var usuario = conObtenerUsuarioId(correo = email)
-        usuario?.let {
-            if (usuario!!.usu_status == "Activo") {
-                if(!ejecutado){
+            var usuario = conObtenerUsuarioId(correo = email)
+            println("VARIABLE USUARIO $usuario")
 
+            usuario?.let {
+                if (usuario!!.usu_status == "Activo") {
                     println("USUARIO ACTIVO")
                     if (loginAttempts < maxLoginAttempts) {
-
                         viewModel.signInWithEmailAndPassword(email, password, context = context,
                             home = {
                                 loginAttempts = 0
                                 onButtonClick(email)
                             },
                             errorCallback = {
-
                                 loginAttempts++
                                 println("loginAttempts++ $loginAttempts++")
-
-
                                 Toast.makeText(
                                     context,
                                     "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                ejecutado = true
-                                //println("EJECUTADOOOOOOO $ejecutado")
-                                //prueba = true
-
                             })
                     } else {
                         Toast.makeText(
@@ -304,20 +297,25 @@ fun Login(
                             "El sistema se ha bloqueado. Inténtelo nuevamente después de 15 minutos.",
                             Toast.LENGTH_SHORT
                         ).show()
-                        //viewModel.startLockTimer()
-                        ejecutado=true
                     }
-
+                    ejecutado = true // Marca que ya se ha ejecutado
+                } else {
+                    println("USUARIO NO ACTIVO")
+                    Toast.makeText(
+                        context,
+                        "Usuario dado de baja. No es posible iniciar sesión. ",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    ejecutado = true // Marca que ya se ha ejecutado
                 }
-            } else {
-                println("USUARIO NO ACTIVO")
-                ejecutado = true
-                Toast.makeText(
-                    context,
-                    "Usuario dado de baja. No es posible iniciar sesión. ",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
+
         }
     }
-    }
+
+}
+
+
+
+
+

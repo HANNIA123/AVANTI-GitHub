@@ -181,9 +181,10 @@ fun cuentaPantallaPas(
                         ),
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            authViewModel.signOut()
-                            eliminarToken(userID)
-                            navController.navigate(route = "login")
+                            eliminarToken(userID) {
+                                authViewModel.signOut()
+                                navController.navigate(route = "login")
+                            }
                         }) {
                         Icon(
                             imageVector = Icons.Filled.ExitToApp,

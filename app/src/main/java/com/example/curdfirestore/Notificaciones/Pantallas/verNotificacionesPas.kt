@@ -166,14 +166,17 @@ fun verNotificacionesPas(
                         println("No nulo")
                         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-                        // Ordenar la lista de notificaciones por fecha
-                        val notificacionOrdenada =
-                            notificaciones!!.sortedByDescending { dateFormat.parse(it.notificacion_fecha) }
+                        // Ordenar la lista de notificaciones por fecha y por hora
+                        val notificacionOrdenada = notificaciones!!.sortedWith(compareByDescending<NoticacionData> { dateFormat.parse(it.notificacion_fecha) }.thenByDescending {
+                            val (hora, minuto) = it.notificacion_hora.split(":").map { it.toInt() }
+                            hora * 60 + minuto
+                        })
 
 
                         for (notificacion in notificacionOrdenada!!) {
 
-                            val usuario= conObtenerUsuarioId(correo = notificacion.notificacion_usu_origen)
+                            val usuario =
+                                conObtenerUsuarioId(correo = notificacion.notificacion_usu_origen)
 
                             if (usuario != null) {
                                 Row(
@@ -199,7 +202,6 @@ fun verNotificacionesPas(
 
                                     ) {
 
-
                                         Text(
                                             buildAnnotatedString {
                                                 withStyle(
@@ -218,22 +220,29 @@ fun verNotificacionesPas(
                                                 ) {
                                                     append(TextoNotificacionVer(tipoNot = notificacion.notificacion_tipo))
                                                 }
-
-                                                appendLine()
-
-                                                withStyle(
-                                                    style = SpanStyle(
-                                                        fontSize = 13.sp,
-                                                        color = Color.Gray
-                                                    )
-                                                ) {
-                                                    append("${notificacion.notificacion_fecha}")
-                                                }
-
-
                                             }
                                         )
-
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = "${notificacion.notificacion_hora}",
+                                                style = TextStyle(
+                                                    fontSize = 13.sp,
+                                                    color = Color.Gray
+                                                ),
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            Text(
+                                                text = "${notificacion.notificacion_fecha}",
+                                                style = TextStyle(
+                                                    fontSize = 13.sp,
+                                                    color = Color.Gray
+                                                ),
+                                                textAlign = TextAlign.End
+                                            )
+                                        }
 
                                     }
 
