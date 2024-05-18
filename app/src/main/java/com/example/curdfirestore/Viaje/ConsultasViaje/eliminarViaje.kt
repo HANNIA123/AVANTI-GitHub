@@ -24,3 +24,20 @@ fun eliminarViaje(documentId: String, navController: NavController, userId:Strin
         println("Error al intentar eliminar el documento de Firestore: $e")
     }
 }
+
+fun eliminarViajeSinRuta(documentId: String) {
+    try {
+        val db = FirebaseFirestore.getInstance()
+        val documentReference = db.collection("viaje").document(documentId)
+        documentReference.delete().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+
+                println("Documento con ID $documentId eliminado correctamente de Firestore.")
+            } else {
+                println("Error al intentar eliminar el documento de Firestore: ${task.exception}")
+            }
+        }
+    } catch (e: Exception) {
+        println("Error al intentar eliminar el documento de Firestore: $e")
+    }
+}

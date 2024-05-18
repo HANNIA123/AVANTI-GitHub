@@ -61,6 +61,7 @@ import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Pantallas.FilaIconoTexto3
+import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -162,13 +163,22 @@ fun generalParada(
                 ) {
 
 
-                cabeceraAtrasParada(
-                    titulo = "Registro de parada",
-                    navController = navController,
-                    userid = userId,
-                    regresar = pantallaRegresa,
-                    viajeid = viajeId
-                )
+
+                viaje?.let {
+                    val ruta = if (viaje.viaje_paradas == "0") {
+                        "ver_mapa_viaje_sin/$viajeId/$userId"
+                    } else {
+                        "ver_mapa_viaje/$viajeId/$userId"
+                    }
+
+                    cabeceraEditarAtras(
+                        "Registrar parada",
+                        navController,
+                        ruta
+                    )
+                }
+
+
 
                 val alturaT = maxh - 70.dp - 60.dp - 210.dp - 10.dp - 55.dp - 60.dp - 10.dp - 190.dp
                 val espacio = (alturaT / 3) - 20.dp
@@ -449,7 +459,6 @@ fun generalParada(
                     val horaFin = convertirStringAHora(viaje.viaje_hora_partida)
                     val horaPar = convertirStringAHora(selectedHora)
 
-                    println("hora Ini $horaIni fin $horaFin")
                     if (
                         (horaFin.isBefore(horaPar) && horaIni.isAfter(horaPar)) || horaPar==horaIni || horaPar==horaFin) {
 

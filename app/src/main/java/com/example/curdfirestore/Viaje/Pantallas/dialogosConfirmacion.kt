@@ -133,3 +133,100 @@ fun dialogoConfirmarEditarViaje(
     }
 
 }
+
+@Composable
+fun dialogoConfirmarVolver(
+    regresar: () -> Unit,
+    texto: String,
+    noRegresar: () -> Unit
+
+
+) {
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f)),
+
+        ) {
+        Dialog(
+            onDismissRequest = {
+                noRegresar()
+
+            }, // Cierra el diálogo al tocar fuera de él
+            content = {
+                // Contenido del diálogo
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(15.dp)
+
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Image(
+                        modifier = Modifier
+                            .height(190.dp),
+                        painter = painterResource(id = R.drawable.delete),
+                        contentDescription = "Imagen pregunta",
+                        contentScale = ContentScale.FillBounds
+                    )
+                    Text(
+                        text = texto,
+                        textAlign = TextAlign.Justify,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.Black
+
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+
+
+                    Row(modifier = Modifier.align(Alignment.End)) {
+                        TextButton(onClick = {
+                         noRegresar()
+                        }
+                        ) {
+                            Text(
+                                text = "CANCELAR",
+                                style = TextStyle(
+                                    Color(137, 67, 242),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        TextButton(
+                            onClick = {
+
+                              regresar()
+
+                            }) {
+                            Text(
+                                text = "ACEPTAR",
+                                style = TextStyle(
+                                    Color(137, 67, 242),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                )
+                            )
+                        }
+                    }
+
+                }
+            },
+
+
+            )
+
+    }
+
+}

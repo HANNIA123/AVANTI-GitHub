@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -25,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -33,18 +31,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.avanti.NoticacionData
+import com.example.avanti.SolicitudData
 import com.example.avanti.ViajeData
-import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
+import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
+import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
 import com.example.curdfirestore.NivelAplicacion.SearchBar
 import com.example.curdfirestore.NivelAplicacion.searchPlaces
+import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Viaje.ConsultasViaje.conActualizarViaje
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
-import com.example.curdfirestore.Viaje.ConsultasViaje.conRegistrarViaje
+import com.example.curdfirestore.Viaje.ConsultasViaje.eliminarSolicitudPorviajeId
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
-import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
-import com.example.curdfirestore.Viaje.Pantallas.cabeceraConBotonCerrarViaje
 import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
 import com.example.curdfirestore.Viaje.Pantallas.mapaMarkerDestino
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -60,7 +62,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun registrarDestinoConductorEditar(
     navController: NavController,
@@ -100,6 +101,10 @@ fun registrarDestinoConductorEditar(
     var TipoBusqueda: String by remember { mutableStateOf("barra") } //El que paso
     var ubiMarker by remember { mutableStateOf("19.3898164,-99.11023") }
     var ejecutado by remember { mutableStateOf(false) }
+    var ejecutadoNot by remember { mutableStateOf(false) }
+    var confirmN by remember { mutableStateOf(false) }
+
+
     var boton by remember { mutableStateOf(false) }
     var primeraVez by remember {
         mutableStateOf(0)
@@ -350,14 +355,14 @@ fun registrarDestinoConductorEditar(
         }
 
     }
+
+    var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+    conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
+        solicitudes = resultado
+    }
     if (boton == true && ejecutado == false) {
-
-
         val conViaje = conObtenerViajeId(viajeId = viajeId)
-
         conViaje?.let {
-
-            var comPantalla = "muestra"
             val origen = "19.5114059,-99.1265259" //Coordenadas de UPIITA
             val viajeData = ViajeData(
                 usu_id = userid,
@@ -377,15 +382,51 @@ fun registrarDestinoConductorEditar(
                 viaje_id = "",
                 viaje_id_iniciado = ""
             )
-            //GuardarViaje(navController, userid, viajeData,conPantall)
-            //GuardarCoordenadas(navController, userid,viajeData)
+
+
+            if(solicitudes!=null){
+                for ((index, solicitud) in solicitudes!!.withIndex()) {
+                    actualizarHorarioPas(solicitud.horario_id, "horario_solicitud", "No")
+
+                    val notificacionData = NoticacionData(
+                        notificacion_tipo = "ve",
+                        notificacion_usu_origen = userid,
+                        notificacion_usu_destino = solicitud.pasajero_id,
+                        notificacion_id_viaje = viajeId,
+                        notificacion_id_solicitud = solicitud.solicitud_id,
+                        notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
+                        notificacion_hora = obtenerHoraActual(),
+
+                        )
+                    if (!ejecutadoNot) {
+                        LaunchedEffect(Unit) {
+                            conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
+                                confirmN = respuestaExitosa
+                            }
+                        }
+
+                    }
+                    if (index == solicitudes!!.size - 1) {
+                        ejecutadoNot = true
+                        eliminarSolicitudPorviajeId(viajeId)
+                    }
+                }
+
+            }
+
+
+
+
             conActualizarViaje(
                 navController = navController,
                 userId = userid,
                 viajeId = viajeId,
                 viajeData = viajeData
             )
-            //  conRegistrarViaje(navController, userid,viajeData, comPantalla)
+            //eliminar solicitud
+
+
+
 
             ejecutado = true
         }

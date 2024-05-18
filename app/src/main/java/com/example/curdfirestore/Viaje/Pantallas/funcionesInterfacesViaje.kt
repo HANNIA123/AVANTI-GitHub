@@ -153,7 +153,8 @@ fun mapaMarkerDestino(ubicacionMarker: String): String {
 @Composable
 fun cabeceraConBotonCerrarViaje(titulo:String,
                            navController: NavController,
-                                userid:String
+                                userid:String,
+
 
                            ){
     Box(

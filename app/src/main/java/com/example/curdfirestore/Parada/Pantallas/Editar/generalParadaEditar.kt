@@ -26,6 +26,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,11 +47,15 @@ import androidx.compose.ui.unit.sp
 
 import androidx.navigation.NavController
 import androidx.navigation.compose.composable
+import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
+import com.example.curdfirestore.Parada.Pantallas.dialogoInfViajeParada
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.convertirStringATime
+import com.example.curdfirestore.Viaje.Pantallas.FilaIconoTexto3
 import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
+import com.example.curdfirestore.Viaje.Pantallas.dialogoConfirmarEditarViaje
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
@@ -68,6 +73,10 @@ fun generalParadaEditar(
 
 ) {
 
+    var showEditar by remember {
+        mutableStateOf(true)
+    }
+
     var maxh by remember {
         mutableStateOf(0.dp)
     }
@@ -77,6 +86,15 @@ fun generalParadaEditar(
     }
     val parada = conObtenerParadaId(paradaId = paradaId)
     val viaje = conObtenerViajeId(viajeId = viajeId)
+    var infoViaje by remember {
+        mutableStateOf(false)
+    }
+    var campoValidaHora by remember {
+        mutableStateOf(false)
+    }
+    var campoHoraF by remember {
+        mutableStateOf(false)
+    }
 
     parada?.let {
         viaje?.let {
@@ -109,9 +127,16 @@ fun generalParadaEditar(
                 horaFin = "$selectedHora hrs"
             }
 
+
             LaunchedEffect(nombre) {
                 campoNombre = false
+
             }
+            LaunchedEffect(horaFin) {
+                campoHoraF = false
+                campoValidaHora = false
+            }
+
 
             Scaffold()
             {
@@ -248,42 +273,59 @@ fun generalParadaEditar(
                                     )
                                     Spacer(modifier = Modifier.height(5.dp))
 
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .border(
-                                                1.dp,
-                                                Color.LightGray
-                                            )
-                                            .clickable {
-                                                timeDialogStateFin.show()
-                                                isDialogOpenFin = true
-                                            }
-                                    ) {
+                                    FilaIconoTexto3(
+                                        icono = R.drawable.clock,
+                                        texto = horaFin,
+                                        onClick = {
+                                            timeDialogStateFin.show()
+                                            isDialogOpenFin = true
+                                        },
+                                        mostrarTextoError = campoHoraF,
+                                        mensaje = "*Por favor ingresa el horario"
+
+                                    )
+
+
+                                    if (campoValidaHora) {
                                         Text(
-                                            text = horaFin,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .padding(15.dp),
+                                            text = "*Verifica el horario de la parada",
                                             style = TextStyle(
-                                                fontSize = 20.sp,
-                                                color = Color.Black
+                                                color = Color(86, 86, 86),
+                                                fontSize = 12.sp
                                             )
-                                        )
-                                        // Spacer(modifier = Modifier.weight(1f)) // Espacio flexible para alinear el icono al final
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.clock),
-                                            contentDescription = "Icono horario",
-                                            modifier = Modifier
-                                                .size(tamIcono)
-                                                .padding(10.dp, 5.dp),
-                                            tint = Color(137, 13, 86)
                                         )
                                     }
 
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                infoViaje = true
+                                            },
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Info,
+                                            contentDescription = "Icono",
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .padding(10.dp, 5.dp),
+                                            tint = Color(86, 86, 86)
+                                        )
 
+                                        Text(
+                                            text = "Ver mi viaje",
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                color = Color(86, 86, 86),
+                                                textAlign = TextAlign.Justify
+                                            )
+                                        )
+                                    }
 
-                                    Spacer(modifier = Modifier.height(90.dp))
+                                    Spacer(modifier = Modifier.height(70.dp))
                                     Button(
                                         colors = ButtonDefaults.buttonColors(
                                             backgroundColor = Color(
@@ -310,7 +352,27 @@ fun generalParadaEditar(
 
                         }
                     }
+                    if (infoViaje) {
+
+                        dialogoInfViajeParada(
+                            onDismiss = { infoViaje = false },
+                            viaje = viaje
+                        )
+
+                    }
+
                 }
+                if (showEditar) {
+                    dialogoConfirmarEditarViaje(
+                        onDismiss = { showEditar = false },
+                        viajeId,
+                        userId,
+                        viaje.viaje_paradas,
+                        navController
+                    )
+
+                }
+
 
                 Box(
                     modifier = Modifier
@@ -351,11 +413,23 @@ fun generalParadaEditar(
                         campoNombre = true
                     } else {
 
-                        println("nombre --------------$nombre")
-                        //  navController.navigate(route = "registrar_origen_conductor/$userId/$diaCon/$selectedHoraInicio/$selectedHoraFin/$selectedLugares/$selectedTarifa")
-var parU=parada.par_ubicacion
-                        navController.navigate("registrar_parada_barra_editar/$userId/$viajeId/$nombre/$selectedHora/$parU/$paradaId")
-                        println("Campos completos de parada")
+
+                        val horaIni = convertirStringAHora(viaje.viaje_hora_llegada)
+                        val horaFin = convertirStringAHora(viaje.viaje_hora_partida)
+                        val horaPar = convertirStringAHora(selectedHora)
+
+                        if (
+                            (horaFin.isBefore(horaPar) && horaIni.isAfter(horaPar)) || horaPar == horaIni || horaPar == horaFin) {
+                            val parU = parada.par_ubicacion
+                            navController.navigate("registrar_parada_barra_editar/$userId/$viajeId/$nombre/$selectedHora/$parU/$paradaId")
+
+
+                        } else {
+                            campoValidaHora = true
+
+                        }
+
+
                     }
                     botonSiguiente = false
                 }

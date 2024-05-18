@@ -200,7 +200,8 @@ fun textInMarker(Label:String, Text:String){
             )) {
                 append(Text)
             }
-        }
+        },
+        style = TextStyle(textAlign = TextAlign.Justify)
     )
 }
 

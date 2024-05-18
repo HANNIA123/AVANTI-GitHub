@@ -15,6 +15,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,12 +33,17 @@ import com.example.curdfirestore.R
 
 
 @Composable
-fun cabeceraEditarAtras(titulo:String,
-                          navController: NavController,
-                        ruta:String
-
-
-                          ){
+fun cabeceraEditarAtras(
+    titulo: String,
+    navController: NavController,
+    ruta: String,
+) {
+    var dialogConfirmarVolver by remember {
+        mutableStateOf(false)
+    }
+    var valida by remember {
+        mutableStateOf(false)
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -58,8 +67,7 @@ fun cabeceraEditarAtras(titulo:String,
             IconButton(
 
                 onClick = {
-                    //  navController.navigate(route="general_viaje_conductor_editar/$userId/$viajeId")
- navController.navigate(route=ruta)
+                    dialogConfirmarVolver=true
 
                 },
                 modifier = Modifier
@@ -85,18 +93,32 @@ fun cabeceraEditarAtras(titulo:String,
         }
 
 
+        if (dialogConfirmarVolver) {
+            dialogoConfirmarVolver(
+                noRegresar = { dialogConfirmarVolver = false },
+                texto = "Los cambios no serán guardados. ¿Deseas regresar?",
+                regresar = {
+                    navController.navigate(route = ruta)
+                }
+
+
+            )
+
+        }
+
     }
 
 
 }
 
 @Composable
-fun cabeceraEditarCerrar(titulo:String,
-                        navController: NavController,
-                        ruta:String
+fun cabeceraEditarCerrar(
+    titulo: String,
+    navController: NavController,
+    ruta: String
 
 
-){
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -121,7 +143,7 @@ fun cabeceraEditarCerrar(titulo:String,
 
                 onClick = {
                     //  navController.navigate(route="general_viaje_conductor_editar/$userId/$viajeId")
-                    navController.navigate(route=ruta)
+                    navController.navigate(route = ruta)
 
                 },
                 modifier = Modifier

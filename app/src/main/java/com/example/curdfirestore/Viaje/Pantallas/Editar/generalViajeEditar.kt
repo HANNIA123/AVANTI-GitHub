@@ -114,13 +114,8 @@ fun generalViajeConEditar(
 ) {
 
 var showEditar by remember {
-    mutableStateOf(false)
+    mutableStateOf(true)
 }
-
-
-    var ejecutado by remember {
-        mutableStateOf(false)
-    }
 
     val tamEspacio = 15.dp
     val tamIcono = 55.dp
@@ -128,11 +123,7 @@ var showEditar by remember {
 
     viaje?.let {
 
-        if(!ejecutado) {
-            if (viaje.viaje_num_pasajeros != "0") {
-                showEditar = true
-            }
-        }
+
 
 
         val trayectoI = trayectoANum(viaje.viaje_trayecto)
@@ -614,7 +605,7 @@ var showEditar by remember {
                     viaje.viaje_paradas,
                     navController
                 )
-                ejecutado=true
+
             }
 
 
@@ -688,24 +679,15 @@ var showEditar by remember {
         }
 
         if (botonSiguiente) {
-            var tra = selectedTrayecto.toString()
-            println("trayectooo $selectedTrayecto")
-            println(selectedTrayecto.toString())
+
 
             //Definir si elegirá origen o destino
             if (selectedTrayecto.toString() == "[1]") { //UPIITA como origen
-//Pantalla de seleccionar destino
-                println("registrar_destino_conductor_editar/$userId/$diaCon/$selectedHoraInicio/$selectedHoraFin/$selectedLugares/$selectedTarifa/$uDestino")
-
-
                navController.navigate(route = "registrar_destino_conductor_editar/$userId/$diaCon/$selectedHoraInicio/$selectedHoraFin/$selectedLugares/$selectedTarifa/$uDestino/$viajeId")
             }
             if (selectedTrayecto.toString() == "[2]") {// //UPIITA como destino
-
-
                 navController.navigate(route = "registrar_origen_conductor_editar/$userId/$diaCon/$selectedHoraInicio/$selectedHoraFin/$selectedLugares/$selectedTarifa/$uOrigen/$viajeId")
-                println("origeeeeen  /$userId/$diaCon/$selectedHoraInicio/$selectedHoraFin/$selectedLugares/$selectedTarifa/$uOrigen/$viajeId")
-            }
+              }
 
             botonSiguiente = false
 

@@ -10,10 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import com.example.avanti.ParadaData
 import com.example.avanti.Usuario.RespuestaApiParada
-import com.example.avanti.Usuario.RespuestaApiViaje
 import com.example.avanti.Usuario.RetrofitClientParada
-import com.example.avanti.Usuario.RetrofitClientViaje
-import com.example.avanti.ViajeData
+import com.google.firebase.firestore.FirebaseFirestore
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,7 +21,9 @@ fun conActualizarParada(
     navController: NavController,
     userId: String,
     paradaId: String,
-    paradaData: ParadaData
+    paradaData: ParadaData,
+    paradasViaje:String
+
 
 ) {
     var resp by remember { mutableStateOf("") }
@@ -34,10 +34,19 @@ fun conActualizarParada(
         @SuppressLint("SuspiciousIndentation")
         override fun onResponse(call: Call<RespuestaApiParada>, response: Response<RespuestaApiParada>) {
             if (response.isSuccessful) {
-                val respuesta = response.body()?.message ?: "Mensaje nulo"
-                resp = respuesta
+
+                if (paradasViaje == "0") {
+                    navController.navigate(route = "ver_mapa_viaje_sin/${paradaData.viaje_id}/$userId")
+                    Toast.makeText(navController.context, "Parada actualizada ", Toast.LENGTH_SHORT)
+                        .show()
+
+                } else {
+                    Toast.makeText(navController.context, "Parada actualizado ", Toast.LENGTH_SHORT)
+                        .show()
+
                     navController.navigate(route = "ver_mapa_viaje/${paradaData.viaje_id}/$userId")
-                Toast.makeText(navController.context, "Para actualizada ", Toast.LENGTH_SHORT).show()
+                }
+
 
             } else {
                 resp = "Entro al else"
@@ -50,4 +59,39 @@ fun conActualizarParada(
         }
     })
 
+}
+
+fun editarDocumentoParada(
+    navController: NavController,
+    userId: String,
+    documentId: String,
+    paradasViaje:String,
+    viajeId:String,
+    nuevosValores: Map<String, Any>) {
+
+    try {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("parada").document(documentId).update(nuevosValores)
+            .addOnSuccessListener {
+
+                if (paradasViaje == "0") {
+                    navController.navigate(route = "ver_mapa_viaje_sin/$viajeId/$userId")
+                    Toast.makeText(navController.context, "Parada actualizada ", Toast.LENGTH_SHORT)
+                        .show()
+
+                } else {
+                    Toast.makeText(navController.context, "Parada actualizado ", Toast.LENGTH_SHORT)
+                        .show()
+
+                    navController.navigate(route = "ver_mapa_viaje/$viajeId/$userId")
+                }
+
+                println("Documento con ID $documentId actualizado correctamente en Firestore.")
+            }
+            .addOnFailureListener { exception ->
+                println("Error al intentar actualizar el documento en Firestore: $exception")
+            }
+    } catch (e: Exception) {
+        println("Excepción al intentar actualizar el documento en Firestore: $e")
+    }
 }
