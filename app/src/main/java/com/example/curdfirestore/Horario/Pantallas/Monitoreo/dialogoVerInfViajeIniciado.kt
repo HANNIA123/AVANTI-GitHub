@@ -36,12 +36,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import com.example.avanti.SolicitudData
+import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaRT
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarConductor
 import com.example.curdfirestore.Usuario.Conductor.ConsultasConductor.conObtenerVehiculoId
 import com.example.curdfirestore.textInfPasajeros
 import com.example.curdfirestore.textInfViaje
@@ -52,10 +55,17 @@ import com.example.curdfirestore.textoNegrita
 fun dialogoVerInfViajeIniciado(
     onDismiss: () -> Unit,
     solicitud: SolicitudData,
-    paradaId: String
+    paradaId: String,
+    navController: NavController
 
-) {
+    ) {
     var expContacto by remember { mutableStateOf(false) }
+    var botonReportar by remember { mutableStateOf(false) }
+    var conductor_id by remember {
+        mutableStateOf("")
+    }
+    var usuarioCon by remember { mutableStateOf<UserData?>(null) }
+    val ruta = "ver_progreso_viaje/${solicitud.pasajero_id}/${solicitud.viaje_id}/${solicitud.solicitud_id}/${solicitud.horario_id}/${solicitud.parada_id}"
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -81,13 +91,14 @@ fun dialogoVerInfViajeIniciado(
                     val conductor = conObtenerUsuarioId(correo = solicitud.conductor_id)
                     val vehiculo = conObtenerVehiculoId(correo = solicitud.conductor_id)
 
+
                     Column(
                         modifier = Modifier.fillMaxWidth(),
 
                         ) {
                         conductor?.let {
                             vehiculo?.let {
-
+                                val conId = solicitud.conductor_id
                                 val parada = conObtenerParadaRT(paradaId = paradaId)
                                 parada?.let {
 
@@ -188,7 +199,9 @@ fun dialogoVerInfViajeIniciado(
                                                 modifier = Modifier
                                                     .align(Alignment.CenterHorizontally) // Alineación horizontal centrada
                                                     .clickable {
-                                                        // Función para reportar
+                                                        usuarioCon = conductor
+                                                        conductor_id = conId
+                                                        botonReportar = true
                                                     }
                                             ) {
                                                 Icon(
@@ -301,6 +314,16 @@ fun dialogoVerInfViajeIniciado(
 
             )
 
+    }
+    if (botonReportar) {
+        dialogoReportarConductor(
+            onDismiss = { botonReportar = false },
+            usuarioCon!!,
+            solicitud.pasajero_id,
+            conductor_id,
+            navController,
+            ruta
+        )
     }
 
 }

@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
+import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabeceraAtrasRuta
@@ -76,6 +77,11 @@ fun verInformacionViajeComenzada(
 
     var listaSolicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
     var botonReportar by remember { mutableStateOf(false) }
+    var pasajero_id by remember {
+        mutableStateOf("")
+    }
+    var usuarioPas by remember { mutableStateOf<UserData?>(null) }
+    val ruta = "empezar_viaje/$userid/${viajeId}"
     conObtenerSolicitudesConductor(userId = userid) { solicitudes ->
         listaSolicitudes = solicitudes
     }
@@ -153,10 +159,11 @@ fun verInformacionViajeComenzada(
                                 val solicitudes =
                                     conObtenerSolicitudesPorViajeRT(viajeId = parada.second.viaje_id)
                                 solicitudes?.forEach { solicitud ->
-
+                                    val pasId = solicitud.second.pasajero_id
                                     if (solicitud.second.parada_id == paradaId && solicitud.second.solicitud_activa_pas != "no"
                                         && solicitud.second.solicitud_status=="Aceptada"
                                         ) {
+
                                         val pasajero =
                                             conObtenerUsuarioId(correo = solicitud.second.pasajero_id)
                                         val nombreCampo =
@@ -204,6 +211,8 @@ fun verInformacionViajeComenzada(
                                                         modifier = Modifier
                                                             // Alineación horizontal centrada
                                                             .clickable {
+                                                                usuarioPas = pasajero
+                                                                pasajero_id = pasId
                                                                 botonReportar = true
                                                                 // Función para reportar
                                                             },
@@ -323,15 +332,16 @@ fun verInformacionViajeComenzada(
 
     }
     if (botonReportar) {
-        /*   dialogoReportarPasajero(
-               onDismiss = { botonReportar = false },
-               usuarioPas!!,
-               userid,
-               pasajero_id,
-               navController
-           )
 
-         */
+        dialogoReportarPasajero(
+            onDismiss = { botonReportar = false },
+            usuarioPas!!,
+            userid,
+            pasajero_id,
+            navController,
+            ruta
+        )
+
 
     }
 
