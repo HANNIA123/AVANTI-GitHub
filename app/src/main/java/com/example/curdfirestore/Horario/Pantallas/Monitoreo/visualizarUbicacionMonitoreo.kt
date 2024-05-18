@@ -53,6 +53,7 @@ import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaRT
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudByHorarioRT
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudByHorarioRTId
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
 import com.example.curdfirestore.Usuario.Pasajero.menuDesplegablePas
@@ -192,7 +193,7 @@ fun verUbicacionMonitoreo(
 
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
 
-    val solicitud = conObtenerSolicitudByHorarioRT(horarioId = horarioId)
+    val solicitud = conObtenerSolicitudByHorarioRTId(horarioId = horarioId)
 
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
@@ -468,22 +469,30 @@ fun verUbicacionMonitoreo(
                                 .padding(5.dp)
                                 .weight(0.6f)
                         ) {
-                            val textoVal = if (solicitud?.solicitud_validacion_pasajero == "si") {
-                                "Has sido validado"
-                            } else {
-                                "No has sido validado"
-                            }
-                            Text(
-                                text = textoVal,
-                                style = TextStyle(
-                                    fontSize = 18.sp,
-                                    color = Color(
-                                        137,
-                                        13,
-                                        88
-                                    ),
+
+                            solicitud?.let {
+
+                                val textoVal= if(solicitud.second.solicitud_validacion_pasajero=="si"){
+                                    "Has sido validado"
+                                }else{
+                                    "No has sido validado"
+                                }
+
+                                Text(
+                                    text = textoVal,
+                                    style = TextStyle(
+                                        fontSize = 18.sp,
+                                        color = Color(
+                                            137,
+                                            13,
+                                            88
+                                        ),
+                                    )
                                 )
-                            )
+                            }
+
+
+
                         }
 
                     }

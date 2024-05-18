@@ -51,7 +51,7 @@ import com.example.curdfirestore.textoNegrita
 @Composable
 fun dialogoVerInfViajeIniciado(
     onDismiss: () -> Unit,
-    solicitud: SolicitudData,
+    solicitud: Pair<String, SolicitudData>,
     paradaId: String
 
 ) {
@@ -78,8 +78,8 @@ fun dialogoVerInfViajeIniciado(
                 ) {
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    val conductor = conObtenerUsuarioId(correo = solicitud.conductor_id)
-                    val vehiculo = conObtenerVehiculoId(correo = solicitud.conductor_id)
+                    val conductor = conObtenerUsuarioId(correo = solicitud.second.conductor_id)
+                    val vehiculo = conObtenerVehiculoId(correo = solicitud.second.conductor_id)
 
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -93,7 +93,7 @@ fun dialogoVerInfViajeIniciado(
 
 
                                     val nombreCampo =
-                                        solicitud.solicitud_validacion_conductor
+                                        solicitud.second.solicitud_validacion_conductor
 
                                     val (color, textoValidacion) = when (nombreCampo) {
                                         "si" -> Color(

@@ -76,3 +76,43 @@ fun conObtenerSolicitudByHorarioRT(
         null
     }
 }
+
+
+
+
+@Composable
+fun conObtenerSolicitudByHorarioRTId(
+    horarioId: String
+): Pair<String, SolicitudData>? {
+    var fin by remember { mutableStateOf(false) }
+    var solicitud by remember { mutableStateOf<Pair<String, SolicitudData>?>(null) }
+
+    LaunchedEffect(key1 = horarioId) {
+        val db = Firebase.firestore
+        val viajeRef = db.collection("solicitud").whereEqualTo("horario_id", horarioId)
+
+        viajeRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                println("Error al obtener solicitud: $error")
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && !snapshot.isEmpty) {
+                val document = snapshot.documents[0]
+                val solicitudData = document.toObject(SolicitudData::class.java)
+                val id = document.id
+                if (solicitudData != null) {
+                    solicitud = id to solicitudData
+                }
+            }
+
+            fin = true
+        }
+    }
+
+    return if (fin) {
+        solicitud
+    } else {
+        null
+    }
+}

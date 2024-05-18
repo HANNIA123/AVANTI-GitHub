@@ -58,7 +58,7 @@ fun registrarNotificacionViaje(
 @Composable
 fun registrarNotificacionViajePas(
     tipoNot:String,
-    solicitud: SolicitudData,
+    solicitud: Pair<String, SolicitudData>,
     userId:String,
     viajeId:String
 ){
@@ -73,9 +73,9 @@ fun registrarNotificacionViajePas(
         val notificacionData = NoticacionData(
             notificacion_tipo = tipoNot,
             notificacion_usu_origen = userId,
-            notificacion_usu_destino = solicitud.conductor_id,
+            notificacion_usu_destino = solicitud.second.conductor_id,
             notificacion_id_viaje = viajeId,
-            notificacion_id_solicitud = solicitud.solicitud_id,
+            notificacion_id_solicitud = solicitud.second.solicitud_id,
             notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
             notificacion_hora = obtenerHoraActual(),
 
