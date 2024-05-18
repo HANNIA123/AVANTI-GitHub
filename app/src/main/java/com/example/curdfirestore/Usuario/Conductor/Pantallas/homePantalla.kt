@@ -49,7 +49,7 @@ fun homePantallaConductor(
                         viajeId = primerViajeIniciado.viaje_id,
                         navController = navController
                     )
-                    //  navController.navigate("empezar_viaje/$userid/${primerViajeIniciado.viaje_id}")
+
                 }
 
             } else {

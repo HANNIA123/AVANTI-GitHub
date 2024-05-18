@@ -36,20 +36,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.Conductor.Pantallas.maxh
+import com.example.avanti.ViajeData
 import com.example.avanti.ViajeDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.avanti.ui.theme.Aplicacion.restarTreintaMinutosAHoraActual
 import com.example.avanti.ui.theme.Aplicacion.sumarTreintaMinutosAHoraActual
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioConRT
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Pantallas.mensajeNoViajes
 import com.example.curdfirestore.recuadroTitulos
 import com.example.curdfirestore.textoHoraViaje
 import com.example.curdfirestore.textoInformacionViaje
 import java.time.LocalDate
+import java.time.LocalTime
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -69,10 +74,12 @@ fun homeNoIniciado(
     var texto by remember {
         mutableStateOf("")
     }
-    var viajes by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
+   /* var viajes by remember { mutableStateOf<List<ViajeDataReturn>?>(null) }
     conObtenerItinerarioCon(userId = userid) { resultado ->
         viajes = resultado
-    }
+    }*/
+
+    val viajes= conObtenerItinerarioConRT(userId = userid)
 
     Box {
         Scaffold(
@@ -136,28 +143,80 @@ fun homeNoIniciado(
                             Spacer(modifier = Modifier.height(10.dp))
 
                             if (viajes != null) {
-
                                 val horaMinima = restarTreintaMinutosAHoraActual()
                                 val horaMaxima = sumarTreintaMinutosAHoraActual()
-                                val viajesFiltrados = viajes!!.filter {
-                                    it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual)
 
-
-                                }
-                               /* val viajesFiltrados = viajes!!.filter {
-                                    it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
-                                            convertirStringAHora(it.viaje_hora_partida).isAfter(
-                                                horaMinima
-                                            ) && convertirStringAHora(it.viaje_hora_partida).isBefore(
-                                        horaMaxima
+                              var viajesFiltrados by remember {
+                                    mutableStateOf<List<Pair<String,ViajeData>>?>(
+                                        null
                                     )
+                                }
+
+
+
+
+                                val time1: LocalTime = LocalTime.of(23, 59)
+                                val timeActual = convertirStringAHora(obtenerHoraActual())
+
+                                val time2: LocalTime = LocalTime.of(23, 0)
+
+                                val time3: LocalTime = LocalTime.of(0, 0)
+
+
+                                val time4: LocalTime = LocalTime.of(1, 0)
+
+
+                                if (timeActual.isBefore(time1) && timeActual.isAfter(time2)) {
+
+                                    viajesFiltrados = viajes.filter {
+                                        it.second.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
+                                                convertirStringAHora(it.second.viaje_hora_partida).isAfter(
+                                                    time2
+                                                )
+
+
+                                    }
 
                                 }
-                                */
+                                else if(timeActual.isBefore(time4) && timeActual.isAfter(time3)){
 
-                                if (viajesFiltrados.isNotEmpty()) {
+                                    viajesFiltrados = viajes.filter {
+                                        it.second.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
+                                                convertirStringAHora(it.second.viaje_hora_partida).isAfter(
+                                                    time3
+                                                )
+
+                                    }
+
+                                }
+                                else {
+
+                                    viajesFiltrados = viajes.filter {
+                                        it.second.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
+                                                convertirStringAHora(it.second.viaje_hora_partida).isAfter(
+                                                    horaMinima
+                                                ) && convertirStringAHora(it.second.viaje_hora_partida).isBefore(
+                                            horaMaxima
+                                        )
+
+                                    }
+                                }
+
+
+                                /* val viajesFiltrados = viajes!!.filter {
+                                      it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
+                                              convertirStringAHora(it.viaje_hora_partida).isAfter(
+                                                  horaMinima
+                                              ) && convertirStringAHora(it.viaje_hora_partida).isBefore(
+                                          horaMaxima
+                                      )
+
+                                  }
+*/
+
+                                if (viajesFiltrados!!.isNotEmpty()) {
                                     val viajesProximos =
-                                        viajesFiltrados.sortedBy { it.viaje_hora_partida }
+                                        viajesFiltrados!!.sortedBy { it.second.viaje_hora_partida }
 
                                     viajesProximos.forEach { viaje ->
                                         Box(
@@ -177,20 +236,20 @@ fun homeNoIniciado(
                                                         .padding(16.dp),
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
-                                                    textoHoraViaje(hora = "${viaje.viaje_hora_partida} hrs")
+                                                    textoHoraViaje(hora = "${viaje.second.viaje_hora_partida} hrs")
                                                     Column(
                                                         modifier = Modifier
                                                             .padding(start = 8.dp) // Ajusta el espacio entre los textos en la columna
                                                     ) {
                                                         val trayecto =
-                                                            convertirTrayecto(viaje.viaje_trayecto)
+                                                            convertirTrayecto(viaje.second.viaje_trayecto)
                                                         textoInformacionViaje(
                                                             etiqueta = "Trayecto",
                                                             contenido = trayecto
                                                         )
                                                         textoInformacionViaje(
                                                             etiqueta = "Pasajeros confirmados",
-                                                            contenido = viaje.viaje_num_pasajeros_con
+                                                            contenido = viaje.second.viaje_num_pasajeros_con
                                                         )
 
                                                     }
@@ -205,13 +264,13 @@ fun homeNoIniciado(
                                                     ),
                                                     onClick = {
 
-                                                        if (viaje.viaje_num_pasajeros_con == "0" || viaje.viaje_num_pasajeros_con == "" || viaje.viaje_num_pasajeros == "0") {
+                                                        if (viaje.second.viaje_num_pasajeros_con == "0" || viaje.second.viaje_num_pasajeros_con == "" || viaje.second.viaje_num_pasajeros == "0") {
                                                             texto =
                                                                 "No puedes inciar este viaje porque no tienen ningún pasajero confirmado"
                                                             botonNoIniciar = true
                                                         } else {
 
-                                                            navController.navigate("empezar_viaje/$userid/${viaje.viaje_id}")
+                                                            navController.navigate("empezar_viaje/$userid/${viaje.first}")
                                                         }
 
                                                     },

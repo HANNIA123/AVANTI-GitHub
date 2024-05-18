@@ -8,7 +8,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.example.avanti.Usuario.RetrofitClientViaje
+import com.example.avanti.ViajeData
 import com.example.avanti.ViajeDataReturn
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 
 @Composable
@@ -58,6 +61,47 @@ fun conObtenerItinerarioConSus(
         }
     }
     return if (finD) {
+        viajes
+    } else {
+        null
+    }
+}
+
+
+@Composable
+fun conObtenerItinerarioConRT(
+    userId: String
+): List<Pair<String, ViajeData>>? {
+
+    var fin by remember { mutableStateOf(false) }
+    // Obtener lista de paradas
+    var viajes by remember { mutableStateOf<List<Pair<String, ViajeData>>?>(null) }
+
+    LaunchedEffect(key1 = userId) {
+        val db = Firebase.firestore
+
+        val paradasRef = db.collection("viaje").whereEqualTo("usu_id", userId)
+
+        paradasRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                println("Error al obtener itinerario: $error")
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
+                val listaViajes = snapshot.documents.map { document ->
+                    val idDocumento = document.id
+                    val paradaData = document.toObject(ViajeData::class.java)
+                    idDocumento to paradaData!!
+                }
+                viajes = listaViajes
+
+            }
+            fin = true
+        }
+    }
+
+    return if (fin) {
         viajes
     } else {
         null
