@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -52,6 +53,7 @@ import com.example.curdfirestore.Horario.Pantallas.Monitoreo.mapaUbicacionConduc
 import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
+import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitudPorBusqueda
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
@@ -63,12 +65,14 @@ import com.example.curdfirestore.Viaje.ConsultasViaje.registrarHistorialViaje
 import com.example.curdfirestore.Viaje.Funciones.UbicacionRealTime
 import com.example.curdfirestore.Viaje.Funciones.accionesComienzoViaje
 import com.example.curdfirestore.Viaje.Funciones.accionesTerminoViaje
+import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.obtenerHoraActualSec
 import com.example.curdfirestore.Viaje.Funciones.registrarHistorialBloqueo
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViaje
 import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
 import com.example.curdfirestore.Viaje.Pantallas.Huella.dialogoHuellaFallida
 import com.example.curdfirestore.lineaCargando
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -78,6 +82,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import kotlinx.coroutines.delay
 
 
@@ -224,7 +231,7 @@ fun obtenerCoordenadas(
         mutableStateOf("")
     }
     var historial by remember {
-        mutableStateOf< HistorialViajesData?>(null)
+        mutableStateOf<HistorialViajesData?>(null)
     }
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
@@ -273,8 +280,8 @@ fun obtenerCoordenadas(
                     println("Id historial $idInicioViaje")
 
 
-                    if(idInicioViaje!="") {
-                         historial = conObtenerHistorialViajeRT(viajeId = idInicioViaje)
+                    if (idInicioViaje != "") {
+                        historial = conObtenerHistorialViajeRT(viajeId = idInicioViaje)
                     }
 
 
@@ -282,7 +289,7 @@ fun obtenerCoordenadas(
                         totalParadas = totalParadas,
                         viajeComenzado = viajeComenzado,
                         maxw = maxw,
-                        texto="Progreso del viaje...",
+                        texto = "Progreso del viaje...",
                         listParadasRecorridas = listParadasRecorridas
                     )
 
@@ -321,14 +328,90 @@ fun obtenerCoordenadas(
                             }
                         }
 
-                        mapaUbicacionConductor(
+                        GoogleMap(
+                            modifier = Modifier
+                                .fillMaxSize(),
                             cameraPositionState = cameraPositionState,
-                            cargando = { cargando = true },
-                            latLng = latLng,
-                            paradasOrdenadas = paradasOrdenadas,
-                            infViaje = infViaje
-                        )
+                            onMapLoaded = {
+                                cargando=true
+                            }
+                        ) {
+                            Marker(
+                                state = MarkerState(
+                                    position = LatLng(
+                                        latLng.latitude,
+                                        latLng.longitude
+                                    )
+                                ),
+                                title = "Tu ubicación",
+                                icon = BitmapDescriptorFactory.fromResource(R.drawable.autooficial),
+                            )
 
+                            paradasOrdenadas.forEach { parada ->
+                                val parLatLng = convertirStringALatLng(parada.second.par_ubicacion)
+                                if (parLatLng != null) {
+
+
+                                    Marker(
+                                        state = MarkerState(
+                                            position = LatLng(
+                                                parLatLng.latitude,
+                                                parLatLng.longitude
+                                            )
+                                        ),
+                                        title = "Parada ${parada.second.par_nombre}",
+                                        //snippet = "Dirección: $direccionPar",
+                                        icon = BitmapDescriptorFactory.fromResource(R.drawable.paradas),
+                                    )
+                                }
+
+
+                            }
+
+                            val origenLatLng =
+                                infViaje?.let { convertirStringALatLng(it.viaje_origen) }
+                            val destinoLatLng =
+                                infViaje?.let { convertirStringALatLng(it.viaje_destino) }
+
+                            if (origenLatLng != null) {
+                                Marker(
+                                    state = MarkerState(
+                                        position = LatLng(
+                                            origenLatLng.latitude,
+                                            origenLatLng.longitude
+                                        )
+                                    ),
+                                    title = "Origen",
+                                    //  snippet = "Dirección: $direccionOri",
+                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
+                                )
+                            }
+                            if (destinoLatLng != null) {
+                                Marker(
+                                    state = MarkerState(
+                                        position = LatLng(
+                                            destinoLatLng.latitude,
+                                            destinoLatLng.longitude
+                                        )
+                                    ),
+                                    title = "Punto de llegada",
+                                    //snippet = "Ubicación: $direccionDes",
+                                    icon = BitmapDescriptorFactory.fromResource(R.drawable.origendestino),
+                                )
+                            }
+
+                        }
+
+
+                        /*
+                         mapaUbicacionConductor(
+                                                    cameraPositionState = cameraPositionState,
+                                                    cargando = { cargando = true },
+                                                    latLng = latLng,
+                                                    paradasOrdenadas = paradasOrdenadas,
+                                                    infViaje = infViaje
+                                                )
+                        */
 
                         //boton flotante
                         Box(
@@ -556,7 +639,7 @@ fun obtenerCoordenadas(
                                         idInicioViaje = idInicioViaje,
 
 
-                                    )
+                                        )
                                     botonNotificacionInicio = true
                                 } else {
                                     dialogoAutFall = true
@@ -588,12 +671,12 @@ fun obtenerCoordenadas(
                         //--------Acciones en las paradas---------
                         if (botonParadas) {
                             if (huellaIngresada) {
-                                var validacionBoolean=false
+                                var validacionBoolean = false
 
                                 textoDialogo =
                                     "Tu identidad no ha sido validada, el pasajero será notificado de esto. "
                                 if (huellaCorrecta) {
-                                    validacionBoolean=true
+                                    validacionBoolean = true
                                     println("huella correcta y el id parada $idParadaActual")
                                     actualizarCampoSolicitudPorBusqueda(
                                         "parada_id",
@@ -616,8 +699,8 @@ fun obtenerCoordenadas(
 
                                 historial?.let {
 
-                                    val listaParadasVal= historial!!.validacion_conductor_paradas
-                                    val newLista= listaParadasVal.plus(validacionBoolean)
+                                    val listaParadasVal = historial!!.validacion_conductor_paradas
+                                    val newLista = listaParadasVal.plus(validacionBoolean)
                                     val nuevosValores = mapOf(
                                         "validacion_conductor_paradas" to newLista,
                                     )
