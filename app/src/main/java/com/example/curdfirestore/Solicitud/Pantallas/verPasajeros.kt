@@ -77,7 +77,7 @@ fun verPasajeros(
     var dialogoInf by remember { mutableStateOf(false) }
     var dialogoContact by remember { mutableStateOf(false) } //Status de la solictud terminado
     var dialogoBorrar by rememberSaveable { mutableStateOf(false) }
-
+    val ruta = "ver_pasajeros_conductor/$userid"
     var pasajero_id by remember {
         mutableStateOf("")
     }
@@ -352,7 +352,8 @@ fun verPasajeros(
                 usuarioPas!!,
                 userid,
                 pasajero_id,
-                navController
+                navController,
+                ruta
             )
         }
 

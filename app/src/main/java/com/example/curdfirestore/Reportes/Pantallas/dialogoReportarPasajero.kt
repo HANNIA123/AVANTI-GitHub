@@ -72,6 +72,7 @@ fun dialogoReportarPasajero(
     userid: String,
     pasajero_id: String,
     navController: NavController,
+    ruta: String
 ) {
     val tamEspacio = 15.dp
     val tamIcono = 45.dp
@@ -272,7 +273,7 @@ fun dialogoReportarPasajero(
     }
 
     if (confirmR) {
-        dialogoReporteEnviadoCon(onDismiss = { confirmR = false }, navController, userid)
+        dialogoReporteEnviadoCon(onDismiss = { confirmR = false }, navController, userid, ruta)
     }
 
     if (boton == true && ejecutado == false) {

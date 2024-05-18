@@ -46,7 +46,8 @@ val paddingTex=15.dp
 fun dialogoReporteEnviadoPas(
     onDismiss: () -> Unit,
     navController: NavController,
-    userId:String
+    userId:String,
+    ruta: String
 ) {
 
     val fadeInAlpha = animateFloatAsState(
@@ -60,7 +61,7 @@ fun dialogoReporteEnviadoPas(
         // Espera 3 segundos antes de cerrar el diálogo automáticamente
         //delay(2000)
         delay(1000)
-        navController.navigate("ver_conductores_pasajero/$userId")
+        navController.navigate(ruta)
         onDismiss()
 
     }
@@ -116,7 +117,8 @@ fun dialogoReporteEnviadoPas(
 fun dialogoReporteEnviadoCon(
     onDismiss: () -> Unit,
     navController: NavController,
-    userId:String
+    userId:String,
+    ruta: String
 ) {
 
     val fadeInAlpha = animateFloatAsState(
@@ -130,7 +132,8 @@ fun dialogoReporteEnviadoCon(
         // Espera 3 segundos antes de cerrar el diálogo automáticamente
         //delay(2000)
         delay(1000)
-        navController.navigate("ver_pasajeros_conductor/$userId")
+        //navController.navigate("ver_pasajeros_conductor/$userId")
+        navController.navigate(ruta)
         onDismiss()
 
     }

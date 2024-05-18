@@ -624,7 +624,8 @@ fun verUbicacionMonitoreo(
             dialogoVerInfViajeIniciado(
                 onDismiss = { verInformacionViaje = false },
                 solicitud,
-                paradaId
+                paradaId,
+                navController
             )
         }
 
