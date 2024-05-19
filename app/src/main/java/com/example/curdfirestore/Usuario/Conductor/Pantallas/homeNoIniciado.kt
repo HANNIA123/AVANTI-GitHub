@@ -192,6 +192,7 @@ fun homeNoIniciado(
                                 else {
 
                                     viajesFiltrados = viajes.filter {
+                                        it.second.viaje_status=="Disponible" &&
                                         it.second.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
                                                 convertirStringAHora(it.second.viaje_hora_partida).isAfter(
                                                     horaMinima

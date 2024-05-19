@@ -432,6 +432,8 @@ fun verUbicacionMonitoreo(
                             ),
                             onClick = {
 
+                                huellaIngresada = false
+                                huellaCorrecta=false
                                 autenticaHuella(
                                     activity = activity1,
                                     exitoso = {
@@ -549,7 +551,7 @@ fun verUbicacionMonitoreo(
                                     "horario_id" to horarioId
                                 )
                                 editarDocumentoHistorial(idHis, nuevosValores)
-
+botonNotificacionValidacion=true
                             } else {
                                 textoDialogo =
                                     "Tu identidad no ha sido validada.El coductor será notificado "

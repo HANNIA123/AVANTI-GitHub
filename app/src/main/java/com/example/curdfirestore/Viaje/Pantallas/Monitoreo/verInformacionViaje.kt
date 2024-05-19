@@ -52,6 +52,7 @@ import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabeceraAtrasRuta
 import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
+import com.example.avanti.ui.theme.Aplicacion.lineaGrisCompleta
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarPasajero
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesConductor
@@ -151,18 +152,24 @@ fun verInformacionViajeComenzada(
 
                             paradasOrdenadas.forEach { parada ->
 
-
                                 textTituloInfSolcitud("${parada.second.par_nombre}  -  ${parada.second.par_hora} hrs")
                                 Spacer(modifier = Modifier.height(5.dp))
                                 val paradaId = parada.first
 
-                                val solicitudes =
+                                val solicitudes=
                                     conObtenerSolicitudesPorViajeRT(viajeId = parada.second.viaje_id)
-                                solicitudes?.forEach { solicitud ->
+                                val cantidadSolicitudes = solicitudes?.size ?: 0
+
+                                solicitudes?.forEachIndexed { index, solicitud ->
+                                    var esUltimaIteracion = index == cantidadSolicitudes - 1
+
+                                    var contenido by remember {
+                                        mutableStateOf(false)
+                                    }
                                     val pasId = solicitud.second.pasajero_id
                                     if (solicitud.second.parada_id == paradaId && solicitud.second.solicitud_activa_pas != "no"
-                                        && solicitud.second.solicitud_status=="Aceptada"
-                                        ) {
+                                        && solicitud.second.solicitud_status == "Aceptada"
+                                    ) {
 
                                         val pasajero =
                                             conObtenerUsuarioId(correo = solicitud.second.pasajero_id)
@@ -298,7 +305,14 @@ fun verInformacionViajeComenzada(
                                                 }
                                             }
                                         }
-                                    } else {
+
+                                        Spacer(modifier = Modifier.height(7.dp))
+                                        lineaGrisCompleta()
+                                        Spacer(modifier = Modifier.height(7.dp))
+contenido=true
+                                    }
+                                    if (esUltimaIteracion && !contenido) {
+
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             verticalAlignment = Alignment.CenterVertically
@@ -312,10 +326,11 @@ fun verInformacionViajeComenzada(
                                                 )
                                             )
                                         }
+                                        // Realizar acciones específicas para la última iteración aquí
                                     }
+
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
-
                             }
 
 

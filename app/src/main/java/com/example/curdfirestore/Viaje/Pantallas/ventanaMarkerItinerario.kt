@@ -40,6 +40,7 @@ import com.example.avanti.SolicitudData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ViajeData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
+import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
 import com.example.curdfirestore.Parada.ConsultasParada.eliminarParada
 import com.example.curdfirestore.Parada.Pantallas.dialogoConfirmarEliminarParada
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
@@ -61,7 +62,6 @@ fun ventanaMarkerItinerario(
 ) {
 
     if (show) {
-
 
 
         var showConfirmarEliminar by remember {
@@ -150,38 +150,73 @@ fun ventanaMarkerItinerario(
 
                         }
                         Spacer(modifier = Modifier.height(5.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-
-                            ) {
-
-                            Column(
-
-                                modifier = Modifier
-                                    .weight(0.70f),
-
-                                ) {
 
 
-                                textInMarker(
-                                    Label = "Nombre de la parada: ",
-                                    Text = marker.marker_titulo
-                                )
-                                textInMarker(
-                                    Label = "Hora de encuentro: ",
-                                    Text = "${marker.marker_hora} hrs"
-                                )
+                            Column (    modifier = Modifier
+                                .fillMaxWidth()
+                            ){
+
+                                Row (modifier = Modifier
+                                    .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ){
+
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(0.70f),
+                                    ) {
 
 
-                                textInMarker(Label = "Ubicación: ", Text = addressP)
+                                        textInMarker(
+                                            Label = "Nombre de la parada: ",
+                                            Text = marker.marker_titulo
+                                        )
+                                        textInMarker(
+                                            Label = "Hora de encuentro: ",
+                                            Text = "${marker.marker_hora} hrs"
+                                        )
 
+
+                                        textInMarker(Label = "Ubicación: ", Text = addressP)
+
+                                    }
+
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(0.25f),
+
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.End// Hace que esta columna ocupe el 20% del ancho del Row
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                showConfirmarEliminar = true
+                                                //eliminarParada(marker.marker_id, navController, email)
+
+
+                                            }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Delete,
+                                                contentDescription = "Borrar",
+                                                tint = Color(137, 13, 86),
+                                                modifier = Modifier.size(50.dp)
+
+                                            )
+                                        }
+                                    }
+                                }
 
                                 if (viaje.viaje_num_pasajeros != "0") {
+
+
                                     Spacer(modifier = Modifier.height(10.dp))
-                                    solicitudes?.let {
+                                    val solicitudeFilter = solicitudes?.filter { solicitud ->
+                                        solicitud.second.parada_id == marker.marker_id
+                                    }
+
+                                    if (solicitudeFilter!!.isNotEmpty()) {
+
                                         Text(
                                             text = "Pasajeros: ",
                                             modifier = Modifier.padding(2.dp),
@@ -191,74 +226,82 @@ fun ventanaMarkerItinerario(
                                             ),
                                             textAlign = TextAlign.Center
                                         )
+
                                         Spacer(modifier = Modifier.height(10.dp))
+                                        solicitudeFilter.forEach { solicitud ->
 
 
 
+                                            val horario= conObtenerHorarioId(horarioId = solicitud.second.horario_id)
 
-                                        solicitudes.forEach { solicitud ->
-                                            val pasajero =
-                                                conObtenerUsuarioId(correo = solicitud.second.pasajero_id)
+                                            horario?.let {
+                                                val status= horario.horario_status
+                                                val (color, textoValidacion) = when (status) {
+                                                    "Disponible" -> Color(
+                                                        21,
+                                                        154,
+                                                        78
+                                                    ) to "Confirmado"
 
-                                            pasajero?.let {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth(),
-                                                    verticalAlignment = Alignment.CenterVertically
 
-                                                ) {
-                                                    CoilImage(
-                                                        url = pasajero.usu_foto,
+                                                    else -> Color.Red to "Cancelado"
+
+                                                }
+
+
+                                                Spacer(modifier = Modifier.height(10.dp))
+
+                                                val pasajero =
+                                                    conObtenerUsuarioId(correo = solicitud.second.pasajero_id)
+
+                                                pasajero?.let {
+
+                                                    Row(
                                                         modifier = Modifier
-                                                            .size(60.dp)
-                                                            .clip(CircleShape)
-                                                    )
+                                                            .fillMaxWidth(),
+                                                        verticalAlignment = Alignment.CenterVertically
 
-                                                    Spacer(modifier = Modifier.width(15.dp))
-                                                    textoNegrita(
-                                                        texto = "${pasajero.usu_nombre} ${pasajero.usu_primer_apellido}",
-                                                        tam = 15.0f,
-                                                        color = Color.Black
-                                                    )
+                                                    ) {
+                                                        CoilImage(
+                                                            url = pasajero.usu_foto,
+                                                            modifier = Modifier
+                                                                .size(60.dp)
+                                                                .clip(CircleShape)
+                                                        )
+
+                                                        Spacer(modifier = Modifier.width(15.dp))
+                                                        Column {
+
+
+                                                            textoNegrita(
+                                                                texto = "${pasajero.usu_nombre} ${pasajero.usu_primer_apellido}",
+                                                                tam = 15.0f,
+                                                                color = Color.Black
+                                                            )
+                                                            textoNegrita(
+                                                                texto = textoValidacion,
+                                                                tam = 14.0f,
+                                                                color = color
+                                                            )
+                                                        }
+                                                    }
+
+                                                    Spacer(modifier = Modifier.height(5.dp))
                                                 }
 
 
                                             }
 
-                                        }
 
+                                        }
                                     }
 
+
                                 }
                             }
 
 
 
-
-                            Column(
-                                modifier = Modifier
-                                    .weight(0.25f),
-
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.End// Hace que esta columna ocupe el 20% del ancho del Row
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        showConfirmarEliminar = true
-                                        //eliminarParada(marker.marker_id, navController, email)
-
-
-                                    }) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Delete,
-                                        contentDescription = "Borrar",
-                                        tint = Color(137, 13, 86),
-                                        modifier = Modifier.size(50.dp)
-
-                                    )
-                                }
-                            }
-                        }
 
 
                     }
