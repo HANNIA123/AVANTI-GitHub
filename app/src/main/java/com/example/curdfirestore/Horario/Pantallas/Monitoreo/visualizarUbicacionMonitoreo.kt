@@ -529,14 +529,16 @@ fun verUbicacionMonitoreo(
 
 
                 if (botonLlegada) {
-                    botonNotificacionParada = true
+
                     if (huellaIngresada) {
 
                         if (historial != null) {
                             val listaPasajerosVal = historial!!.validacion_pasajeros
                             val listaIdPasajeros = historial!!.ids_pasajeros
                             val newPasajero = listaIdPasajeros.plus(userId)
+                            println("huelle correcta $huellaCorrecta")
                             if (huellaCorrecta) {
+                                botonNotificacionValidacion=true
                                 actualizarCampoSolicitud(
                                     solicitudId,
                                     "solicitud_validacion_pasajero",
@@ -549,6 +551,7 @@ fun verUbicacionMonitoreo(
                                     "horario_id" to horarioId
                                 )
                                 editarDocumentoHistorial(idHis, nuevosValores)
+
 
                             } else {
                                 textoDialogo =

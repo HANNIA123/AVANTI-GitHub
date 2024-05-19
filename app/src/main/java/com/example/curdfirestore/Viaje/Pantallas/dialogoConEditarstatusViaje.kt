@@ -35,12 +35,17 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.avanti.NoticacionData
 import com.example.avanti.SolicitudData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioNot
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
+import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacionNew
+import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conActualizarSolicitudByStatus
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
 import com.example.curdfirestore.Viaje.ConsultasViaje.conEditarStatusViaje
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -81,32 +86,40 @@ fun dialogoConfirmarCancelacion(
     } else {
         "vd" //viaje activo
     }
-    var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+
+    val solicitudes = conObtenerSolicitudesPorViajeRT(viajeId = viajeId)
+
+    var usuarioPas by remember { mutableStateOf(listOf<String>()) }
+    /*var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
-    }
+    }*/
 
     if (cancelado) {
-        if(solicitudes!=null){
-            println("Boton cancelado")
-
+        if (solicitudes != null) {
             for ((index, solicitud) in solicitudes!!.withIndex()) {
+
+                println("..................................")
+                val newUsuario = solicitud.second.pasajero_id
+                // Crear una nueva lista con el nuevo elemento añadido
+                usuarioPas = usuarioPas + newUsuario
+
 
                 var notificacionData = NoticacionData(
                     notificacion_tipo = tipoNot,
                     notificacion_usu_origen = userId,
-                    notificacion_usu_destino = solicitud.pasajero_id,
+                    notificacion_usu_destino = solicitud.second.pasajero_id,
                     notificacion_id_viaje = viajeId,
-                    notificacion_id_solicitud = solicitud.solicitud_id,
+                    notificacion_id_solicitud = solicitud.second.solicitud_id,
                     notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
                     notificacion_hora = obtenerHoraActual(),
 
 
-                )
+                    )
                 if (ejecutado == false) {
                     //Define si esta activa para el conducto o no
                     conActualizarSolicitudByStatus(
-                        documentId = solicitud.solicitud_id,
+                        documentId = solicitud.first,
                         campo = "solicitud_activa_con",
                         valor = tipoNot
                     )
@@ -117,19 +130,55 @@ fun dialogoConfirmarCancelacion(
                         }
                     }
 
-                    println("Estos son los id de usuarios: ${solicitud.pasajero_id}")
+
                 }
                 if (index == solicitudes!!.size - 1) {
+
                     ejecutado = true
                 }
+
             }
 
         }
+
+
 
         conEditarStatusViaje(
             navController = navController,
             viajeId = viajeId, userId = userId, nuevoStatus = newStatus
         )
+
+
+
+        val conductor = conObtenerUsuarioId(correo = userId)
+
+        usuarioPas.forEach { Idpasajero ->
+
+            val pasajero = conObtenerUsuarioId(correo = Idpasajero)
+            conductor?.let {
+
+                pasajero?.let {
+                    println("El pasajeroooo $pasajero")
+
+                    enviarNotificacion(conductor.usu_nombre,
+                        conductor.usu_segundo_apellido,
+                        pasajero.usu_token,
+                        tipoNot,
+                        Idpasajero,
+                        onSuccess = {
+                            println("Notificación enviada exitosamente")
+                        },
+                        onError = { errorMessage ->
+                            println(errorMessage)
+                        }
+                    )
+                }
+            }
+
+
+        }
+
+
 
         onDismiss()
 

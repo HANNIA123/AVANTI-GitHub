@@ -2,7 +2,11 @@ package com.example.curdfirestore.Notificaciones.Consultas
 
 import android.annotation.SuppressLint
 import com.example.avanti.NoticacionData
+import com.example.avanti.ReporteData
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.RetrofitClientSolicitud.apiService
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -38,3 +42,19 @@ import retrofit2.Response
 }
 
 
+
+fun conRegistrarNotificacionNew(notificacionData: NoticacionData) {
+
+    val db: FirebaseFirestore = Firebase.firestore
+    val viajesRef = db.collection("notificacion")
+
+    viajesRef.add(notificacionData)
+        .addOnSuccessListener { documentReference ->
+            println("notificacion agregado correctamente a Firebase con ID: ${documentReference.id}")
+            // editarCampoViajeSinRuta(documentId = viaje.viaje_id, campo = "viaje_id_iniciado", valor=documentReference.id )
+        }
+        .addOnFailureListener { e ->
+            println("Error al agregar el viaje a Firebase: $e")
+        }
+
+}
