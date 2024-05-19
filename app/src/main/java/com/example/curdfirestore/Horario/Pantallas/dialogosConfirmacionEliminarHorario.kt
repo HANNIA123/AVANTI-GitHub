@@ -39,12 +39,10 @@ import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
-import com.example.curdfirestore.Horario.ConsultasHorario.conEditarStatusHorario
 import com.example.curdfirestore.Horario.ConsultasHorario.eliminarHorario
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
 import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.R
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conActualizarSolicitudByStatus
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.eliminarSolicitudPorHorarioId
 
 import com.example.curdfirestore.Viaje.ConsultasViaje.aumentarLugaresDeViaje
@@ -58,6 +56,7 @@ fun dialogoConfirmarEliminarHorarioP(
     navController: NavController
 
 ) {
+
 
     Box(
         modifier = Modifier
@@ -131,7 +130,9 @@ fun dialogoConfirmarEliminarHorarioP(
                     }
 
                 }
+
             },
+
 
 
             )

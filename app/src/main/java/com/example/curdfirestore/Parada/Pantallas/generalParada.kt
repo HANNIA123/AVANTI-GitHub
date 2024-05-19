@@ -59,7 +59,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.curdfirestore.R
-import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
 import com.example.curdfirestore.Viaje.Pantallas.FilaIconoTexto3
 import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -89,7 +89,7 @@ fun generalParada(
     BoxWithConstraints {
         maxh = this.maxHeight
     }
-    val viaje = conObtenerViajeId(viajeId = viajeId)
+    val viaje = conObtenerViajeRT(viajeId = viajeId)
 
 
     val tamIcono = 55.dp
