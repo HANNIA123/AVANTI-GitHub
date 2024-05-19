@@ -45,15 +45,18 @@ import androidx.navigation.NavController
 import com.example.avanti.HistorialViajesData
 import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
+import com.example.avanti.UserData
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.barraProgresoViaje
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.dialogoViajeFinalizo
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.mapaUbicacionConductor
+import com.example.curdfirestore.Imprevistos.Pantallas.dialogoImprevisto
 import com.example.curdfirestore.MainActivity
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarConductor
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitudPorBusqueda
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
@@ -133,6 +136,10 @@ fun obtenerCoordenadas(
     var dialogoAutFall by remember {
         mutableStateOf(false)
     }
+
+    var usuarioCon by remember { mutableStateOf<UserData?>(null) }
+    var dialogoImprevisto by remember { mutableStateOf(false) }
+    val ruta = "empezar_viaje/$userId/${viajeId}"
 
     val referencia = Firebase.database.getReference("ubicacion").child(viajeId)
 
@@ -423,7 +430,7 @@ fun obtenerCoordenadas(
                         ) {
                             Button(
                                 onClick = {
-                                    //Reportar imprevisto
+                                    dialogoImprevisto = true
                                 },
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = Color(180, 13, 13)
@@ -808,6 +815,16 @@ fun obtenerCoordenadas(
             "El viaje ha finalizado",
             userId,
             navController
+        )
+    }
+
+    if (dialogoImprevisto) {
+        dialogoImprevisto(
+            onDismiss = { dialogoImprevisto = false },
+            userId,
+            viajeId,
+            navController,
+            ruta
         )
     }
 }
