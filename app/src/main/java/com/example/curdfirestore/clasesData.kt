@@ -173,3 +173,11 @@ data class HistorialViajesData(
     var hora_bloqueo_viaje: String="",
     var id_viaje_iniciado:String=""
 )
+
+data class ImprevistoData(
+    var impr_u_que_reporta: String="",
+    var impr_viaje_id: String="",
+    var impr_motivo: String="",
+    var impr_fecha: String="",
+    var impr_hora:String="",
+)
