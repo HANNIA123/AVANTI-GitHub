@@ -41,7 +41,7 @@ fun TextoNotificacionVer(tipoNot:String):String{
         texto="ha finalizado un viaje."
     }
     else{
-        texto="NNOTIFICACION RECIBIDA"
+        texto="Notificación recibida."
     }
 
     return texto
