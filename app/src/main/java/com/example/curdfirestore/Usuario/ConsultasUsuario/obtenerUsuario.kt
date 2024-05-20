@@ -9,7 +9,10 @@ import androidx.compose.runtime.setValue
 import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.RetrofitClientUsuario
+import com.example.avanti.ViajeData
 import com.example.curdfirestore.lineaCargando
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 
 //unicamente lauched effect para las consultas, funciones unicamente.
@@ -50,6 +53,40 @@ fun conObtenerUsuarioId(correo: String): UserData? {
 
 
 
+@Composable
+fun conObtenerUsuarioRT(
+    userId: String
+): UserData? {
+
+    var fin by remember { mutableStateOf(false) }
+    // Obtener objeto ViajeData
+    var usuario by remember { mutableStateOf<UserData?>(null) }
+
+    LaunchedEffect(key1 = userId) {
+        val db = Firebase.firestore
+
+        val viajeRef = db.collection("usuario").document(userId)
+
+        viajeRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                println("Error al obtener viaje: $error")
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                usuario = snapshot.toObject(UserData::class.java)
+
+            }
+            fin = true
+        }
+    }
+
+    return if (fin) {
+        usuario
+    } else {
+        null
+    }
+}
 
 
 
