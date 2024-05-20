@@ -45,8 +45,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.HistorialViajesData
 import com.example.avanti.SolicitudData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
 import com.example.curdfirestore.MainActivity
+import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaRT
@@ -111,6 +113,8 @@ fun verUbicacionMonitoreo(
     var verInformacionViaje by remember {
         mutableStateOf(false)
     }
+
+
     val referencia = Firebase.database.getReference("ubicacion").child(viajeId)
     var latLng by remember { mutableStateOf(LatLng(0.0, 0.0)) } // Coordenadas de San Francisco
 
@@ -190,10 +194,15 @@ fun verUbicacionMonitoreo(
     }
 
     val infHorario = conObtenerHorarioId(horarioId = horarioId)
+    //val usuarioCon= conObtenerUsuarioId(correo = parada!!.user_id)
+    val usuarioPas= conObtenerUsuarioId(correo = userId)
+    println("USUARIO PASAJERO $usuarioPas")
+
 
     var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
 
     val solicitud = conObtenerSolicitudByHorarioRTId(horarioId = horarioId)
+    println("SOLICITUD $solicitud")
 
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
@@ -406,7 +415,8 @@ fun verUbicacionMonitoreo(
 
 
             parada?.let {
-
+                val usuarioCon= conObtenerUsuarioId(correo = solicitud!!.second.conductor_id)
+                println("USUARIO CONDUCTOR $usuarioCon")
                 //Boton de llegada
                 Row(
                     modifier = Modifier
@@ -421,7 +431,8 @@ fun verUbicacionMonitoreo(
 
 
                     if (parada.par_llegada_pas != "si") {
-
+                        /*val usuarioCon= conObtenerUsuarioId(correo = solicitud!!.second.conductor_id)
+                        println("USUARIO CONDUCTOR $usuarioCon")*/
                         Button(
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = Color(
@@ -588,6 +599,18 @@ fun verUbicacionMonitoreo(
                         )
                     }
                     botonNotificacionParada = false
+
+                    //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
+                    enviarNotificacion(usuarioPas!!.usu_nombre, usuarioPas.usu_segundo_apellido, usuarioCon!!.usu_token, "llp", solicitud.second.conductor_id,
+                        onSuccess = {
+                            println("Notificación enviada exitosamente")
+                        },
+                        onError = { errorMessage ->
+                            println(errorMessage)
+                        }
+                    )
+                    //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
+
                 }
                 if (botonNotificacionValidacion) {
                     solicitud?.let {
@@ -599,6 +622,19 @@ fun verUbicacionMonitoreo(
                         )
                     }
                     botonNotificacionValidacion = false
+
+
+                    //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
+                    enviarNotificacion(usuarioPas!!.usu_nombre, usuarioPas.usu_segundo_apellido, usuarioCon!!.usu_token, "vi", solicitud.second.conductor_id,
+                        onSuccess = {
+                            println("Notificación enviada exitosamente")
+                        },
+                        onError = { errorMessage ->
+                            println(errorMessage)
+                        }
+                    )
+                    //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
+
                 }
 
             }

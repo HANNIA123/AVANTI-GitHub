@@ -218,7 +218,7 @@ fun verNotificacionesCon(
                                                         fontSize = 15.sp
                                                     )
                                                 ) {
-                                                    append("${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido} ")
+                                                    append("${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido}  ")
                                                 }
 
                                                 withStyle(
