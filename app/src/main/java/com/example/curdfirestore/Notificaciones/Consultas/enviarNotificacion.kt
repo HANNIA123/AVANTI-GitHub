@@ -41,6 +41,12 @@ fun enviarNotificacion(
     }else if(tipo=="ve"){
         titulo = "$title"
         cuerpo = "$nombre $p_apellido $texto"
+    }else if(tipo=="llp"){
+        titulo = "$title"
+        cuerpo = "$nombre $p_apellido $texto"
+    }else if(tipo=="vi"){
+        titulo = "$title"
+        cuerpo = "$nombre $p_apellido $texto"
     }
     else{
         println("NO ENTRAAAA")
