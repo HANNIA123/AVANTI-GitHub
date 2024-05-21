@@ -67,7 +67,7 @@ fun obtenerDistanciaParadas(
 
 
                     if (distancia <= 1500.0f) {
-                        println("entra al if de distancia")
+
 
                         val nuevaP =
                             ParadaData(
@@ -80,7 +80,6 @@ fun obtenerDistanciaParadas(
                             )
                         filterparadas.add(nuevaP)
 
-                        println("Filtrado $filterparadas")
                     }
 
                 }
@@ -96,7 +95,7 @@ fun obtenerDistanciaParadas(
         }
 
     }
-    println("FINAL LISTA----- $filterparadas")
+
 
     if (validar) {
 

@@ -18,7 +18,6 @@ import com.example.curdfirestore.Parada.ConsultasParada.conBuscarParadasPas
 import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
 
 
-
 /*Primero busca un viaje que coincida con los datos que porporciono el pasajero,
 de acuerdo al día y tipo de trayecto (no se considera el horario para una mayor probabilidad de
 encontrar paradas. Esta busqueda se hace en el servidor.
@@ -64,46 +63,45 @@ fun conBuscarViajePas(
         }
     }
 
-
-
+    var final by remember {
+        mutableStateOf(false)
+    }
+    var ejecutado by remember {
+        mutableStateOf(false)
+    }
+    val nuevaListaDeViajes = mutableListOf<ViajeData>()
     if (fin) {
+        println("fin es true")
         if (viajes != null) {
-            val nuevaListaDeViajes = mutableListOf<ViajeData>()
-            viajes?.let {
-                viajes!!.forEachIndexed { index, viaje ->
-                    val horario = conObtenerHorarioId(horarioId = horarioId)
-                    horario?.let { horario ->
-                        val horaHorario = convertirStringAHora(horario.horario_hora)
-                        val horaTipoViaje =
-                            if (horario.horario_trayecto === "0") {
-                                viaje.viaje_hora_partida
-                            } else {
-                                viaje.viaje_hora_llegada
+            viajes!!.forEachIndexed { index, viaje ->
+                val horario = conObtenerHorarioId(horarioId = horarioId)
+                horario?.let { horario ->
+                    val horaHorario = convertirStringAHora(horario.horario_hora)
+                    val horaTipoViaje =
+                        if (horario.horario_trayecto === "0") {
+                            viaje.viaje_hora_partida
+                        } else {
+                            viaje.viaje_hora_llegada
 
-                            }
-                        val horaViaje = convertirStringAHora(horaTipoViaje)
-                        val horariomas = horaHorario.plusMinutes(30)
-                        val horariomenos = horaHorario.minusMinutes(30)
-
-                        if ((horaViaje.isBefore(horariomas) && horaViaje.isAfter(horariomenos)) || horaViaje == horariomenos || horaViaje==horariomas)
-                         {
-                            nuevaListaDeViajes.add(viaje)
                         }
+                    val horaViaje = convertirStringAHora(horaTipoViaje)
+                    val horariomas = horaHorario.plusMinutes(30)
+                    val horariomenos = horaHorario.minusMinutes(30)
+
+                    if ((horaViaje.isBefore(horariomas) && horaViaje.isAfter(horariomenos)) || horaViaje == horariomenos || horaViaje == horariomas) {
+                        nuevaListaDeViajes.add(viaje)
+                    }
+
+
+                    // Verifica si es la última iteración del bucle viajes
+                    val isLastViaje = index == viajes!!.size - 1
+
+                    if (isLastViaje) {
+                        final = true
                     }
 
                 }
 
-
-                if (nuevaListaDeViajes.isEmpty()) {
-                    showViaje = true
-                } else {
-                    conBuscarParadasPas(
-                        navController = navController,
-                        correo = correo,
-                        horarioId = horarioId,
-                        viajes = nuevaListaDeViajes
-                    )
-                }
 
             }
 
@@ -113,17 +111,32 @@ fun conBuscarViajePas(
             showViaje = true
 
 
-
         }
-        ventanaNoEncontrado(
-            show = showViaje,
-            { showViaje = false },
-            {},
-            userId = correo,
-            navController = navController
-        )
 
+
+        if (final) {
+            if (nuevaListaDeViajes.isEmpty()) {
+                println("lista vacia!!!! ")
+                showViaje = true
+            } else {
+                conBuscarParadasPas(
+                    navController = navController,
+                    correo = correo,
+                    horarioId = horarioId,
+                    viajes = nuevaListaDeViajes
+                )
+            }
+        }
+
+        if (showViaje) {
+            ventanaNoEncontrado(
+                show = showViaje,
+                { showViaje = false },
+                {},
+                userId = correo,
+                navController = navController
+            )
+        }
 
     }
-
 }
