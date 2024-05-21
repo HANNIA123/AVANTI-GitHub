@@ -35,10 +35,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.avanti.NoticacionData
 import com.example.avanti.SolicitudData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.ConsultasHorario.actualizarHorarioPas
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
+import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
 import com.example.curdfirestore.Viaje.ConsultasViaje.eliminarSolicitudPorviajeId
@@ -67,7 +69,7 @@ fun dialogoConfirmarEliminarViaje(
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
     }
-
+val conductor= conObtenerUsuarioId(correo = userId)
     if (eliminar) {
         if (solicitudes != null) {
             for ((index, solicitud) in solicitudes!!.withIndex()) {
@@ -89,6 +91,21 @@ fun dialogoConfirmarEliminarViaje(
                             confirmN = respuestaExitosa
                         }
                     }
+conductor?.let {
+                    enviarNotificacion(
+                        conductor.usu_nombre,
+                        conductor.usu_segundo_apellido,
+                        solicitud.pasajero_token,
+                        "ve",
+                        solicitud.pasajero_id,
+                        onSuccess = {
+                            println("Notificación enviada exitosamente")
+                        },
+                        onError = { errorMessage ->
+                            println(errorMessage)
+                        }
+                    )
+}
 
                 }
                 if (index == solicitudes!!.size - 1) {

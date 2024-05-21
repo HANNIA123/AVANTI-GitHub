@@ -3,7 +3,6 @@ package com.example.curdfirestore.Solicitud
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -341,23 +340,25 @@ fun ventanaEnviarSolicitud(
         val fecha_now = obtenerFechaFormatoddmmyyyy()
 
 
-        val solicitudData = SolicitudData(
-            viaje_id = parada.viaje_id,
-            horario_id = horarioId,
-            conductor_id = parada.user_id,
-            pasajero_id = email,
-            parada_id = parada.par_id,
-            horario_trayecto = horario.horario_trayecto,
-            solicitud_status = "Pendiente",
-            solicitud_date = fecha_now,
-         solicitud_viaje_iniciado="no",
-         solicitud_validacion_pasajero="pendiente",
-         solicitud_validacion_conductor= "pendiente"
+        val solicitudData = usuarioPas?.let {
+            SolicitudData(
+                viaje_id = parada.viaje_id,
+                horario_id = horarioId,
+                conductor_id = parada.user_id,
+                pasajero_id = email,
+                pasajero_token= it.usu_token,
+                parada_id = parada.par_id,
+                horario_trayecto = horario.horario_trayecto,
+                solicitud_status = "Pendiente",
+                solicitud_date = fecha_now,
+                solicitud_viaje_iniciado="no",
+                solicitud_validacion_pasajero="pendiente",
+                solicitud_validacion_conductor= "pendiente"
 
 
             )
+        }
 
-        //Enviar esta notificacion al conductor
         val notificacionData = NoticacionData(
             notificacion_tipo = "sr",
             notificacion_usu_origen = email, //conductor
@@ -366,7 +367,9 @@ fun ventanaEnviarSolicitud(
             notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
             notificacion_hora = obtenerHoraActual().toString()
         )
-        conRegistrarSolicitud(solicitudData) //Registra la solicitud en la BD
+        if (solicitudData != null) {
+            conRegistrarSolicitud(solicitudData)
+        } //Registra la solicitud en la BD
 
         conActualizarSolicitudHorario(horarioId = horarioId, status ="Si" )
 

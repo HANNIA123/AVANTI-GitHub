@@ -11,16 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
-import com.example.avanti.Usuario.BASE_URL
 import com.example.avanti.ViajeData
-import com.example.avanti.ViajeDataReturn
-import com.example.curdfirestore.Horario.ApiServiceHorario
+import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.curdfirestore.Horario.RetrofitClientHorario
 import com.example.curdfirestore.Parada.ConsultasParada.conBuscarParadasPas
-import com.example.curdfirestore.Parada.Funciones.obtenerDistanciaParadas
 import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
+
 
 /*Primero busca un viaje que coincida con los datos que porporciono el pasajero,
 de acuerdo al día y tipo de trayecto (no se considera el horario para una mayor probabilidad de
@@ -51,9 +48,9 @@ fun conBuscarViajePas(
             if (response.isSuccessful) {
                 println("Encontramos viajeee")
                 viajes = response.body()
-                busqueda=true
+                busqueda = true
             } else {
-                showViaje=true
+                showViaje = true
                 println("NOOO  viajeee")
                 text = "No se encontró ningún viaje que coincida con tu búsqueda"
 
@@ -62,36 +59,69 @@ fun conBuscarViajePas(
         } catch (e: Exception) {
             text = "Error al obtener viaje: $e"
             println("Error al obtener viaje: $e")
-        }
-        finally {
-            fin=true
+        } finally {
+            fin = true
         }
     }
 
 
-    if(fin){
-        if (viajes != null && busqueda == true) {
 
-           conBuscarParadasPas(
-                navController = navController,
-                correo = correo,
-                horarioId = horarioId,
-                viajes = viajes!!
-            )
+    if (fin) {
+        if (viajes != null) {
+            val nuevaListaDeViajes = mutableListOf<ViajeData>()
+            viajes?.let {
+                viajes!!.forEachIndexed { index, viaje ->
+                    val horario = conObtenerHorarioId(horarioId = horarioId)
+                    horario?.let { horario ->
+                        val horaHorario = convertirStringAHora(horario.horario_hora)
+                        val horaTipoViaje =
+                            if (horario.horario_trayecto === "0") {
+                                viaje.viaje_hora_partida
+                            } else {
+                                viaje.viaje_hora_llegada
+
+                            }
+                        val horaViaje = convertirStringAHora(horaTipoViaje)
+                        val horariomas = horaHorario.plusMinutes(30)
+                        val horariomenos = horaHorario.minusMinutes(30)
+
+                        if ((horaViaje.isBefore(horariomas) && horaViaje.isAfter(horariomenos)) || horaViaje == horariomenos || horaViaje==horariomas)
+                         {
+                            nuevaListaDeViajes.add(viaje)
+                        }
+                    }
+
+                }
+
+
+                if (nuevaListaDeViajes.isEmpty()) {
+                    showViaje = true
+                } else {
+                    conBuscarParadasPas(
+                        navController = navController,
+                        correo = correo,
+                        horarioId = horarioId,
+                        viajes = nuevaListaDeViajes
+                    )
+                }
+
+            }
+
+
+        } else {
+            println("No encontro nada")
+            showViaje = true
+
+
 
         }
-        else{
-            showViaje=true
-            ventanaNoEncontrado(
-                show = showViaje,
-                { showViaje = false },
-                {},
-                userId = correo,
-                navController = navController
-            )
-
-
-        }
+        ventanaNoEncontrado(
+            show = showViaje,
+            { showViaje = false },
+            {},
+            userId = correo,
+            navController = navController
+        )
 
 
     }

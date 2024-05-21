@@ -3,7 +3,6 @@ package com.example.curdfirestore.Solicitud.Pantallas
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -136,7 +135,7 @@ fun verSolicitudesCon(
                     ) {
 
                         Text(
-                            text = "Te mostramos las solicitudes que has recibido",
+                            text = "Solicitudes recibidas, elige alguna para ver los detalles. ",
                             style = TextStyle(
                                 color = Color(86, 86, 86),
                                 fontSize = 18.sp,
@@ -198,6 +197,7 @@ fun verSolicitudesCon(
                                                 Spacer(modifier = Modifier.width(20.dp))
 
                                                 Column {
+
                                                     Text(
                                                         text = nombreMostrar,
                                                         style = TextStyle(Color.Black),
@@ -210,7 +210,10 @@ fun verSolicitudesCon(
                                                         style = TextStyle(Color(86, 86, 86)),
                                                         fontSize = 14.sp
                                                     )
-                                                    Spacer(modifier = Modifier.height(10.dp))
+
+                                                   Spacer(modifier = Modifier.height(10.dp))
+
+
 
                                                     botonesSolicitud(
                                                         onAceptarClick = {

@@ -9,8 +9,8 @@ fun aumentarLugaresDeViaje(viajeId: String) {
 
         viajeRef.get().addOnSuccessListener { viajeDoc ->
             val lugaresActuales = viajeDoc.getString("viaje_num_lugares")?.toIntOrNull() ?: 0
-
-            viajeRef.update("viaje_num_lugares", lugaresActuales + 1)
+val newLugares=lugaresActuales + 1
+            viajeRef.update("viaje_num_lugares", newLugares.toString())
                 .addOnSuccessListener {
                     println("Campo viaje_lugares actualizado correctamente para el viaje con ID: $viajeId.")
                 }

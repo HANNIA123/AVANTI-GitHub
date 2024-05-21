@@ -4,28 +4,16 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,49 +23,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.avanti.HorarioData
 import com.example.avanti.ParadaData
-import com.example.avanti.ViajeData
-import com.example.avanti.ViajeDataReturn
-import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
-import com.example.curdfirestore.Horario.ConsultasHorario.conBuscarViajePas
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
 import com.example.curdfirestore.Horario.Pantallas.textInfHorario
-import com.example.curdfirestore.Parada.ConsultasParada.conBuscarParadasPas
-import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadas
-import com.example.curdfirestore.Parada.Funciones.obtenerDistanciaParadas
-import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ventanaEnviarSolicitud
-import com.example.curdfirestore.Usuario.Conductor.Pantallas.viajesInicio
-import com.example.curdfirestore.Usuario.Conductor.cabeceraConMenuCon
 import com.example.curdfirestore.Usuario.Conductor.menuDesplegableCon
 import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
-import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
-import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Pantallas.MapViewContainer
-import com.example.curdfirestore.Viaje.Pantallas.verItinerarioCon
-import com.example.curdfirestore.textInMarker
-import com.example.curdfirestore.textoGris
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberMarkerState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+
 
 /*Este es el mapa donde se muestran las paradas cercanas de acuerdo al
 * horario filtrado del pasajero, el marker abre una ventana (VentanaSolicitudesPasa)
@@ -331,14 +292,5 @@ fun verParadasCercanasPas(
         }
     }
 
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun ItinerarioView() {
-
-    //verItinerarioCon(navController = navController, userId = "hannia")
 }
 

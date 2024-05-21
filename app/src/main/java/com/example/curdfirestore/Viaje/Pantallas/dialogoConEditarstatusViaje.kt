@@ -36,16 +36,14 @@ import androidx.navigation.NavController
 import com.example.avanti.NoticacionData
 import com.example.avanti.SolicitudData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
-import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioNot
+
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
-import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacionNew
 import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conActualizarSolicitudByStatus
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
 import com.example.curdfirestore.Viaje.ConsultasViaje.conEditarStatusViaje
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -87,39 +85,35 @@ fun dialogoConfirmarCancelacion(
         "vd" //viaje activo
     }
 
-    val solicitudes = conObtenerSolicitudesPorViajeRT(viajeId = viajeId)
 
-    var usuarioPas by remember { mutableStateOf(listOf<String>()) }
-    /*var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
+    var listaUsuarioPas by remember { mutableStateOf(listOf<String>()) }
+    var solicitudes by remember { mutableStateOf<List<SolicitudData>?>(null) }
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
-    }*/
-
+    }
+var fin by remember {
+    mutableStateOf(false)
+}
+    val conductor= conObtenerUsuarioId(correo = userId)
     if (cancelado) {
-        if (solicitudes != null) {
+        if (solicitudes != null && conductor!=null) {
             for ((index, solicitud) in solicitudes!!.withIndex()) {
 
-                println("..................................")
-                val newUsuario = solicitud.second.pasajero_id
-                // Crear una nueva lista con el nuevo elemento añadido
-                usuarioPas = usuarioPas + newUsuario
-
-
-                var notificacionData = NoticacionData(
+                val notificacionData = NoticacionData(
                     notificacion_tipo = tipoNot,
                     notificacion_usu_origen = userId,
-                    notificacion_usu_destino = solicitud.second.pasajero_id,
+                    notificacion_usu_destino = solicitud.pasajero_id,
                     notificacion_id_viaje = viajeId,
-                    notificacion_id_solicitud = solicitud.second.solicitud_id,
+                    notificacion_id_solicitud = solicitud.solicitud_id,
                     notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
                     notificacion_hora = obtenerHoraActual(),
 
 
                     )
-                if (ejecutado == false) {
+                if (!ejecutado) {
                     //Define si esta activa para el conducto o no
                     conActualizarSolicitudByStatus(
-                        documentId = solicitud.first,
+                        documentId = solicitud.solicitud_id,
                         campo = "solicitud_activa_con",
                         valor = tipoNot
                     )
@@ -129,6 +123,20 @@ fun dialogoConfirmarCancelacion(
                             confirmN = respuestaExitosa
                         }
                     }
+
+                    enviarNotificacion(
+                        conductor.usu_nombre,
+                        conductor.usu_segundo_apellido,
+                        solicitud.pasajero_token,
+                        tipoNot,
+                        solicitud.pasajero_id,
+                        onSuccess = {
+                            println("Notificación enviada exitosamente")
+                        },
+                        onError = { errorMessage ->
+                            println(errorMessage)
+                        }
+                    )
 
 
                 }
@@ -149,38 +157,6 @@ fun dialogoConfirmarCancelacion(
         )
 
 
-
-        val conductor = conObtenerUsuarioId(correo = userId)
-
-        usuarioPas.forEach { Idpasajero ->
-
-            val pasajero = conObtenerUsuarioId(correo = Idpasajero)
-            conductor?.let {
-
-                pasajero?.let {
-                    println("El pasajeroooo $pasajero")
-
-                    enviarNotificacion(conductor.usu_nombre,
-                        conductor.usu_segundo_apellido,
-                        pasajero.usu_token,
-                        tipoNot,
-                        Idpasajero,
-                        onSuccess = {
-                            println("Notificación enviada exitosamente")
-                        },
-                        onError = { errorMessage ->
-                            println(errorMessage)
-                        }
-                    )
-                }
-            }
-
-
-        }
-
-
-
-        onDismiss()
 
     }
 

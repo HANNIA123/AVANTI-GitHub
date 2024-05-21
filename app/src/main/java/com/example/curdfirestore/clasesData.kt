@@ -97,6 +97,7 @@ data class SolicitudData(
     var horario_id: String = "",
     var conductor_id: String = "",
     var pasajero_id: String = "",
+    var pasajero_token: String = "",
     var parada_id: String = "",
     var horario_trayecto: String = "",
     var solicitud_status: String = "",
