@@ -30,7 +30,8 @@ fun dialogoViajeFinalizo(
     onDismiss: () -> Unit,
     text: String,
     userId:String,
-    navController: NavController
+    navController: NavController,
+    ruta:String
 
 ) {
 
@@ -90,8 +91,8 @@ fun dialogoViajeFinalizo(
                     ) {
                         TextButton(
                             onClick = {
-
-                                navController.navigate("home_pasajero/$userId")
+navController.navigate(ruta)
+                                //navController.navigate("home_pasajero/$userId")
 
                             }) {
                             Text(

@@ -48,6 +48,14 @@ fun enviarNotificacion(
         titulo = "$title"
         cuerpo = "$nombre $p_apellido $texto"
     }
+    else if(tipo=="vc"){
+        titulo = "$title"
+        cuerpo = "$nombre $p_apellido $texto"
+    }
+    else if(tipo=="llp"){
+        titulo = "$title"
+        cuerpo = "$nombre $p_apellido $texto"
+    }
     else{
         println("NO ENTRAAAA")
     }
@@ -92,7 +100,7 @@ fun requestNotificationPermission(context: Context) {
 fun showNotificationPermissionDialog(context: Context) {
     AlertDialog.Builder(context)
         .setTitle("Solicitar permisos de notificación")
-        .setMessage("Para recibir notificaciones, necesitamos permisos de notificación. ¿Deseas conceder permisos ahora?")
+        .setMessage("Es necesario conceder los permisos para recibir notificaciones. ¿Deseas conceder permisos ahora?")
         .setPositiveButton("Sí") { _, _ ->
             requestNotificationPermission(context)
         }

@@ -46,6 +46,7 @@ import com.example.avanti.HistorialViajesData
 import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.barraProgresoViaje
@@ -53,6 +54,7 @@ import com.example.curdfirestore.Horario.Pantallas.Monitoreo.dialogoViajeFinaliz
 import com.example.curdfirestore.Horario.Pantallas.Monitoreo.mapaUbicacionConductor
 import com.example.curdfirestore.Imprevistos.Pantallas.dialogoImprevisto
 import com.example.curdfirestore.MainActivity
+import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.R
@@ -68,6 +70,7 @@ import com.example.curdfirestore.Viaje.ConsultasViaje.registrarHistorialViaje
 import com.example.curdfirestore.Viaje.Funciones.UbicacionRealTime
 import com.example.curdfirestore.Viaje.Funciones.accionesComienzoViaje
 import com.example.curdfirestore.Viaje.Funciones.accionesTerminoViaje
+import com.example.curdfirestore.Viaje.Funciones.convertirADia
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.obtenerHoraActualSec
 import com.example.curdfirestore.Viaje.Funciones.registrarHistorialBloqueo
@@ -225,6 +228,7 @@ fun obtenerCoordenadas(
     var numParadaActual by remember {
         mutableStateOf(0)
     }
+    val conductor = conObtenerUsuarioId(correo = userId)
 
     val listaParadasCom = conObtenerListaParadasRT(viajeId = viajeId)
     val infViaje = conObtenerViajeRT(viajeId = viajeId)
@@ -340,7 +344,7 @@ fun obtenerCoordenadas(
                                 .fillMaxSize(),
                             cameraPositionState = cameraPositionState,
                             onMapLoaded = {
-                                cargando=true
+                                cargando = true
                             }
                         ) {
                             Marker(
@@ -728,46 +732,61 @@ fun obtenerCoordenadas(
 
                         if (botonNotificacionInicio) {
                             if (solicitudes != null) {
-                                registrarNotificacionViaje(
-                                    tipoNot = "vc",
-                                    solicitudes!!,
-                                    userId,
-                                    viajeId
-                                )
+                                conductor?.let {
+                                    registrarNotificacionViaje(
+                                        tipoNot = "vc",
+                                        solicitudes!!,
+                                        userId,
+                                        viajeId,
+                                        conductor
+                                    )
+                                }
                             }
+
                             botonNotificacionInicio = false
                         }
 
                         if (botonNotificacionParada) {
                             if (solicitudes != null) {
-                                registrarNotificacionViaje(
-                                    tipoNot = "llp",
-                                    solicitudes!!,
-                                    userId,
-                                    viajeId
-                                )
+                                conductor?.let {
+                                    registrarNotificacionViaje(
+                                        tipoNot = "llp",
+                                        solicitudes!!,
+                                        userId,
+                                        viajeId,
+                                        conductor
+                                    )
+
+                                }
+
                             }
                             botonNotificacionParada = false
                         }
                         if (botonNotificacionValida) {
                             if (solicitudes != null) {
-                                registrarNotificacionViaje(
-                                    tipoNot = "vi",
-                                    solicitudes!!,
-                                    userId,
-                                    viajeId
-                                )
+                                conductor?.let {
+                                    registrarNotificacionViaje(
+                                        tipoNot = "vi",
+                                        solicitudes!!,
+                                        userId,
+                                        viajeId,
+                                        conductor
+                                    )
+                                }
                             }
                             botonNotificacionValida = false
                         }
                         if (botonNotificacionFin) {
                             if (solicitudes != null) {
-                                registrarNotificacionViaje(
-                                    tipoNot = "vt",
-                                    solicitudes!!,
-                                    userId,
-                                    viajeId
-                                )
+                                conductor?.let {
+                                    registrarNotificacionViaje(
+                                        tipoNot = "vt",
+                                        solicitudes!!,
+                                        userId,
+                                        viajeId,
+                                        conductor
+                                    )
+                                }
                             }
                             botonNotificacionFin = false
                         }
@@ -814,7 +833,8 @@ fun obtenerCoordenadas(
             onDismiss = { viajeFinalizado = false },
             "El viaje ha finalizado",
             userId,
-            navController
+            navController,
+            ruta="homeconductor/$userId"
         )
     }
 

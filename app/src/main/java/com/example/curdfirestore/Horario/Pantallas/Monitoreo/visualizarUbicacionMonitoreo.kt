@@ -673,7 +673,8 @@ botonNotificacionValidacion=true
             onDismiss = { botonFinalizo = false },
             "El viaje ha finalizado",
             userId,
-            navController
+            navController,
+            "home_pasajero/$userId"
         )
     }
     if (!cargando) {
