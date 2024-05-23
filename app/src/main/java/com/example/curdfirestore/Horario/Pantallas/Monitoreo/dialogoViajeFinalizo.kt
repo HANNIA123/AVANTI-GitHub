@@ -27,9 +27,7 @@ import com.example.curdfirestore.R
 
 @Composable
 fun dialogoViajeFinalizo(
-    onDismiss: () -> Unit,
     text: String,
-    userId:String,
     navController: NavController,
     ruta:String
 

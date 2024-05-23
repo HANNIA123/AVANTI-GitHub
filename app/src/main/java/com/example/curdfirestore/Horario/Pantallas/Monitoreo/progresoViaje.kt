@@ -36,7 +36,7 @@ fun barraProgresoViaje(
         Text(
             texto,
             fontSize = 12.sp,
-            color = Color(165, 165, 165)
+            color = Color.Black
         )
         Spacer(modifier = Modifier.height(5.dp))
         Row {

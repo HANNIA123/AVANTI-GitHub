@@ -415,8 +415,8 @@ fun verUbicacionMonitoreo(
 
 
             parada?.let {
-                val usuarioCon= conObtenerUsuarioId(correo = solicitud!!.second.conductor_id)
-                println("USUARIO CONDUCTOR $usuarioCon")
+//                val usuarioCon= conObtenerUsuarioId(correo = solicitud!!.second.conductor_id)
+
                 //Boton de llegada
                 Row(
                     modifier = Modifier
@@ -431,6 +431,7 @@ fun verUbicacionMonitoreo(
 
 
                     if (parada.par_llegada_pas != "si") {
+
                         /*val usuarioCon= conObtenerUsuarioId(correo = solicitud!!.second.conductor_id)
                         println("USUARIO CONDUCTOR $usuarioCon")*/
                         Button(
@@ -443,8 +444,8 @@ fun verUbicacionMonitoreo(
                             ),
                             onClick = {
 
-                                huellaIngresada = false
-                                huellaCorrecta=false
+huellaCorrecta=false
+                                huellaIngresada=false
                                 autenticaHuella(
                                     activity = activity1,
                                     exitoso = {
@@ -545,6 +546,7 @@ fun verUbicacionMonitoreo(
                     botonNotificacionParada = true
                     if (huellaIngresada) {
 
+
                         if (historial != null) {
                             val listaPasajerosVal = historial!!.validacion_pasajeros
                             val listaIdPasajeros = historial!!.ids_pasajeros
@@ -584,7 +586,7 @@ botonNotificacionValidacion=true
                             }
                         }
                         actualizarCampoParada(paradaId, "par_llegada_pas", "si")
-                        botonNotificacionParada = true
+
                         botonLlegada = false
                     }
 
@@ -600,17 +602,10 @@ botonNotificacionValidacion=true
                             viajeId
                         )
                     }
-                    botonNotificacionParada = false
+
 
                     //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
-                    enviarNotificacion(usuarioPas!!.usu_nombre, usuarioPas.usu_segundo_apellido, usuarioCon!!.usu_token, "llp", solicitud.second.conductor_id,
-                        onSuccess = {
-                            println("Notificación enviada exitosamente")
-                        },
-                        onError = { errorMessage ->
-                            println(errorMessage)
-                        }
-                    )
+
                     //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
 
                 }
@@ -623,19 +618,8 @@ botonNotificacionValidacion=true
                             viajeId
                         )
                     }
-                    botonNotificacionValidacion = false
 
 
-                    //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
-                    enviarNotificacion(usuarioPas!!.usu_nombre, usuarioPas.usu_segundo_apellido, usuarioCon!!.usu_token, "vi", solicitud.second.conductor_id,
-                        onSuccess = {
-                            println("Notificación enviada exitosamente")
-                        },
-                        onError = { errorMessage ->
-                            println(errorMessage)
-                        }
-                    )
-                    //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------
 
                 }
 
@@ -652,7 +636,10 @@ botonNotificacionValidacion=true
     }
     if (dialogoNoValida) {
         dialogoHuellaFallida(
-            onDismiss = { dialogoNoValida = false },
+            onDismiss = {
+                dialogoNoValida = false
+
+                        },
             text = textoDialogo
         )
     }
@@ -670,9 +657,8 @@ botonNotificacionValidacion=true
     }
     if (botonFinalizo) {
         dialogoViajeFinalizo(
-            onDismiss = { botonFinalizo = false },
+
             "El viaje ha finalizado",
-            userId,
             navController,
             "home_pasajero/$userId"
         )

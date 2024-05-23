@@ -291,9 +291,27 @@ fun obtenerCoordenadas(
                     println("Id historial $idInicioViaje")
 
 
-                    if (idInicioViaje != "") {
+
+                    if (idInicioViaje != "") { // existe
+                        println("este")
                         historial = conObtenerHistorialViajeRT(viajeId = idInicioViaje)
+                        hisCreado = true
+
+                        registrarHistorialBloqueo(
+                            idInicioViaje = idInicioViaje,
+                            botonActivo = {
+                                botonActivo = true
+
+                            },
+                            botonNoActivo = {
+                                botonActivo = false
+
+                            },
+
+                            )
+
                     }
+
 
 
                     barraProgresoViaje(
@@ -470,19 +488,6 @@ fun obtenerCoordenadas(
 
 
 
-                    if (idInicioViaje != "") { // existe
-
-                        hisCreado = true
-                        registrarHistorialBloqueo(
-                            idInicioViaje = idInicioViaje,
-                            botonActivo = { botonActivo = true },
-                            botonNoActivo = { botonActivo = false },
-
-                            )
-                    }
-
-
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -494,117 +499,117 @@ fun obtenerCoordenadas(
 
                     ) {
 
-                        if (botonActivo) {
-
-                            Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = Color(
-                                        137,
-                                        13,
-                                        88
-                                    )
-                                ),
-                                onClick = {
-                                    num = listParadasRecorridas.size
-                                    // numParadaActual = listParadasRecorridas.size
-                                    if (viajeComenzado.isEmpty()) {
-                                        autenticaHuella(
-                                            activity = activity1,
-                                            exitoso = {
-                                                huellaCorrecta = true
-                                                huellaIngresada = true
-                                            },
-                                            fallido = {
-                                                huellaIngresada = true
-                                                huellaCorrecta = false
-                                            },
-                                            maxIntentos = 3
-                                        )
-
-                                        botonInicioViaje = true
-
-                                    } else {
-                                        huellaIngresada = false
+    if (botonActivo) {
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(
+                    137,
+                    13,
+                    88
+                )
+            ),
+            onClick = {
+                num = listParadasRecorridas.size
+                // numParadaActual = listParadasRecorridas.size
+                if (viajeComenzado.isEmpty()) {
+                    autenticaHuella(
+                        activity = activity1,
+                        exitoso = {
+                            huellaCorrecta = true
+                            huellaIngresada = true
+                            botonInicioViaje = true
+                        },
+                        fallido = {
+                            huellaIngresada = true
+                            huellaCorrecta = false
+                            botonInicioViaje = true
+                        },
+                        maxIntentos = 3
+                    )
 
 
-                                        if (numParadaActual < totalParadas) {
-                                            idParadaActual = paradasOrdenadas[numParadaActual].first
-                                            paradasOrdenadasPasar = paradasOrdenadas
-                                            autenticaHuella(
-                                                activity = activity1,
-                                                exitoso = {
-                                                    huellaCorrecta = true
-                                                    huellaIngresada = true
-                                                },
-                                                fallido = {
-                                                    huellaIngresada = true
-                                                    huellaCorrecta = false
-                                                },
-                                                maxIntentos = 3
-                                            )
-
-                                            botonParadas = true
+                } else {
+                    huellaIngresada = false
 
 
-                                        } else {
-                                            // Restablecer el status del viaje y las paradas
-                                            botonNotificacionFin = true
+                    if (numParadaActual < totalParadas) {
+                        idParadaActual = paradasOrdenadas[numParadaActual].first
+                        paradasOrdenadasPasar = paradasOrdenadas
+                        autenticaHuella(
+                            activity = activity1,
+                            exitoso = {
+                                huellaCorrecta = true
+                                huellaIngresada = true
+                            },
+                            fallido = {
+                                huellaIngresada = true
+                                huellaCorrecta = false
+                            },
+                            maxIntentos = 3
+                        )
 
-                                            accionesTerminoViaje(
-                                                viajeId,
-                                                solicitudes,
-                                                navController,
-                                                userId,
-                                                idParadaActual,
-                                                paradasOrdenadasPasar
-                                            )
-
-                                            val nuevosValores = mapOf(
-                                                "hora_fin_viaje" to obtenerHoraActual(),
-                                            )
-                                            editarDocumentoHistorial(idInicioViaje, nuevosValores)
-
-
-
-                                            viajeFinalizado = true
-                                        }
-
-                                    }
-
-                                },
-                                modifier = Modifier
-                                    .height(60.dp)
-                                    .padding(5.dp)
-                                    .weight(0.6f) // Ocupa el 80% del ancho disponible
-                            ) {
-                                Text(
-                                    text = textoBoton,
-                                    style = TextStyle(
-                                        fontSize = 18.sp,
-                                        color = Color.White
-                                    )
-                                )
-                            }
-
-                        } else {
-
-                            huellaIngresada = false
-                            Text(
-                                text = "Viaje bloqueado, espera 1 min",
-                                style = TextStyle(
-                                    fontSize = 18.sp,
-                                    color = Color(
-                                        137,
-                                        13,
-                                        88
-                                    )
-                                ),
-                                modifier = Modifier
-                                    .padding(5.dp)
-                            )
+                        botonParadas = true
 
 
-                        }
+                    } else {
+                        // Restablecer el status del viaje y las paradas
+                        botonNotificacionFin = true
+
+                        accionesTerminoViaje(
+                            viajeId,
+                            solicitudes,
+                            navController,
+                            userId,
+                            idParadaActual,
+                            paradasOrdenadasPasar
+                        )
+
+                        val nuevosValores = mapOf(
+                            "hora_fin_viaje" to obtenerHoraActual(),
+                        )
+                        editarDocumentoHistorial(idInicioViaje, nuevosValores)
+
+
+
+                        viajeFinalizado = true
+                    }
+
+                }
+
+            },
+            modifier = Modifier
+                .height(60.dp)
+                .padding(5.dp)
+                .weight(0.6f) // Ocupa el 80% del ancho disponible
+        ) {
+            Text(
+                text = textoBoton,
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            )
+        }
+
+    } else {
+
+        Text(
+            text = "Viaje bloqueado, espera 1 min",
+            style = TextStyle(
+                fontSize = 18.sp,
+                color = Color(
+                    137,
+                    13,
+                    88
+                )
+            ),
+            modifier = Modifier
+                .padding(5.dp)
+        )
+
+
+    }
+
 
 
                         Spacer(modifier = Modifier.width(12.dp))
@@ -635,8 +640,9 @@ fun obtenerCoordenadas(
 
                         //--------Acciones al iniciar el viaje---------
                         if (botonInicioViaje) {
-
+                            println("Boton inicio")
                             if (huellaIngresada) {
+                                println("huella ingresada inicio huelaa $huellaCorrecta")
                                 textoDialogo =
                                     "Tu identidad no ha sido validada. No puedes comenzar el viaje en este momento. "
 
@@ -676,6 +682,7 @@ fun obtenerCoordenadas(
 
                                 botonInicioViaje = false
                             }
+
                         }
 
 
@@ -808,7 +815,9 @@ fun obtenerCoordenadas(
     }
     if (dialogoAutFall) {
         dialogoHuellaFallida(
-            onDismiss = { dialogoAutFall = false },
+            onDismiss = {
+                dialogoAutFall = false
+            },
             text = textoDialogo
         )
     }
@@ -830,11 +839,9 @@ fun obtenerCoordenadas(
     }
     if (viajeFinalizado) {
         dialogoViajeFinalizo(
-            onDismiss = { viajeFinalizado = false },
             "El viaje ha finalizado",
-            userId,
             navController,
-            ruta="homeconductor/$userId"
+            ruta = "homeconductor/$userId"
         )
     }
 

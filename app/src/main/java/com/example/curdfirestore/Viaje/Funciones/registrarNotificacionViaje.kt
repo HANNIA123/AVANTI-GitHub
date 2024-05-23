@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import com.example.avanti.NoticacionData
 import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Notificaciones.Consultas.conRegistrarNotificacion
@@ -86,8 +87,8 @@ fun registrarNotificacionViajePas(
     var ejecutado by remember {
         mutableStateOf(false)
     }
-
-
+    val pasajero= conObtenerUsuarioId(userId)
+    val conductor= conObtenerUsuarioId(solicitud.second.conductor_id)
         val notificacionData = NoticacionData(
             notificacion_tipo = tipoNot,
             notificacion_usu_origen = userId,
@@ -99,14 +100,30 @@ fun registrarNotificacionViajePas(
 
             )
         if (!ejecutado) {
-            LaunchedEffect(Unit) {
-                conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
-                    notEnviada = respuestaExitosa
+            pasajero?.let {
+                conductor?.let {
+                    LaunchedEffect(Unit) {
+                        conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
+                            notEnviada = respuestaExitosa
+                        }
+
+                    }
+                    enviarNotificacion(
+                        pasajero.usu_nombre,
+                        pasajero.usu_segundo_apellido,
+                        conductor.usu_token,
+                        tipoNot,
+                        solicitud.second.conductor_id,
+                        onSuccess = {
+                            println("Notificación enviada exitosamente")
+                        },
+                        onError = { errorMessage ->
+                            println(errorMessage)
+                        }
+                    )
+                    ejecutado = true
                 }
-                ejecutado=false
             }
 
         }
-
-
 }
