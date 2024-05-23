@@ -110,7 +110,7 @@ fun registrarNotificacionViajePas(
                     }
                     enviarNotificacion(
                         pasajero.usu_nombre,
-                        pasajero.usu_segundo_apellido,
+                        pasajero.usu_primer_apellido,
                         conductor.usu_token,
                         tipoNot,
                         solicitud.second.conductor_id,
