@@ -40,6 +40,7 @@ import com.example.avanti.Usuario.LoginViewModel
 import com.example.avanti.Usuario.eliminarToken
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.curdfirestore.AuthViewModel
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
 
@@ -78,7 +79,7 @@ fun cuentaPantallaPas(
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ){
-            cabecera(titulo = "Cuenta")
+            cabeceraSin(titulo = "Cuenta")
 
             Column(
                 modifier = Modifier
@@ -91,7 +92,7 @@ fun cuentaPantallaPas(
                 usuario?.let {
                     // Cargar y mostrar la imagen con Coil
                     CoilImage(
-                        url = usuario!!.usu_foto, modifier = Modifier
+                        url = usuario.usu_foto, modifier = Modifier
 
                             .clip(CircleShape)
                             .size(200.dp)
@@ -99,7 +100,7 @@ fun cuentaPantallaPas(
 
 
                     Text(
-                        text = "${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido} ${usuario!!.usu_segundo_apellido}",
+                        text = "${usuario.usu_nombre} ${usuario.usu_primer_apellido} ${usuario!!.usu_segundo_apellido}",
                         style = TextStyle(
                             color = Color(71, 12, 107),
                             fontSize = 28.sp,

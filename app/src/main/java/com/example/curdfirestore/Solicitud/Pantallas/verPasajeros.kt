@@ -49,7 +49,7 @@ import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
-import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Reportes.Pantallas.dialogoBorrarPasajero
@@ -123,7 +123,7 @@ fun verPasajeros(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                cabecera("Pasajeros")
+                cabeceraSin("Pasajeros")
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

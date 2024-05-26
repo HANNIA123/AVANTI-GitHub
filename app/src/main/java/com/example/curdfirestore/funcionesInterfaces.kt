@@ -1,13 +1,13 @@
 package com.example.avanti.ui.theme.Aplicacion
 
 import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,10 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,10 +32,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.curdfirestore.R
-import com.example.curdfirestore.Viaje.Pantallas.Monitoreo.obtenerCoordenadas
-
 @Composable
-fun cabecera(titulo: String) {
+fun cabecera(titulo: String, navController: NavController, ruta:String) {
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -69,6 +63,13 @@ fun cabecera(titulo: String) {
                 ),
                 modifier = Modifier.weight(1f)
             )
+            Icon(  painter = painterResource(id = R.drawable.notificacion),
+                contentDescription = "not", tint = Color.White,
+                modifier = Modifier.size(45.dp).clickable {
+navController.navigate(ruta)
+                }
+            )
+            Spacer(modifier = Modifier.width(15.dp))
             Image(
                 modifier = Modifier.size(60.dp),
                 painter = painterResource(id = R.drawable.logoavanti),
@@ -82,77 +83,50 @@ fun cabecera(titulo: String) {
 }
 
 @Composable
-fun tituloAtras(
-    Titulo: String,
-    navController: NavController
-) {
-    Row {
+fun cabeceraSin(titulo: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+    )
+    {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp),
+            painter = painterResource(id = R.drawable.fondorec),
+            contentDescription = "Fondo inicial",
+            contentScale = ContentScale.FillBounds
+        )
         Row(
             modifier = Modifier
-                .padding(5.dp, 10.dp, 0.dp, 0.dp),
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
+                .padding(18.dp, 10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Box {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        modifier = Modifier
-                            .height(57.dp)
-                            .width(57.dp)
-                            .align(Alignment.Center),
-
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Icono atras",
-                        tint = Color(137, 13, 88),
-
-                        )
-                }
-
-            }
             Text(
-                text = Titulo, style = TextStyle(
-                    color = Color(71, 12, 107),
+                text = titulo,
+                style = TextStyle(
+                    color = Color.White,
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
-
-
-                )
+                ),
+                modifier = Modifier.weight(1f)
             )
 
+            Image(
+                modifier = Modifier.size(60.dp),
+                painter = painterResource(id = R.drawable.logoavanti),
+                contentDescription = "Logo de Avanti",
+                contentScale = ContentScale.FillBounds
+            )
         }
-        cabecera(Titulo)
+
+
     }
 }
 
-@Composable
-fun tituloNoAtras(
-    Titulo: String,
-    navController: NavController
-) {
-    Row {
-        Row(
-            modifier = Modifier
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
 
-
-            Text(
-                text = Titulo, style = TextStyle(
-                    color = Color(71, 12, 107),
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold
-
-
-                )
-            )
-
-        }
-        cabecera(Titulo)
-    }
-}
 
 
 @Composable
@@ -296,7 +270,8 @@ fun lineaGris() {
 fun lineaGrisCompleta() {
     Box(
         modifier = Modifier
-            .fillMaxWidth().padding(3.dp)
+            .fillMaxWidth()
+            .padding(3.dp)
             .height(1.dp)
             //.align(Alignment.CenterHorizontally)
             .background(Color(222, 222, 222))
@@ -320,7 +295,6 @@ fun lineaGrisModificada(width: Dp, height: Dp, color: Color) {
 
 @Composable
 fun nombreCompleto(nombre: String, apellidop: String, apellidom: String): String {
-    var fn: String
-    fn = nombre + " " + apellidop + " " + apellidom
+    val fn: String = nombre + " " + apellidop + " " + apellidom
     return fn
 }

@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.Usuario.Conductor.Pantallas.maxh
 import com.example.avanti.ViajeData
-import com.example.avanti.ViajeDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.avanti.ui.theme.Aplicacion.convertirStringAHora
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
@@ -46,7 +45,6 @@ import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.avanti.ui.theme.Aplicacion.restarTreintaMinutosAHoraActual
 import com.example.avanti.ui.theme.Aplicacion.sumarTreintaMinutosAHoraActual
 import com.example.curdfirestore.Usuario.Conductor.menuCon
-import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioConRT
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Pantallas.mensajeNoViajes
@@ -99,7 +97,7 @@ fun homeNoIniciado(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                cabecera("Inicio de viaje")
+                cabecera("Inicio de viaje", navController, "ver_notificaciones_conductor/$userid")
 
                 Column(
                     modifier = Modifier

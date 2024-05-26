@@ -3,10 +3,8 @@ package com.example.curdfirestore.Usuario.Conductor.Pantallas
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,9 +50,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.avanti.Usuario.LoginViewModel
 import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
-import com.example.avanti.ui.theme.Aplicacion.tituloAtras
+
 import com.example.curdfirestore.AuthViewModel
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.menuCon

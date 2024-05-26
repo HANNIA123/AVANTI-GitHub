@@ -13,19 +13,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,16 +44,14 @@ import com.example.avanti.SolicitudData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
 import com.example.curdfirestore.MainActivity
-import com.example.curdfirestore.Notificaciones.Consultas.enviarNotificacion
 import com.example.curdfirestore.Parada.ConsultasParada.actualizarCampoParada
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerListaParadasRT
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaRT
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.actualizarCampoSolicitud
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudByHorarioRT
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudByHorarioRTId
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
-import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPas
+import com.example.curdfirestore.Usuario.Pasajero.cabeceraConMenuPasNot
 import com.example.curdfirestore.Usuario.Pasajero.menuDesplegablePas
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerHistorialViajeRT
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
@@ -220,13 +214,15 @@ fun verUbicacionMonitoreo(
 
         ) {
 
-            cabeceraConMenuPas(
-                titulo = "Tu viaje...",
+            cabeceraConMenuPasNot(
+                titulo = "Tu viaje",
                 navController,
                 userId,
                 boton = { estaBoton ->
                     boton = estaBoton
-                })
+                },
+"ver_notificaciones_pasajero/$userId"
+                )
 
             infViaje?.let {
                 idHis = infViaje.viaje_id_iniciado
@@ -378,44 +374,12 @@ fun verUbicacionMonitoreo(
                 }
 
 
-                //boton flotante ver imprevistos
-                Box(
-                    contentAlignment = Alignment.BottomCenter,
 
-                    modifier = Modifier
-                        .size(57.dp)
-                        .offset(x = 15.dp, y = 12.dp),
-                ) {
-                    Button(
-                        onClick = {
-
-                            //Reportar imprevisto
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color(180, 13, 13)
-                        ),
-                        shape = CircleShape, // Cambiado a CircleShape para hacer el botón redondo
-                        contentPadding = ButtonDefaults.ContentPadding,
-                        elevation = ButtonDefaults.elevation(defaultElevation = 8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier.size(48.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Default.Warning,
-                                contentDescription = null,
-                                tint = Color.White
-                            )
-                        }
-                    }
-                }
 
             }
 
 
             parada?.let {
-//                val usuarioCon= conObtenerUsuarioId(correo = solicitud!!.second.conductor_id)
 
                 //Boton de llegada
                 Row(

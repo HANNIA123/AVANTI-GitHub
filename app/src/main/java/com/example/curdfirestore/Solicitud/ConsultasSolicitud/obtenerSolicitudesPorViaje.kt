@@ -8,14 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavController
-import com.example.avanti.ParadaData
 import com.example.avanti.SolicitudData
-import com.example.avanti.Usuario.RetrofitClientParada
-import com.example.avanti.ViajeData
-import com.example.avanti.ViajeDataReturn
-import com.example.curdfirestore.Parada.Funciones.obtenerDistanciaParadas
-import com.example.curdfirestore.Parada.Pantallas.ventanaNoEncontrado
+
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
@@ -78,7 +72,8 @@ fun conObtenerSolicitudesPorViajeRT(
                     val paradaData = document.toObject(SolicitudData::class.java)
                     idDocumento to paradaData!!
                 }
-                solicitudes = listaParadas
+                val listFil=listaParadas.filter { it.second.solicitud_status=="Aceptada" }
+                solicitudes = listFil
 
             }
             fin = true

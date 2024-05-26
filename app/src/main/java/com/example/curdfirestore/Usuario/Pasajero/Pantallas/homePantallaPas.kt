@@ -32,34 +32,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.avanti.HorarioData
-import com.example.avanti.HorarioDataReturn
 import com.example.avanti.SolicitudData
 
 import com.example.avanti.Usuario.Conductor.Pantallas.maxh
-import com.example.avanti.ViajeDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
 import com.example.curdfirestore.R
-
-import com.example.avanti.ui.theme.Aplicacion.obtenerDiaDeLaSemanaActual
-import com.example.avanti.ui.theme.Aplicacion.obtenerFechaHoyCompleto
-import com.example.curdfirestore.AuthViewModel
-import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPas
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPasRT
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorHorario
-import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViaje
-
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
-import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerItinerarioCon
 import com.example.curdfirestore.Viaje.Funciones.solicitarPermiso
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun homePantallaPasajero(
     navController: NavController,
@@ -97,7 +84,7 @@ fun homePantallaPasajero(
         ) {
 
 
-            cabecera("Inicio de viaje")
+            cabecera("Inicio de viaje", navController, "ver_notificaciones_pasajero/$userid")
 
             Column(
                 modifier = Modifier

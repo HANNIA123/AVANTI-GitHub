@@ -45,8 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.ViajeDataReturn
-import com.example.avanti.ui.theme.Aplicacion.cabecera
-import com.example.avanti.ui.theme.Aplicacion.lineaGris
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.avanti.ui.theme.Aplicacion.lineaGrisCompleta
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Usuario.Conductor.menuCon
@@ -93,7 +92,7 @@ fun verItinerarioCon(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            cabecera(titulo = "Itinerario")
+            cabeceraSin(titulo = "Itinerario")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

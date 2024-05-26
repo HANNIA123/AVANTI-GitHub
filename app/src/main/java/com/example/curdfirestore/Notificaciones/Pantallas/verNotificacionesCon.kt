@@ -3,25 +3,20 @@ package com.example.curdfirestore.Notificaciones.Pantallas
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,15 +42,13 @@ import androidx.navigation.NavController
 import com.example.avanti.NoticacionData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
-import com.example.avanti.ui.theme.Aplicacion.cabecera
-import com.example.curdfirestore.Notificaciones.Consultas.ObtenerNavGraphCon
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.curdfirestore.Notificaciones.Consultas.TextoNotificacionVer
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.menuCon
+import com.example.curdfirestore.lineaCargando
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -94,7 +87,7 @@ fun verNotificacionesCon(
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ) {
-            cabecera(titulo = "Notificaciones")
+            cabeceraSin(titulo = "Notificaciones")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,35 +98,7 @@ fun verNotificacionesCon(
                 Spacer(modifier = Modifier.height(15.dp))
 
                 if (isLoading) {
-                    println("Caragandooo----------------------------------")
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.5f))
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .background(Color.White)
-                                .padding(16.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                        ) {
-                            LinearProgressIndicator(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(8.dp)
-                            )
-                            Text(
-                                text = "Cargando Notificaciones",
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .padding(4.dp),
-                                color = Color.Gray
-                            )
-                        }
-                    }
+                    lineaCargando(text = "Cargando notificaciones...")
                 }
 
                 var notificaciones by remember { mutableStateOf<List<NoticacionData>?>(null) }
@@ -163,12 +128,12 @@ fun verNotificacionesCon(
                         final = true
                     }
                 }
-                println("finaaal $final")
+
 
                 if (final) {
-                    println("noti $notificaciones")
+
                     if (notificaciones?.isEmpty() == false) {
-                        println("No nulo")
+
                         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
                         // Ordenar la lista de notificaciones por fecha
@@ -181,7 +146,7 @@ fun verNotificacionesCon(
                             hora * 60 + minuto
                         })
 
-                        for (notificacion in notificacionOrdenada!!) {
+                        for (notificacion in notificacionOrdenada) {
 
                             val usuario= conObtenerUsuarioId(correo = notificacion.notificacion_usu_origen)
 
@@ -191,14 +156,10 @@ fun verNotificacionesCon(
                                     modifier = Modifier
                                         .padding(10.dp)
                                         .fillMaxWidth()
-                                        .clickable {
-                                            var ruta =
-                                                ObtenerNavGraphCon(notificacion.notificacion_tipo)
-                                            navController.navigate("$ruta/$userID")
-                                        }
+
                                 ) {
                                     CoilImage(
-                                        url = usuario!!.usu_foto, modifier = Modifier
+                                        url = usuario.usu_foto, modifier = Modifier
                                             .size(85.dp)
                                             .clip(CircleShape)
                                     )
@@ -218,7 +179,7 @@ fun verNotificacionesCon(
                                                         fontSize = 15.sp
                                                     )
                                                 ) {
-                                                    append("${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido}  ")
+                                                    append("${usuario.usu_nombre} ${usuario.usu_primer_apellido}  ")
                                                 }
 
                                                 withStyle(
@@ -235,7 +196,7 @@ fun verNotificacionesCon(
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             Text(
-                                                text = "${notificacion.notificacion_hora}",
+                                                text = "${notificacion.notificacion_hora} hrs",
                                                 style = TextStyle(
                                                     fontSize = 13.sp,
                                                     color = Color.Gray
@@ -243,7 +204,7 @@ fun verNotificacionesCon(
                                                 modifier = Modifier.weight(1f)
                                             )
                                             Text(
-                                                text = "${notificacion.notificacion_fecha}",
+                                                text = "${notificacion.notificacion_fecha} hrs",
                                                 style = TextStyle(
                                                     fontSize = 13.sp,
                                                     color = Color.Gray

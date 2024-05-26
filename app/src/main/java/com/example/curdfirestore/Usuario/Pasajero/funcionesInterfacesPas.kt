@@ -274,6 +274,8 @@ fun cabeceraConMenuPas(titulo:String
                 )
             }
 
+
+
             Text(
                 text = titulo,
                 style = TextStyle(
@@ -288,3 +290,82 @@ fun cabeceraConMenuPas(titulo:String
 
 }
 
+
+
+@Composable
+fun cabeceraConMenuPasNot(titulo:String
+                       ,
+                       navController: NavController,
+                       userID: String,
+                       boton: (Boolean) -> Unit,
+                       ruta:String
+
+){
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+    )
+    {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp),
+            painter = painterResource(id = R.drawable.fondorec),
+            contentDescription = "Fondo inicial",
+            contentScale = ContentScale.FillBounds
+        )
+        Row(
+            modifier = Modifier
+                .padding(18.dp, 10.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    boton(true)
+                },
+                modifier = Modifier
+                    .padding(end = 10.dp) // Ajusta el espacio entre el icono y el texto
+            ) {
+                Icon(
+                    Icons.Filled.Menu,
+                    contentDescription = "Abrir menú",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+            Text(
+                text = titulo,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+                modifier = Modifier.padding(start = 16.dp) // Ajusta el espacio entre el icono y el texto
+            )
+            // Espacio flexible para empujar el segundo Row al final
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.notificacion),
+                    contentDescription = "not",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable {
+                            navController.navigate(ruta)
+                        }
+                )
+
+            }
+        }
+
+    }
+
+}

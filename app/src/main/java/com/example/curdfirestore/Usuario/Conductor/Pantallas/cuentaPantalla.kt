@@ -37,6 +37,7 @@ import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.Usuario.eliminarToken
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.curdfirestore.AuthViewModel
 
 import com.example.curdfirestore.Usuario.Conductor.menuCon
@@ -75,7 +76,7 @@ fun cuentaPantallaCon(
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ) {
-            cabecera(titulo = "Cuenta")
+            cabeceraSin(titulo = "Cuenta")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

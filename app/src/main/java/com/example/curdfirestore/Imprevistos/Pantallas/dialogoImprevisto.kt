@@ -37,10 +37,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.avanti.ImprevistoData
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Imprevistos.Funciones.conRegistrarImprevisto
 import com.example.curdfirestore.Imprevistos.Funciones.convertiraMotivoImprevisto
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPorViajeRT
+import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionImprevistoViaje
 import com.example.curdfirestore.textTituloInfSolcitud
 
 @Composable
@@ -60,8 +63,10 @@ fun dialogoImprevisto(
         mutableStateOf(false)
     }
     var showDialogMotivo by remember { mutableStateOf(false) }
+    var botonNotificacion by remember { mutableStateOf(false) }
     var selectedMotivo by remember { mutableStateOf(emptySet<Int>()) }
     var descripcion by remember { mutableStateOf(TextFieldValue("")) }
+
     var boton by remember { mutableStateOf(false) }
     var ejecutado by remember { mutableStateOf(false) }
     var confirmR by remember { mutableStateOf(false) }
@@ -197,7 +202,7 @@ fun dialogoImprevisto(
 
             )
     }
-    // Diálogo para la selección de días
+    // Diálogo para la selección de motivos
     if (showDialogMotivo) {
         dialogSeleccionMotivoImpr(
             onDismiss = { showDialogMotivo = false },
@@ -208,6 +213,8 @@ fun dialogoImprevisto(
     if (confirmR) {
         dialogoImprevistoEnviado(onDismiss = { confirmR = false }, navController, userid, ruta)
     }
+    val solicitudes = conObtenerSolicitudesPorViajeRT(viajeId = viajeid)
+    val conductor = conObtenerUsuarioId(correo = userid)
 
     if (boton == true && ejecutado == false) {
         val imprevistoData = ImprevistoData(
@@ -217,8 +224,25 @@ fun dialogoImprevisto(
             impr_fecha = obtenerFechaFormatoddmmyyyy(),
             impr_hora = obtenerHoraActual().toString()
         )
-        conRegistrarImprevisto(imprevistoData)
-        ejecutado = true
-    }
+
+        solicitudes?.let {
+            conductor?.let {
+                registrarNotificacionImprevistoViaje(
+                    tipoNot = "iv",
+                    solicitudes,
+                    userid,
+                    viajeid,
+                    conductor = conductor
+                )
+
+
+
+
+                conRegistrarImprevisto(imprevistoData)
+                ejecutado = true
+            }
+        }
+        }
+
 
 }

@@ -27,37 +27,41 @@ fun enviarNotificacion(
     var cuerpo = ""
 
     if(tipo=="sa"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }else if(tipo=="sr"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }else if(tipo=="cv"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }else if(tipo=="vd"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }else if(tipo=="ve"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }else if(tipo=="llp"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }else if(tipo=="vi"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }
     else if(tipo=="vc"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }
     else if(tipo=="llp"){
-        titulo = "$title"
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }
     else if(tipo=="vt"){
-        titulo = "$title"
+        titulo = title
+        cuerpo = "$nombre $p_apellido $texto"
+    }
+    else if(tipo=="iv"){
+        titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }
     else{

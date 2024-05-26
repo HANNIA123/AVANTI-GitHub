@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.HorarioDataReturn
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.avanti.ui.theme.Aplicacion.lineaGrisCompleta
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerItinerarioPas
@@ -92,7 +93,7 @@ fun verItinerarioPas(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            cabecera(titulo = "Itinerario")
+            cabeceraSin(titulo = "Itinerario")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

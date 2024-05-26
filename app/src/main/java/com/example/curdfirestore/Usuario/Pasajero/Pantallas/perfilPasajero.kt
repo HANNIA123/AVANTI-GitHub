@@ -33,9 +33,10 @@ import androidx.navigation.NavController
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.nombreCompleto
-import com.example.avanti.ui.theme.Aplicacion.tituloAtras
+
 import com.example.curdfirestore.InfTextos
 import com.example.curdfirestore.Usuario.Conductor.ConsultasConductor.conObtenerVehiculoId
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.maxp
@@ -73,7 +74,7 @@ fun perfilPas(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                cabecera(titulo = "Mi perfil")
+                cabeceraSin(titulo = "Mi perfil")
 
                 //importante, agregar esta condición
                 usuario?.let {

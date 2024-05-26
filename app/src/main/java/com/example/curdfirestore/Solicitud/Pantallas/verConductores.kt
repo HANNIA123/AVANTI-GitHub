@@ -24,12 +24,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -50,18 +47,15 @@ import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
-import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerNombreDiaEnEspanol
 import com.example.curdfirestore.Reportes.Pantallas.dialogoBorrarConductor
-import com.example.curdfirestore.Reportes.Pantallas.dialogoBorrarPasajero
 import com.example.curdfirestore.Reportes.Pantallas.dialogoContactoConductor
 import com.example.curdfirestore.Reportes.Pantallas.dialogoReportarConductor
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudesPasajero
-import com.example.curdfirestore.Usuario.Conductor.menuCon
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
-import com.example.curdfirestore.lineaCargando
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -126,7 +120,7 @@ fun verConductores(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                cabecera("Conductores")
+                cabeceraSin("Conductores")
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

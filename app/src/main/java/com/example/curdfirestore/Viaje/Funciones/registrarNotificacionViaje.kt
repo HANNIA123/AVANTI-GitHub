@@ -32,7 +32,7 @@ fun registrarNotificacionViaje(
     var ejecutado by remember {
         mutableStateOf(false)
     }
-    for ((index, solicitud) in solicitudes!!.withIndex()) {
+    for ((index, solicitud) in solicitudes.withIndex()) {
 
         val notificacionData = NoticacionData(
             notificacion_tipo = tipoNot,
@@ -57,6 +57,60 @@ fun registrarNotificacionViaje(
                 token = solicitud.pasajero_token,
                 tipo=tipoNot,
                 userId=solicitud.pasajero_id,
+                onSuccess = {
+                    println("Notificación enviada exitosamente")
+                },
+                onError = { errorMessage ->
+                    println(errorMessage)
+                }
+            )
+
+        }
+        if (index == solicitudes.size - 1) {
+            ejecutado = true
+        }
+    }
+}
+
+@Composable
+fun registrarNotificacionImprevistoViaje(
+    tipoNot:String,
+    solicitudes: List<Pair<String, SolicitudData>>?,
+    userId:String,
+    viajeId:String,
+    conductor:UserData
+){
+    var notEnviada by remember {
+        mutableStateOf(false)
+    }
+    var ejecutado by remember {
+        mutableStateOf(false)
+    }
+    for ((index, solicitud) in solicitudes!!.withIndex()) {
+
+        val notificacionData = NoticacionData(
+            notificacion_tipo = tipoNot,
+            notificacion_usu_origen = userId,
+            notificacion_usu_destino = solicitud.second.pasajero_id,
+            notificacion_id_viaje = viajeId,
+            notificacion_id_solicitud = solicitud.first,
+            notificacion_fecha = obtenerFechaFormatoddmmyyyy(),
+            notificacion_hora = obtenerHoraActual(),
+
+            )
+        if (!ejecutado) {
+            LaunchedEffect(Unit) {
+                conRegistrarNotificacion(notificacionData) { respuestaExitosa ->
+                    notEnviada = respuestaExitosa
+                }
+            }
+
+            enviarNotificacion(
+                nombre= conductor.usu_nombre,
+                p_apellido = conductor.usu_segundo_apellido,
+                token = solicitud.second.pasajero_token,
+                tipo=tipoNot,
+                userId=solicitud.second.pasajero_id,
                 onSuccess = {
                     println("Notificación enviada exitosamente")
                 },

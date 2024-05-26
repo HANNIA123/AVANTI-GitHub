@@ -48,6 +48,7 @@ import com.example.avanti.UserData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
 import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.avanti.ui.theme.Aplicacion.toLocalDate
@@ -118,7 +119,7 @@ fun verSolicitudesCon(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                cabecera(titulo = "Solicitudes")
+                cabeceraSin(titulo = "Solicitudes")
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

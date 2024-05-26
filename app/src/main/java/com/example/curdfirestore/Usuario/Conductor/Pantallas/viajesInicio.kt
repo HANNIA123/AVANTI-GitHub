@@ -27,12 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.avanti.ui.theme.Aplicacion.cabecera
+
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.menuCon
 
@@ -64,7 +63,7 @@ fun viajesInicio(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-cabecera(titulo = "Viajes")
+cabeceraSin(titulo = "Viajes")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -211,15 +210,6 @@ cabecera(titulo = "Viajes")
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun MyComposablePreviewHomeViaje() {
-    // Esta función se utiliza para la vista previa
-    var correo = "hplayasr1700@alumno.ipn.mx"
-    val navController = rememberNavController()
- viajesInicio(navController = navController, userId =correo )
-}
 
 
 

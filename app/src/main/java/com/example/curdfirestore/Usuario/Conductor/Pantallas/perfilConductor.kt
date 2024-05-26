@@ -30,11 +30,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.avanti.UserData
+
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
-import com.example.avanti.VehicleData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
-import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.nombreCompleto
@@ -75,7 +74,7 @@ fun perfilConductor(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-               cabecera(titulo = "Mi perfil")
+               cabeceraSin(titulo = "Mi perfil")
 
                 //importante, agregar esta condición
                 usuario?.let {
@@ -96,8 +95,8 @@ fun perfilConductor(
                         )
 
 //Datos del conductor
-                        InfTextos(Title = "Nombre de usuario", Inf =usuario!!.usu_nombre_usuario )
-                        InfTextos(Title = "Tipo de usuario", Inf =usuario!!.usu_tipo )
+                        InfTextos(Title = "Nombre de usuario", Inf =usuario.usu_nombre_usuario )
+                        InfTextos(Title = "Tipo de usuario", Inf =usuario.usu_tipo )
 //Falta cambiar contraseñ
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(230.dp)
