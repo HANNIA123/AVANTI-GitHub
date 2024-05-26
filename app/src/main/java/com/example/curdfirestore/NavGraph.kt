@@ -557,9 +557,7 @@ fun NavGraph(
 
 //FCM
 fun sendTokenToServer(userId: String, token: String?) {
-
     val usuarioRef = Firebase.firestore.collection("usuario").document(userId)
-
     // Actualiza el documento del usuario para incluir el token de FCM
     usuarioRef.update("usu_token", token)
         .addOnSuccessListener {
@@ -570,4 +568,20 @@ fun sendTokenToServer(userId: String, token: String?) {
             Log.e("Firestore", "Error al actualizar el token: $e")
         }
 
+}
+
+fun sendTokenToServer2(userId: String, token: String?) {
+    val usuarioRef = Firebase.firestore.collection("usuario").document(userId)
+    // Actualiza el documento del usuario para incluir los tokens de FCM
+    usuarioRef.update(mapOf(
+        "usu_token" to token,
+        "usu_token_reg" to token
+    ))
+        .addOnSuccessListener {
+            // Manejar el éxito, si es necesario
+        }
+        .addOnFailureListener { e ->
+            // Manejar el error
+            Log.e("Firestore", "Error al actualizar el token: $e")
+        }
 }

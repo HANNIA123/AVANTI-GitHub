@@ -8,7 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.RetrofitClientUsuario
-
+import com.example.avanti.ViajeData
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 
 //unicamente lauched effect para las consultas, funciones unicamente.
@@ -47,15 +49,37 @@ fun conObtenerUsuarioId(correo: String): UserData? {
 
 
 
+@Composable
+fun conObtenerUsuarioRT(
+    usuarioId: String
+): UserData? {
 
+    var fin by remember { mutableStateOf(false) }
+    // Obtener objeto ViajeData
+    var usuario by remember { mutableStateOf<UserData?>(null) }
 
-suspend fun obtenerUsuarioIdSuspend(correo: String): UserData? {
-    return try {
-        val resultadoUsuario = RetrofitClientUsuario.apiService.obtenerUsuario(correo)
-        println("Usuario obtenido: $resultadoUsuario")
-        resultadoUsuario
-    } catch (e: Exception) {
-        println("Error al obtener usuario: $e")
+    LaunchedEffect(key1 = usuarioId) {
+        val db = Firebase.firestore
+
+        val viajeRef = db.collection("usuario").document(usuarioId)
+
+        viajeRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                println("Error al obtener usuario: $error")
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                usuario = snapshot.toObject(UserData::class.java)
+                println("user obtenido: $usuario")
+            }
+            fin = true
+        }
+    }
+
+    return if (fin) {
+        usuario
+    } else {
         null
     }
 }

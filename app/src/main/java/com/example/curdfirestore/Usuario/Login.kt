@@ -40,7 +40,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioRT
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Usuario.dialogoNoToken
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -265,32 +268,115 @@ fun Login(
             }*/
         }
     }
+    var showDialogo by remember {
+        mutableStateOf(false)
+    }
 
+    var tokenActual by remember {
+        mutableStateOf("")
+    }
+    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            tokenActual = task.result
+            println("TOKEN Actual $tokenActual")
+        } else {
+            println("FCM -> Error al obtener el token: ${task.exception}")
+        }
+    }
+    var registro by remember {
+        mutableStateOf(false)
+    }
 
-    if (boton == true) {
+    if (boton) {
+        val usuario = conObtenerUsuarioRT(usuarioId = email)
         if (!ejecutado) {
 
-            var usuario = conObtenerUsuarioId(correo = email)
-            println("VARIABLE USUARIO $usuario")
-
             usuario?.let {
-                if (usuario!!.usu_status == "Activo") {
-                    println("USUARIO ACTIVO")
+                if (usuario.usu_status == "Activo") {
+                    var tokenRegistrado = usuario.usu_token_reg
+
                     if (loginAttempts < maxLoginAttempts) {
-                        viewModel.signInWithEmailAndPassword(email, password, context = context,
-                            home = {
-                                loginAttempts = 0
-                                onButtonClick(email)
-                            },
-                            errorCallback = {
-                                loginAttempts++
-                                println("loginAttempts++ $loginAttempts++")
-                                Toast.makeText(
-                                    context,
-                                    "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            })
+
+                        if (tokenRegistrado == "") {
+                            println("primera vez")
+                            //Primera vez
+                            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    val token = task.result
+                                    tokenRegistrado = token
+                                    viewModel.signInWithEmailAndPassword(email,
+                                        password,
+                                        context = context,
+                                        home = {
+                                            sendTokenToServer2(email, token) //Registra el token por primera vez
+                                            loginAttempts = 0
+                                            onButtonClick(email)
+                                        },
+                                        errorCallback = {
+                                            loginAttempts++
+                                            println("loginAttempts++ $loginAttempts++")
+                                            Toast.makeText(
+                                                context,
+                                                "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        })
+
+
+                                } else {
+                                    println("FCM -> Error al obtener el token: ${task.exception}")
+                                }
+                            }
+
+                        } else {
+
+                            if (tokenActual == tokenRegistrado) {
+                                //Todo bien
+                                viewModel.signInWithEmailAndPassword(email,
+                                    password,
+                                    context = context,
+                                    home = {
+                                        sendTokenToServer(email, tokenActual) //Registra el token por primera vez
+                                        loginAttempts = 0
+                                        onButtonClick(email)
+                                    },
+                                    errorCallback = {
+                                        loginAttempts++
+                                        println("loginAttempts++ $loginAttempts++")
+                                        Toast.makeText(
+                                            context,
+                                            "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    })
+
+                            } else {
+                                showDialogo = true
+
+                            }
+
+                        }
+                        /*
+                        if(registro){
+                            viewModel.signInWithEmailAndPassword(email,
+                                password,
+                                context = context,
+                                home = {
+                                    loginAttempts = 0
+                                    onButtonClick(email)
+                                },
+                                errorCallback = {
+                                    loginAttempts++
+                                    println("loginAttempts++ $loginAttempts++")
+                                    Toast.makeText(
+                                        context,
+                                        "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                })
+
+                        }
+                        */
                     } else {
                         Toast.makeText(
                             context,
@@ -300,7 +386,7 @@ fun Login(
                     }
                     ejecutado = true // Marca que ya se ha ejecutado
                 } else {
-                    println("USUARIO NO ACTIVO")
+                    //Usuario no activo
                     Toast.makeText(
                         context,
                         "Usuario dado de baja. No es posible iniciar sesión. ",
@@ -310,6 +396,11 @@ fun Login(
                 }
             }
 
+        }
+    }
+    if (showDialogo) {
+        dialogoNoToken {
+            showDialogo = false
         }
     }
 

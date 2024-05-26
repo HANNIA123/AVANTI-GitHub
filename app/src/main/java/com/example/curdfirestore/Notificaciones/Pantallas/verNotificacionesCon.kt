@@ -204,7 +204,7 @@ fun verNotificacionesCon(
                                                 modifier = Modifier.weight(1f)
                                             )
                                             Text(
-                                                text = "${notificacion.notificacion_fecha} hrs",
+                                                text = notificacion.notificacion_fecha,
                                                 style = TextStyle(
                                                     fontSize = 13.sp,
                                                     color = Color.Gray

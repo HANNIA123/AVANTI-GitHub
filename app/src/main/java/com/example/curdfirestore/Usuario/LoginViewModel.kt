@@ -33,6 +33,8 @@ class LoginViewModel: ViewModel () {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
                     if (task.isSuccessful) {
                         Log.d("Logueo", "Logueado!!")
+
+
                         home()
                         showNotificationPermissionDialog(context)
                     } else {
@@ -43,14 +45,6 @@ class LoginViewModel: ViewModel () {
                 Log.d("Logueo", "SignInWithEmailandPassword: ${ex.message}")
             }
         }
-
-
-    fun signOut(email: String) = viewModelScope.launch {
-
-
-
-        auth.signOut()
-    }
 
 
 

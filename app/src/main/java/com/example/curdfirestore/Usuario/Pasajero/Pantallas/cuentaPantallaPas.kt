@@ -185,7 +185,7 @@ fun cuentaPantallaPas(
                             eliminarToken(userID) {
                                 authViewModel.signOut()
                                 navController.navigate(route = "login")
-                            }
+                        }
                         }) {
                         Icon(
                             imageVector = Icons.Filled.ExitToApp,

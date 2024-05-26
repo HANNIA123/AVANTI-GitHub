@@ -175,10 +175,11 @@ fun cuentaPantallaCon(
                         ),
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
+
                             eliminarToken(userID) {
-                                authViewModel.signOut()
-                                navController.navigate(route = "login")
-                            }
+                                  authViewModel.signOut()
+                                  navController.navigate(route = "login")
+                              }
 
                         }) {
                         Icon(

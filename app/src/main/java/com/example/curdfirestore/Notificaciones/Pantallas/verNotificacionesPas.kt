@@ -155,7 +155,7 @@ fun verNotificacionesPas(
 
                                 ) {
                                     CoilImage(
-                                        url = usuario!!.usu_foto, modifier = Modifier
+                                        url = usuario.usu_foto, modifier = Modifier
                                             .size(85.dp)
                                             .clip(CircleShape)
                                     )
@@ -175,7 +175,7 @@ fun verNotificacionesPas(
                                                         fontSize = 15.sp
                                                     )
                                                 ) {
-                                                    append("${usuario!!.usu_nombre} ${usuario!!.usu_primer_apellido} ")
+                                                    append("${usuario.usu_nombre} ${usuario!!.usu_primer_apellido} ")
                                                 }
 
                                                 withStyle(
@@ -192,7 +192,7 @@ fun verNotificacionesPas(
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             Text(
-                                                text = "${notificacion.notificacion_hora}",
+                                                text = "${notificacion.notificacion_hora} hrs",
                                                 style = TextStyle(
                                                     fontSize = 13.sp,
                                                     color = Color.Gray
@@ -200,7 +200,7 @@ fun verNotificacionesPas(
                                                 modifier = Modifier.weight(1f)
                                             )
                                             Text(
-                                                text = "${notificacion.notificacion_fecha}",
+                                                text = notificacion.notificacion_fecha,
                                                 style = TextStyle(
                                                     fontSize = 13.sp,
                                                     color = Color.Gray
