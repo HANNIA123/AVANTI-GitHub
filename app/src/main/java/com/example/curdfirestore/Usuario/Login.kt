@@ -116,7 +116,7 @@ fun Login(
     var idTokenRegistrado by remember {
         mutableStateOf("")
     }
-    /*
+
         registrarToken(tokenData) { result ->
             result.onSuccess { data ->
                 data.let { (id, token) ->
@@ -127,7 +127,7 @@ fun Login(
                 println("Error: $e")
             }
         }
-    */
+
 
 
     LaunchedEffect(ejecutado) {
@@ -381,7 +381,9 @@ fun Login(
                         ).show()
                         ejecutado = true
                     } else {
-                        val tokenRegistrado = usuarioData?.usu_token_reg
+                        println("USUARIO $usuario")
+                        val tokenRegistrado = usuario.usu_token_reg
+                        println("Cual es $tokenRegistrado")
                         if (usuario.usu_status == "Activo") {
                             if (tokenRegistrado == "") {
                                 println("Primera vez")
@@ -394,7 +396,7 @@ fun Login(
                                             tokenActual
                                         )
                                         onButtonClick(email)
-                                        showNotificationPermissionDialog(context)
+
 
                                     },
                                     errorCallback = {
@@ -404,9 +406,9 @@ fun Login(
                                             "Usuario o contraseña inconrrectos",
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        ejecutado = true
-                                    })
 
+                                    })
+ejecutado=true
 
                             } else {
                                 println("ya registardo Actual $tokenActual  Regi $tokenRegistrado")
@@ -422,23 +424,24 @@ fun Login(
                                                 tokenActual
                                             )
                                             onButtonClick(email)
-                                            showNotificationPermissionDialog(context)
+
 
                                         },
                                         errorCallback = {
                                             loginAttempts++
                                             Toast.makeText(
                                                 context,
-                                                "Usuario o contraseña inconrrectos",
+                                                "Usuario o contraseña incorrectos",
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                            ejecutado = true
+
                                         })
 
 
                                 } else {
                                     showDialogo = true
                                 }
+                                ejecutado=true
                             }
                         } else {
 
@@ -459,6 +462,7 @@ fun Login(
                         "Sistema bloqueado",
                         Toast.LENGTH_SHORT
                     ).show()
+                    ejecutado=true
                 }
 
             }

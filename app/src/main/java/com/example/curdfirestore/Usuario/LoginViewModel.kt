@@ -38,7 +38,7 @@ class LoginViewModel: ViewModel () {
 
                         Log.d("Logueo", "Logueado!!")
                         home()
-
+                        showNotificationPermissionDialog(context)
 
 
                         } else {
