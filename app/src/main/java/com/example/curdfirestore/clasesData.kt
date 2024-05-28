@@ -1,6 +1,16 @@
 package com.example.avanti
 
 import com.google.android.gms.maps.model.LatLng
+import java.util.Date
+
+data class TokenData(
+    var token: String? ="",
+    var token_hora_bloqueo: String = "",
+    val token_bloqueo: Boolean=false,
+    val token_intentos: Int=0,
+    val token_fecha: String=""
+
+    )
 
 
 data class UserData(
@@ -17,6 +27,7 @@ data class UserData(
     var usu_token:String="",
     var usu_status: String="",
     var usu_token_reg: String="",
+
 
     )
 data class VehicleData(

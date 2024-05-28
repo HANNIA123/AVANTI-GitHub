@@ -25,11 +25,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import com.example.curdfirestore.R
 
 @Composable
 fun dialogoNoToken(
     onDismiss: () -> Unit,
+    navController: NavController
 ) {
 
 
@@ -84,7 +86,90 @@ fun dialogoNoToken(
 
                         TextButton(
                             onClick = {
-                              onDismiss()
+                                navController.navigate(route = "login")
+
+                            }) {
+                            Text(text = "ACEPTAR",
+                                style = TextStyle(
+                                    Color(137,67,242),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                )
+                            )
+                        }
+                    }
+
+                }
+
+            },
+
+
+
+            )
+
+    }
+
+}
+
+@Composable
+fun dialogoUsuarioInactivo(
+    onDismiss: () -> Unit,
+    textoD:String
+) {
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f)),
+
+        ) {
+        Dialog(
+            onDismissRequest = {
+                onDismiss()
+
+            },
+            content = {
+                // Contenido del diálogo
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(15.dp)
+
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Box(modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Image(
+                            modifier = Modifier
+                                .height(190.dp),
+                            painter = painterResource(id = R.drawable.cara),
+                            contentDescription = "Imagen pregunta",
+                            contentScale = ContentScale.FillBounds
+                        )
+                    }
+                    Text(
+                        text = textoD,
+                        textAlign = TextAlign.Justify,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.Black
+
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+
+
+                    Row(modifier = Modifier.align(Alignment.CenterHorizontally)){
+
+                        TextButton(
+                            onClick = {
+                                onDismiss()
                             }) {
                             Text(text = "ACEPTAR",
                                 style = TextStyle(

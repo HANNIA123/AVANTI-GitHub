@@ -10,7 +10,10 @@ import com.example.avanti.UserData
 import com.example.avanti.Usuario.RetrofitClientUsuario
 import com.example.avanti.ViajeData
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.tasks.await
 
 
 //unicamente lauched effect para las consultas, funciones unicamente.
@@ -49,14 +52,18 @@ fun conObtenerUsuarioId(correo: String): UserData? {
 
 
 
+
+
+
 @Composable
 fun conObtenerUsuarioRT(
-    usuarioId: String
+    usuarioId: String,
+    botonFin: () -> Unit
 ): UserData? {
 
     var fin by remember { mutableStateOf(false) }
     // Obtener objeto ViajeData
-    var usuario by remember { mutableStateOf<UserData?>(null) }
+    var viaje by remember { mutableStateOf<UserData?>(null) }
 
     LaunchedEffect(key1 = usuarioId) {
         val db = Firebase.firestore
@@ -65,21 +72,46 @@ fun conObtenerUsuarioRT(
 
         viajeRef.addSnapshotListener { snapshot, error ->
             if (error != null) {
-                println("Error al obtener usuario: $error")
+                println("Error al obtener viaje: $error")
                 return@addSnapshotListener
             }
 
             if (snapshot != null && snapshot.exists()) {
-                usuario = snapshot.toObject(UserData::class.java)
-                println("user obtenido: $usuario")
+                viaje = snapshot.toObject(UserData::class.java)
+
             }
             fin = true
+
         }
     }
-
+if(fin){
+    botonFin()
+    println("Aquiiiii")
+}
+    print("El boton $fin")
     return if (fin) {
-        usuario
+        viaje
     } else {
         null
+    }
+}
+
+suspend fun validarUsuarioExistente(
+    usuarioId: String
+): Pair<Boolean, UserData?> {
+    return try {
+        val db = FirebaseFirestore.getInstance()
+        val documentoRef = db.collection("usuario").document(usuarioId)
+        val snapshot = documentoRef.get().await()
+
+        if (snapshot.exists()) {
+            val usuario = snapshot.toObject(UserData::class.java)
+            Pair(true, usuario)
+        } else {
+            Pair(false, null)
+        }
+    } catch (e: FirebaseFirestoreException) {
+        println("Error al verificar usuario: $e")
+        Pair(false, null)
     }
 }

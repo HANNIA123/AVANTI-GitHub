@@ -37,16 +37,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.avanti.Usuario.Conductor.Pantallas.homePantallaConductor
-import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
+import com.example.avanti.TokenData
+import com.example.avanti.UserData
+
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioRT
+import com.example.curdfirestore.Notificaciones.Consultas.showNotificationPermissionDialog
+
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.dialogoNoToken
+
+import com.example.curdfirestore.conObtenerTokenRTCom
+
+import com.example.curdfirestore.registrarToken
+import com.example.curdfirestore.validaBloqueoLogin
 import com.google.firebase.messaging.FirebaseMessaging
 
 
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 
 fun Login(
@@ -61,6 +68,9 @@ fun Login(
     var password by remember {
         mutableStateOf("")
     }
+    var logueo by remember {
+        mutableStateOf(false)
+    }
 
     var hidden by remember { mutableStateOf(true) } //1
     var nameError by remember { mutableStateOf(false) } // 1 -- Field obligatorio
@@ -69,15 +79,78 @@ fun Login(
     var ejecutado by remember { mutableStateOf(false) }
     var boton by remember { mutableStateOf(false) }
     var loginAttempts by remember { mutableStateOf(0) }
+    var newIntentos by remember { mutableStateOf(0) }
     val maxLoginAttempts = 3
-    var prueba by remember { mutableStateOf(false) } // 1 -- Field obligatorio
+    var botonInicio by remember { mutableStateOf(true) } // 1 -- Field obligatorio
 
-    LaunchedEffect(ejecutado) {
-        if (ejecutado == true) {
-            boton = false
-            ejecutado = false
+    var showDialogo by remember {
+        mutableStateOf(false)
+    }
+
+    var usuarioData by remember {
+        mutableStateOf<UserData?>(null)
+    }
+
+    var tokenActual by remember {
+        mutableStateOf("")
+    }
+    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            tokenActual = task.result
+
+        } else {
+            println("FCM -> Error al obtener el token: ${task.exception}")
         }
     }
+
+
+    val tokenData = TokenData(
+        token = tokenActual,
+        token_bloqueo = false,
+        token_intentos = loginAttempts,
+        token_hora_bloqueo = "",
+        token_fecha = ""
+    )
+
+
+    var idTokenRegistrado by remember {
+        mutableStateOf("")
+    }
+    /*
+        registrarToken(tokenData) { result ->
+            result.onSuccess { data ->
+                data.let { (id, token) ->
+                    idTokenRegistrado = id
+
+                }
+            }.onFailure { e ->
+                println("Error: $e")
+            }
+        }
+    */
+
+
+    LaunchedEffect(ejecutado) {
+        if (ejecutado) {
+            boton = false
+            ejecutado = false
+
+        }
+    }
+
+
+    /*   validaBloqueoLogin(
+           idToken = idTokenRegistrado,
+           botonActivo = {
+               botonInicio = true
+               println("Botón activado")
+           },
+           botonNoActivo = {
+               botonInicio = false
+               println("Botón desactivado")
+           }
+       )
+     */
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -151,7 +224,8 @@ fun Login(
 
             //Texto obligatorio
 
-            val assistiveElementText = if (nameError) "Ingresa tu correo electrónico" else "" // 4
+            val assistiveElementText =
+                if (nameError) "Ingresa tu correo electrónico" else "" // 4
             val assistiveElementColor = if (nameError) { // 5
                 MaterialTheme.colors.error
             } else {
@@ -241,170 +315,168 @@ fun Login(
                 )
             }
             Spacer(Modifier.size(16.dp))
-            //Boton Ingreso
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(137, 13, 88)),
-                onClick = {
-                    nameError = email.isBlank()
-                    nameError1 = password.isBlank()
-                    if (!nameError && !nameError1) {
-                        boton = true
 
-                    }
-                },
-                modifier = Modifier
-                    .width(300.dp)
-                    .width(80.dp)
-            ) {
+            //Boton Ingreso
+            if (botonInicio) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(
+                            137,
+                            13,
+                            88
+                        )
+                    ),
+                    onClick = {
+                        nameError = email.isBlank()
+                        nameError1 = password.isBlank()
+                        if (!nameError && !nameError1) {
+                            boton = true
+
+                        }
+                    },
+                    modifier = Modifier
+                        .width(300.dp)
+                        .width(80.dp)
+                ) {
+                    Text(
+                        text = "Iniciar sesión", style = TextStyle(
+                            fontSize = 24.sp,
+                            color = Color.White
+                        )
+                    )
+                }
+            } else {
                 Text(
-                    text = "Iniciar sesión", style = TextStyle(
-                        fontSize = 24.sp,
-                        color = Color.White
+                    text = "Sistema bloqueado... Espere 5 minutos", style = TextStyle(
+                        fontSize = 18.sp,
+                        color = Color(137, 13, 88)
                     )
                 )
             }
-            /*if (prueba == true) {
-                Text("Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}")
-            }*/
+
         }
-    }
-    var showDialogo by remember {
-        mutableStateOf(false)
     }
 
-    var tokenActual by remember {
-        mutableStateOf("")
-    }
-    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-            tokenActual = task.result
-            println("TOKEN Actual $tokenActual")
-        } else {
-            println("FCM -> Error al obtener el token: ${task.exception}")
-        }
-    }
-    var registro by remember {
+    var finaliza by remember {
         mutableStateOf(false)
     }
 
     if (boton) {
-        val usuario = conObtenerUsuarioRT(usuarioId = email)
+        val usuario = conObtenerUsuarioRT(usuarioId = email, botonFin = {
+            finaliza = true
+        })
         if (!ejecutado) {
 
-            usuario?.let {
-                if (usuario.usu_status == "Activo") {
-                    var tokenRegistrado = usuario.usu_token_reg
+            if (finaliza) {
 
-                    if (loginAttempts < maxLoginAttempts) {
+                if (loginAttempts < maxLoginAttempts) {
 
-                        if (tokenRegistrado == "") {
-                            println("primera vez")
-                            //Primera vez
-                            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    val token = task.result
-                                    tokenRegistrado = token
-                                    viewModel.signInWithEmailAndPassword(email,
-                                        password,
-                                        context = context,
-                                        home = {
-                                            sendTokenToServer2(email, token) //Registra el token por primera vez
-                                            loginAttempts = 0
-                                            onButtonClick(email)
-                                        },
-                                        errorCallback = {
-                                            loginAttempts++
-                                            println("loginAttempts++ $loginAttempts++")
-                                            Toast.makeText(
-                                                context,
-                                                "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        })
+                    if (usuario == null) {
 
-
-                                } else {
-                                    println("FCM -> Error al obtener el token: ${task.exception}")
-                                }
-                            }
-
-                        } else {
-
-                            if (tokenActual == tokenRegistrado) {
-                                //Todo bien
+                        loginAttempts++
+                        Toast.makeText(
+                            context,
+                            "Usuario o contraseña inconrrectos",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ejecutado = true
+                    } else {
+                        val tokenRegistrado = usuarioData?.usu_token_reg
+                        if (usuario.usu_status == "Activo") {
+                            if (tokenRegistrado == "") {
+                                println("Primera vez")
                                 viewModel.signInWithEmailAndPassword(email,
                                     password,
                                     context = context,
                                     home = {
-                                        sendTokenToServer(email, tokenActual) //Registra el token por primera vez
-                                        loginAttempts = 0
+                                        sendTokenToServer2(
+                                            email,
+                                            tokenActual
+                                        )
                                         onButtonClick(email)
+                                        showNotificationPermissionDialog(context)
+
                                     },
                                     errorCallback = {
                                         loginAttempts++
-                                        println("loginAttempts++ $loginAttempts++")
                                         Toast.makeText(
                                             context,
-                                            "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
+                                            "Usuario o contraseña inconrrectos",
                                             Toast.LENGTH_SHORT
                                         ).show()
+                                        ejecutado = true
                                     })
 
+
                             } else {
-                                showDialogo = true
+                                println("ya registardo Actual $tokenActual  Regi $tokenRegistrado")
+                                if (tokenActual == tokenRegistrado) {
+                                    println("Adentroooo")
 
+                                    viewModel.signInWithEmailAndPassword(email,
+                                        password,
+                                        context = context,
+                                        home = {
+                                            sendTokenToServer(
+                                                email,
+                                                tokenActual
+                                            )
+                                            onButtonClick(email)
+                                            showNotificationPermissionDialog(context)
+
+                                        },
+                                        errorCallback = {
+                                            loginAttempts++
+                                            Toast.makeText(
+                                                context,
+                                                "Usuario o contraseña inconrrectos",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            ejecutado = true
+                                        })
+
+
+                                } else {
+                                    showDialogo = true
+                                }
                             }
+                        } else {
+
+                            Toast.makeText(
+                                context,
+                                "Usuario dado de baja",
+                                Toast.LENGTH_SHORT
+                            ).show()
 
                         }
-                        /*
-                        if(registro){
-                            viewModel.signInWithEmailAndPassword(email,
-                                password,
-                                context = context,
-                                home = {
-                                    loginAttempts = 0
-                                    onButtonClick(email)
-                                },
-                                errorCallback = {
-                                    loginAttempts++
-                                    println("loginAttempts++ $loginAttempts++")
-                                    Toast.makeText(
-                                        context,
-                                        "Datos incorrectos. Intentos restantes: ${maxLoginAttempts - loginAttempts}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                })
 
-                        }
-                        */
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "El sistema se ha bloqueado. Inténtelo nuevamente después de 15 minutos.",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
-                    ejecutado = true // Marca que ya se ha ejecutado
+
+
                 } else {
-                    //Usuario no activo
                     Toast.makeText(
                         context,
-                        "Usuario dado de baja. No es posible iniciar sesión. ",
+                        "Sistema bloqueado",
                         Toast.LENGTH_SHORT
                     ).show()
-                    ejecutado = true // Marca que ya se ha ejecutado
                 }
+
             }
-
         }
+
     }
+
     if (showDialogo) {
-        dialogoNoToken {
+        dialogoNoToken({
             showDialogo = false
-        }
-    }
 
+        }, navController)
+    }
 }
+
+
+
+
 
 
 

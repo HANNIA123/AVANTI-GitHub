@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioRT
 import com.example.curdfirestore.Notificaciones.Consultas.requestNotificationPermission
 import com.example.curdfirestore.Notificaciones.Consultas.showNotificationPermissionDialog
 import com.google.firebase.ktx.Firebase
@@ -32,12 +33,15 @@ class LoginViewModel: ViewModel () {
             try {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
                     if (task.isSuccessful) {
+
+
+
                         Log.d("Logueo", "Logueado!!")
-
-
                         home()
-                        showNotificationPermissionDialog(context)
-                    } else {
+
+
+
+                        } else {
                         errorCallback()
                     }
                 }
