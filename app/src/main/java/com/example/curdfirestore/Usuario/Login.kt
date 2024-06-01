@@ -1,6 +1,7 @@
 package com.example.avanti.Usuario
 
 import android.annotation.SuppressLint
+import android.os.Handler
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -45,12 +46,19 @@ import com.example.curdfirestore.Notificaciones.Consultas.showNotificationPermis
 
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.dialogoNoToken
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerHistorialViajeRT
+import com.example.curdfirestore.Viaje.ConsultasViaje.editarCampoHistorial
+import com.example.curdfirestore.Viaje.Funciones.convertirStringATimeSec
+import com.example.curdfirestore.Viaje.Funciones.obtenerHoraActualSec
 
 import com.example.curdfirestore.conObtenerTokenRTCom
+import com.example.curdfirestore.editarCampoToken
 
 import com.example.curdfirestore.registrarToken
 import com.example.curdfirestore.validaBloqueoLogin
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.delay
+import java.time.temporal.ChronoUnit
 
 
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
@@ -60,6 +68,8 @@ fun Login(
     navController: NavController,
     onButtonClick: (String) -> Unit
 ) {
+    var timeRemaining by remember { mutableStateOf(1 * 60) }  // 5 minutes in seconds
+
     val context = LocalContext.current
     val viewModel = LoginViewModel()
     var email by remember {
@@ -84,6 +94,10 @@ fun Login(
     var botonInicio by remember { mutableStateOf(true) } // 1 -- Field obligatorio
 
     var showDialogo by remember {
+        mutableStateOf(false)
+    }
+
+    var registraB by remember {
         mutableStateOf(false)
     }
 
@@ -116,17 +130,21 @@ fun Login(
     var idTokenRegistrado by remember {
         mutableStateOf("")
     }
+    var finaliza by remember {
+        mutableStateOf(false)
+    }
 
-        registrarToken(tokenData) { result ->
-            result.onSuccess { data ->
-                data.let { (id, token) ->
-                    idTokenRegistrado = id
 
-                }
-            }.onFailure { e ->
-                println("Error: $e")
+    registrarToken(tokenData) { result ->
+        result.onSuccess { data ->
+            data.let { (id, token) ->
+                idTokenRegistrado = id
+
             }
+        }.onFailure { e ->
+            println("Error: $e")
         }
+    }
 
 
 
@@ -134,6 +152,7 @@ fun Login(
         if (ejecutado) {
             boton = false
             ejecutado = false
+            finaliza=false
 
         }
     }
@@ -357,14 +376,16 @@ fun Login(
         }
     }
 
-    var finaliza by remember {
-        mutableStateOf(false)
-    }
 
+    println("MI BOTON $boton")
     if (boton) {
+        var ejecutadoToast by remember {
+            mutableStateOf(false)
+        }
         val usuario = conObtenerUsuarioRT(usuarioId = email, botonFin = {
             finaliza = true
         })
+        println("EL USUARIO $usuario")
         if (!ejecutado) {
 
             if (finaliza) {
@@ -372,54 +393,139 @@ fun Login(
                 if (loginAttempts < maxLoginAttempts) {
 
                     if (usuario == null) {
-
                         loginAttempts++
-                        Toast.makeText(
-                            context,
-                            "Usuario o contraseña inconrrectos",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if(!ejecutadoToast) {
+                            Toast.makeText(
+                                context,
+                                "Usuario o contraseña incorrectos",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        ejecutadoToast=true
+                        }
                         ejecutado = true
                     } else {
                         println("USUARIO $usuario")
                         val tokenRegistrado = usuario.usu_token_reg
-                        println("Cual es $tokenRegistrado")
+                        println("Cual es el token registrado----$tokenRegistrado")
                         if (usuario.usu_status == "Activo") {
-                            if (tokenRegistrado == "") {
-                                println("Primera vez")
-                                viewModel.signInWithEmailAndPassword(email,
-                                    password,
-                                    context = context,
-                                    home = {
+                            viewModel.signInWithEmailAndPassword(email,
+                                password,
+                                context = context,
+                                tokenActual = tokenActual,
+                                tokenRegistrado = tokenRegistrado,
+                                home = {
+
+                                    if(tokenRegistrado=="") {
+                                        println("Primera vez")
                                         sendTokenToServer2(
                                             email,
                                             tokenActual
                                         )
-                                        onButtonClick(email)
+                                    }
+                                    else{
+
+                                        if (tokenActual == tokenRegistrado) {
+                                            println("Este es correcto")
+                                        sendTokenToServer(
+                                            email,
+                                            tokenActual
+                                        )
 
 
-                                    },
-                                    errorCallback = {
-                                        loginAttempts++
+                                        }
+
+                                    }
+                                    onButtonClick(email)
+                                    ejecutado = true
+
+                                },
+                                errorCallback = {
+                                    loginAttempts++
+                                    if(!ejecutadoToast) {
                                         Toast.makeText(
                                             context,
-                                            "Usuario o contraseña inconrrectos",
+                                            "Usuario o contraseña incorrectos",
                                             Toast.LENGTH_SHORT
                                         ).show()
+                                    ejecutadoToast=true
+                                    }
+                                    ejecutado = true
+                                },
+                                errorDis = {
+                                    showDialogo=true
 
-                                    })
-ejecutado=true
+                                    ejecutado=true
+                                }
 
-                            } else {
-                                println("ya registardo Actual $tokenActual  Regi $tokenRegistrado")
-                                if (tokenActual == tokenRegistrado) {
-                                    println("Adentroooo")
+                            )
 
+
+
+
+                        } else {
+
+                            Toast.makeText(
+                                context,
+                                "Usuario dado de baja",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            ejecutado = true
+
+                        }
+
+                    }
+
+
+                } else {
+                    registraB=true
+                    Toast.makeText(
+                        context,
+                        "Sistema bloqueado",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    ejecutado = true
+                }
+
+            }
+        }
+
+    }
+
+
+
+
+    /*
+        if (boton) {
+            val usuario = conObtenerUsuarioRT(usuarioId = email, botonFin = {
+                finaliza = true
+            })
+            if (!ejecutado) {
+
+                if (finaliza) {
+
+                    if (loginAttempts < maxLoginAttempts) {
+
+                        if (usuario == null) {
+
+                            loginAttempts++
+                            Toast.makeText(
+                                context,
+                                "Usuario o contraseña inconrrectos",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            ejecutado = true
+                        } else {
+                            println("USUARIO $usuario")
+                            val tokenRegistrado = usuario.usu_token_reg
+                            println("Cual es $tokenRegistrado")
+                            if (usuario.usu_status == "Activo") {
+                                if (tokenRegistrado == "") {
+                                    println("Primera vez")
                                     viewModel.signInWithEmailAndPassword(email,
                                         password,
                                         context = context,
                                         home = {
-                                            sendTokenToServer(
+                                            sendTokenToServer2(
                                                 email,
                                                 tokenActual
                                             )
@@ -431,44 +537,101 @@ ejecutado=true
                                             loginAttempts++
                                             Toast.makeText(
                                                 context,
-                                                "Usuario o contraseña incorrectos",
+                                                "Usuario o contraseña inconrrectos",
                                                 Toast.LENGTH_SHORT
                                             ).show()
 
                                         })
-
+                                    ejecutado = true
 
                                 } else {
-                                    showDialogo = true
-                                }
-                                ejecutado=true
-                            }
-                        } else {
+                                    println("ya registardo Actual $tokenActual  Regi $tokenRegistrado")
+                                    if (tokenActual == tokenRegistrado) {
+                                        println("Adentroooo")
 
-                            Toast.makeText(
-                                context,
-                                "Usuario dado de baja",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                                        viewModel.signInWithEmailAndPassword(email,
+                                            password,
+                                            context = context,
+                                            home = {
+                                                sendTokenToServer(
+                                                    email,
+                                                    tokenActual
+                                                )
+                                                onButtonClick(email)
+
+
+                                            },
+                                            errorCallback = {
+                                                loginAttempts++
+                                                Toast.makeText(
+                                                    context,
+                                                    "Usuario o contraseña incorrectos",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+
+                                            })
+
+
+                                    } else {
+                                        viewModel.signInWithEmailAndPassword(email,
+                                            password,
+                                            context = context,
+                                            home = {
+
+
+                                                Toast.makeText(
+                                                    context,
+                                                    "Dispositivo no registrado",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                println("SHOW DIALOG $showDialogo")
+                                            },
+                                            errorCallback = {
+                                                loginAttempts++
+                                                Toast.makeText(
+                                                    context,
+                                                    "Usuario o contraseña incorrectos",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+
+                                            })
+
+
+
+
+                                    }
+                                    ejecutado = true
+                                }
+                            } else {
+
+                                Toast.makeText(
+                                    context,
+                                    "Usuario dado de baja",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                ejecutado = true
+
+                            }
 
                         }
 
+
+                    } else {
+    registraB=true
+                        Toast.makeText(
+                            context,
+                            "Sistema bloqueado",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ejecutado = true
                     }
 
-
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Sistema bloqueado",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    ejecutado=true
                 }
-
             }
+
         }
 
-    }
+        */
 
     if (showDialogo) {
         dialogoNoToken({
@@ -476,11 +639,101 @@ ejecutado=true
 
         }, navController)
     }
+
+    if(registraB){
+        registrarBloqueo(
+            bloqueoBoton = true,
+            botonActivo = { botonInicio=true
+                          loginAttempts=0
+                          },
+            botonNoActivo = { botonInicio=false },
+            horaBloqueoS = obtenerHoraActualSec(),
+            botonR = {registraB=false}
+        )
+    }
+    println("Contador $timeRemaining")
 }
 
+@Composable
+fun CountdownTimer(timeRemaining: Int, onTimeRemainingChange: (Int) -> Unit) {
+    LaunchedEffect(key1 = timeRemaining) {
+        if (timeRemaining > 0) {
+            delay(1000L)  // 1 second delay
+            onTimeRemainingChange(timeRemaining - 1)
+        }
+    }
+
+}
+
+@Composable
+fun registrarBloqueo(
+    bloqueoBoton: Boolean,
+    botonActivo: () -> Unit,
+    botonNoActivo: () -> Unit,
+    botonR: () -> Unit,
+    horaBloqueoS: String
+
+) {
+
+    val handler = Handler()
+    val delayMillis = 2000L // 2 segundos en milisegundos, para recargar
+
+    val isRunning =
+        remember { mutableStateOf(true) } // Variable de control para detener la ejecución
 
 
+    val runnableCode = object : Runnable {
+        override fun run() {
 
+
+            // Coloca tu código aquí
+            if (bloqueoBoton) {
+
+                val tiempoBloqueo = 20
+                val horaActual =
+                    convertirStringATimeSec(obtenerHoraActualSec())
+                val horaBloqueo = convertirStringATimeSec(horaBloqueoS)
+
+                val diferencia =
+                    ChronoUnit.SECONDS.between(horaBloqueo, horaActual)
+                println("Diferenciaaa $diferencia")
+                print("Actua: $horaActual  Bloqueo $horaBloqueo")
+
+                if (diferencia > tiempoBloqueo) {
+
+
+                    println("La diferencia de tiempo es mayor a 1 minuto. Boton ACTIVO")
+                    botonActivo()
+                    isRunning.value =
+                        false // Detener la ejecución después de ejecutar botonActivo()
+
+
+                    // Agregar aquí la lógica adicional según tu requerimiento
+                } else {
+                    botonR()
+                    botonNoActivo()
+                    println("La diferencia de tiempo es menor o igual a 1 minuto. INACTIVO")
+                    // Agregar aquí la lógica adicional en caso de ser menor o igual a 1 minuto
+                }
+
+                // Reiniciar la variable "recargar" para futuras recargas
+            }
+
+            // Vuelve a programar la ejecución del código después de 2 segundos
+            if (isRunning.value) {
+
+                handler.postDelayed(this, delayMillis)
+            }
+
+
+        }
+
+    }
+    if (isRunning.value) {
+        handler.postDelayed(runnableCode, delayMillis)
+    }
+
+}
 
 
 

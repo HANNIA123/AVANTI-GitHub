@@ -1,4 +1,5 @@
 package com.example.avanti.Usuario
+
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -19,29 +20,47 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 
 
-class LoginViewModel: ViewModel () {
+class LoginViewModel : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
     private val _loading = MutableLiveData(false)
     fun signInWithEmailAndPassword(
         email: String,
         password: String,
         context: Context,
+        tokenActual: String,
+        tokenRegistrado: String,
         home: () -> Unit,
-        errorCallback: () -> Unit
-    ) =
+        errorCallback: () -> Unit,
+        errorDis:() -> Unit
+
+        ) =
         viewModelScope.launch {
+
+
+
+
+
+
             try {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
                     if (task.isSuccessful) {
+                        var tokenRegistradoNew= tokenRegistrado
+                        if(tokenRegistradoNew==""){
+                            tokenRegistradoNew=tokenActual
+                        }
 
+                            // Verificar si los tokens coinciden después de una autenticación exitosa
+                            if (tokenActual != tokenRegistradoNew) {
+                                auth.signOut() // Cerrar sesión inmediatamente si los tokens no coinciden
+                                errorDis()
+                            } else {
+                                Log.d("Logueo", "Logueado!!")
+                                home()
+                                showNotificationPermissionDialog(context)
 
+                            }
 
-                        Log.d("Logueo", "Logueado!!")
-                        home()
-                        showNotificationPermissionDialog(context)
-
-
-                        } else {
+                    } else {
                         errorCallback()
                     }
                 }
@@ -51,28 +70,39 @@ class LoginViewModel: ViewModel () {
         }
 
 
-
-
     fun resetPassword(
         email: String,
         context: Context,
         navController: NavController,
-    )
-    {
-        try{
+    ) {
+        try {
             auth.sendPasswordResetEmail(email).addOnCompleteListener() { task ->
                 if (task.isSuccessful) {
                     Log.d("ResetPassword", "Se ha enviado el correo de restablecimiento!!")
-                    Toast.makeText(context, "Se ha enviado el correo de restablecimiento", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Se ha enviado el correo de restablecimiento",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     navController.navigate(route = "login")
                 } else {
-                    Toast.makeText(context, "Correo electrónico no registrado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Correo electrónico no registrado", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
 
-            Log.d("ResetPassword","Error al restablcer la contraseña ${e.message}")
+            Log.d("ResetPassword", "Error al restablcer la contraseña ${e.message}")
+        }
+    }
+
+    fun logOut(logoutCallback: () -> Unit) {
+        try {
+            auth.signOut()
+            Log.d("LogOut", "User signed out")
+            logoutCallback()
+        } catch (ex: Exception) {
+            Log.d("LogOut", "Error signing out: ${ex.message}")
         }
     }
 
@@ -99,5 +129,6 @@ fun eliminarToken(email: String, onComplete: () -> Unit) {
         e.printStackTrace()
         println("Error al intentar eliminar el campo usu_token de Firestore: $e")
     }
+
 
 }
