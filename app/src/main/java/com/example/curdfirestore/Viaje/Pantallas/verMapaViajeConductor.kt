@@ -319,7 +319,7 @@ fun verMapaViajeConductor(
                                 // Modifica el nivel de zoom del mapa
 
                                 val cameraUpdate =
-                                    CameraUpdateFactory.newLatLngZoom(markerPositions[0], 14f)
+                                    CameraUpdateFactory.newLatLngZoom(markerPositions[1], 16f)
                                 //googleMap.moveCamera(cameraUpdate)
                                 googleMap.animateCamera(cameraUpdate)
                                 //googleMap.animateCamera(cameraUpdate, 1000, null)

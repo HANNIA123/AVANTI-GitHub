@@ -6,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.avanti.SolicitudData
 import com.example.avanti.UserData
 import com.example.avanti.Usuario.RetrofitClientUsuario
+import com.example.curdfirestore.lineaCargando
 import com.example.avanti.ViajeData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -50,11 +52,6 @@ fun conObtenerUsuarioId(correo: String): UserData? {
     }
 }
 
-
-
-
-
-
 @Composable
 fun conObtenerUsuarioRT(
     usuarioId: String,
@@ -84,10 +81,10 @@ fun conObtenerUsuarioRT(
 
         }
     }
-if(fin){
-    botonFin()
-    println("Aquiiiii")
-}
+    if(fin){
+        botonFin()
+        println("Aquiiiii")
+    }
     print("El boton $fin")
     return if (fin) {
         viaje
@@ -115,3 +112,9 @@ suspend fun validarUsuarioExistente(
         Pair(false, null)
     }
 }
+
+
+
+
+
+
