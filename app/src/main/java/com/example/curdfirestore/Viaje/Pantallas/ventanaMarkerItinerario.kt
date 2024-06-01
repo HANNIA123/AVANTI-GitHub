@@ -256,7 +256,7 @@ fun ventanaMarkerItinerario(
                                             Spacer(modifier = Modifier.height(10.dp))
 
                                             val pasajero =
-                                                conObtenerUsuarioRT(userId = idUser)
+                                                conObtenerUsuarioId(correo = idUser)
 
                                             pasajero?.let {
 

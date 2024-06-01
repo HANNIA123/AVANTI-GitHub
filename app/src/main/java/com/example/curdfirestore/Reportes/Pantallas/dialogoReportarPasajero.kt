@@ -52,6 +52,7 @@ import com.example.avanti.ViajeData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.lineaGris
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
 import com.example.curdfirestore.Reportes.ConsultasReporte.conRegistrarReporte
 import com.example.curdfirestore.Reportes.Funciones.convertiraMotivo
@@ -283,7 +284,8 @@ fun dialogoReportarPasajero(
             repor_u_reportado = pasajero_id,
             repor_motivo = motivo,
             repor_detalles = descripciontext,
-            repor_fecha = fecha_now
+            repor_fecha = fecha_now,
+            repor_hora = obtenerHoraActual()
         )
         conRegistrarReporte( reporteData)
         ejecutado = true

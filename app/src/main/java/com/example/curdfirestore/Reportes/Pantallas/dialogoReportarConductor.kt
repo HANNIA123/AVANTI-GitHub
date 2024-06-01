@@ -44,6 +44,7 @@ import com.example.avanti.ReporteData
 import com.example.avanti.UserData
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
 import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Reportes.ConsultasReporte.conRegistrarReporte
 import com.example.curdfirestore.Reportes.Funciones.convertiraMotivo
 import com.example.curdfirestore.textTituloInfSolcitud
@@ -266,7 +267,8 @@ fun dialogoReportarConductor(
             repor_u_reportado = conductor_id,
             repor_motivo = motivo,
             repor_detalles = descripciontext,
-            repor_fecha = fecha_now
+            repor_fecha = fecha_now,
+            repor_hora = obtenerHoraActual()
         )
         conRegistrarReporte( reporteData)
         ejecutado = true
