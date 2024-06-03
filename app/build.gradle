@@ -73,7 +73,7 @@ dependencies {
     //implementation 'com.google.maps.android:maps-compose:1.0.0' agregador
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
 
-
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 
 
 ///
