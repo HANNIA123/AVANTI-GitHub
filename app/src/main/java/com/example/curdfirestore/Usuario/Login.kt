@@ -42,6 +42,7 @@ import com.example.avanti.TokenData
 import com.example.avanti.UserData
 
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioRT
+import com.example.curdfirestore.Notificaciones.Consultas.showNotificationPermissionDialog
 
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.dialogoNoToken
@@ -371,6 +372,9 @@ fun Login(
         var ejecutadoToast by remember {
             mutableStateOf(false)
         }
+        var ejecutadoPermiso by remember {
+            mutableStateOf(false)
+        }
         val usuario = conObtenerUsuarioRT(usuarioId = email, botonFin = {
             finaliza = true
         })
@@ -418,6 +422,10 @@ fun Login(
 
                                         }
 
+                                    }
+                                    if(!ejecutadoPermiso) {
+                                        showNotificationPermissionDialog(context)
+                                        ejecutadoPermiso=true
                                     }
                                     onButtonClick(email)
                                     ejecutado = true

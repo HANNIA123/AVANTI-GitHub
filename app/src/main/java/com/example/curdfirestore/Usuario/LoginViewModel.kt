@@ -23,6 +23,9 @@ import kotlinx.coroutines.tasks.await
 class LoginViewModel : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
     private val _loading = MutableLiveData(false)
+
+
+
     fun signInWithEmailAndPassword(
         email: String,
         password: String,
@@ -31,43 +34,33 @@ class LoginViewModel : ViewModel() {
         tokenRegistrado: String,
         home: () -> Unit,
         errorCallback: () -> Unit,
-        errorDis:() -> Unit
-
-        ) =
-        viewModelScope.launch {
-
-
-
-
-
-
-            try {
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
-                    if (task.isSuccessful) {
-                        var tokenRegistradoNew= tokenRegistrado
-                        if(tokenRegistradoNew==""){
-                            tokenRegistradoNew=tokenActual
-                        }
-
-                            // Verificar si los tokens coinciden después de una autenticación exitosa
-                            if (tokenActual != tokenRegistradoNew) {
-                                auth.signOut() // Cerrar sesión inmediatamente si los tokens no coinciden
-                                errorDis()
-                            } else {
-                                Log.d("Logueo", "Logueado!!")
-                                home()
-                                showNotificationPermissionDialog(context)
-
-                            }
-
-                    } else {
-                        errorCallback()
+        errorDis: () -> Unit
+    ) = viewModelScope.launch {
+        try {
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
+                if (task.isSuccessful) {
+                    var tokenRegistradoNew = tokenRegistrado
+                    if (tokenRegistradoNew == "") {
+                        tokenRegistradoNew = tokenActual
                     }
+                    // Verificar si los tokens coinciden después de una autenticación exitosa
+                    if (tokenActual != tokenRegistradoNew) {
+                        auth.signOut() // Cerrar sesión inmediatamente si los tokens no coinciden
+                        errorDis()
+                    } else {
+
+
+
+                            home()
+                      }
+                } else {
+                    errorCallback()
                 }
-            } catch (ex: Exception) {
-                Log.d("Logueo", "SignInWithEmailandPassword: ${ex.message}")
             }
+        } catch (ex: Exception) {
+            Log.d("Logueo Exception", "SignInWithEmailandPassword: ${ex.message}")
         }
+    }
 
 
     fun resetPassword(
@@ -92,9 +85,10 @@ class LoginViewModel : ViewModel() {
             }
         } catch (e: Exception) {
 
-            Log.d("ResetPassword", "Error al restablcer la contraseña ${e.message}")
+            Log.d("ResetPassword", "Error al restablecer la contraseña ${e.message}")
         }
     }
+
 
     fun logOut(logoutCallback: () -> Unit) {
         try {

@@ -63,27 +63,25 @@ import java.util.concurrent.TimeUnit
 
 //barra de busqueda 27/12/2023
 suspend fun searchPlaces(query: String, context: Context): List<Place> {
-    // Inicializar el cliente de Places API
     Places.initialize(context, "AIzaSyAZmpsa99qsen70ktUWCSDbmEChisRMdlQ")
     val placesClient = Places.createClient(context)
-    // Crear un token de sesión con información de idioma
-    val sessionToken = AutocompleteSessionToken.newInstance()
-
     // Realizar una solicitud para obtener predicciones de autocompletado
     val request = FindAutocompletePredictionsRequest.builder()
         .setQuery("CDMX State of Mexico $query") // Agregar prefijos de las ciudades
-
         .build()
-
 
     val response = withContext(Dispatchers.IO) {
         placesClient.findAutocompletePredictions(request).await()
     }
-    // Mapear las predicciones a objetos Place
+
     return response.autocompletePredictions.map { prediction ->
         val placeId = prediction.placeId
-        // Realizar una solicitud para obtener más detalles del lugar
-        val placeRequest = FetchPlaceRequest.builder(placeId, listOf(Place.Field.ADDRESS, Place.Field.LAT_LNG)).build()
+        val placeRequest = FetchPlaceRequest.builder(
+            placeId, listOf(
+                Place.Field.ADDRESS,
+                Place.Field.LAT_LNG
+            )
+        ).build()
         val placeResponse = withContext(Dispatchers.IO) {
             placesClient.fetchPlace(placeRequest).await()
         }
@@ -91,7 +89,7 @@ suspend fun searchPlaces(query: String, context: Context): List<Place> {
         val place = placeResponse.place
         val address = place.address
         val latLng = place.latLng
-        // Crear una instancia de Place
+
         Place.builder()
             .setName(prediction.getFullText(null).toString())
             .setAddress(address)
@@ -99,7 +97,6 @@ suspend fun searchPlaces(query: String, context: Context): List<Place> {
             .build()
     }
 }
-
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -110,8 +107,8 @@ fun SearchBar(
     onSearch: (String) -> Unit,
     onPlaceSelected: (Place) -> Unit,
     onMapButtonClick: (String) -> Unit,
-    TipoBusqueda:String,
-    TextoBarra:String
+    TipoBusqueda: String,
+    TextoBarra: String
 ) {
 
     var selectedPlace by remember { mutableStateOf<Place?>(null) }
@@ -120,55 +117,57 @@ fun SearchBar(
     var isTextFieldSelected by remember { mutableStateOf(false) }
 
     Column(
-        modifier=Modifier.fillMaxWidth()
-    ){
+        modifier = Modifier.fillMaxWidth()
+    ) {
 
 
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ){
+        ) {
 
-                Column(
-                    modifier=Modifier .border(
-                            1.dp,
-                    Color.LightGray
-                )
-                        .background(Color.White)
-                        .size(60.dp)
-                        .clickable {
-                            if (TipoBusqueda == "barra") {
-                                onMapButtonClick("marker")
-                            }
-                            if (TipoBusqueda == "marker") {
-                                onMapButtonClick("barra")
-                            }
+            Column(
+                modifier = Modifier
+                    .border(
+                        1.dp,
+                        Color.LightGray
+                    )
+                    .background(Color.White)
+                    .size(60.dp)
+                    .clickable {
+                        if (TipoBusqueda == "barra") {
+                            onMapButtonClick("marker")
                         }
-                    ,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                    , verticalArrangement = Arrangement.Center
-                ){
-                    Icon(
-                        imageVector = Icons.Filled.Place,
-                        contentDescription = null,
-                        tint = Color.Black
-                    )
+                        if (TipoBusqueda == "marker") {
+                            onMapButtonClick("barra")
+                        }
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Place,
+                    contentDescription = null,
+                    tint = Color.Black
+                )
 
-                    Text(
-                        text = "Mover",
-                        style = TextStyle(
-                            color = Color.Black,
-                            fontSize = 12.sp),
-                        modifier = Modifier
+                Text(
+                    text = "Mover",
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontSize = 12.sp
+                    ),
+                    modifier = Modifier
 
-                    )
+                )
 
-                }
+            }
 
 
 
             Column(
-                modifier=Modifier.background(Color.White)
-            ){
+                modifier = Modifier.background(Color.White)
+            ) {
                 TextField(
                     value = searchQuery.value,
 
@@ -176,11 +175,10 @@ fun SearchBar(
                         .fillMaxWidth()
 
                         .border(1.dp, Color.LightGray)
-                        .onFocusChanged { isTextFieldSelected = it.isFocused
-                        }
-                    ,
-                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.White)
-                    ,
+                        .onFocusChanged {
+                            isTextFieldSelected = it.isFocused
+                        },
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.White),
                     onValueChange = { newValue ->
                         if (!newValue.contains("\n")) {
                             searchQuery.value = newValue
@@ -188,12 +186,14 @@ fun SearchBar(
                         }
 
                     },
-                    label = { Text(TextoBarra,
-                        style = TextStyle(
-                            color = Color(104, 104, 104),
-                            fontSize = 14.sp
+                    label = {
+                        Text(
+                            TextoBarra,
+                            style = TextStyle(
+                                color = Color(104, 104, 104),
+                                fontSize = 14.sp
+                            )
                         )
-                    )
                     },
 
                     )
@@ -237,7 +237,11 @@ fun SearchBar(
                                 Text(
                                     text = place.address ?: "",
                                     style = TextStyle(
-                                        color = Color(50, 50, 50), // Color diferente para la dirección
+                                        color = Color(
+                                            50,
+                                            50,
+                                            50
+                                        ), // Color diferente para la dirección
                                         fontSize = 12.sp
                                     )
                                 )
@@ -246,16 +250,16 @@ fun SearchBar(
                     }
                 }
 
-                LaunchedEffect(key1 =  searchQuery.value){
-                    boton=false
-                    showResults=true
+                LaunchedEffect(key1 = searchQuery.value) {
+                    boton = false
+                    showResults = true
 
                 }
-                LaunchedEffect(key1 = selectedPlace){
-                    showResults=false
+                LaunchedEffect(key1 = selectedPlace) {
+                    showResults = false
                 }
 
-                if (boton==true){
+                if (boton == true) {
                     LocalSoftwareKeyboardController.current?.hide() //oculta el teclado{
                 }
             }
@@ -269,7 +273,7 @@ fun SearchBar(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Buscar(){
+fun Buscar() {
     LocalSoftwareKeyboardController.current?.hide() //oculta el teclado
 }
 /*
@@ -348,15 +352,6 @@ markerState=MarkerState(LatLng(
 
 
 */
-
-
-
-
-
-
-
-
-
 
 
 /*

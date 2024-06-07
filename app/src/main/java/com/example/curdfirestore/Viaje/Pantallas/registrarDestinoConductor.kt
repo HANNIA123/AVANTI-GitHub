@@ -225,7 +225,9 @@ fun registrarDestinoConductor(
                                     snippet = "Ubicación: $direccion",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.marcador),
                                 )
-                            } else {
+                            }
+
+                            else {
                                 selectedPlace?.let { place ->
                                     Marker(
                                         state = MarkerState(

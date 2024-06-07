@@ -11,9 +11,8 @@ import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.runtime.collectAsState
 
-fun getDistanceCorrecto(coordenadas1:LatLng, coordenadas2:LatLng): Float {
-
-
+fun getDistanceCorrecto(coordenadas1: LatLng, coordenadas2: LatLng):
+        Float {
     val location1 = Location("")
     location1.latitude = coordenadas1.latitude
     location1.longitude = coordenadas1.longitude
@@ -24,6 +23,7 @@ fun getDistanceCorrecto(coordenadas1:LatLng, coordenadas2:LatLng): Float {
 
     return location1.distanceTo(location2)
 }
+
 
 @Composable
 fun getDistance(coordenadas1: String, coordenadas2: String): State<Float?> {

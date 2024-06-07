@@ -45,10 +45,11 @@ import com.google.android.gms.location.LocationResult
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun LocationScreen1(): String{
+fun LocationScreen1(): String {
 
     val context = LocalContext.current
-    val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+    val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(context)
 
     // Comprueba y solicita permisos de ubicación
     DisposableEffect(context) {
@@ -83,9 +84,12 @@ fun LocationScreen1(): String{
                 Log.w(TAG, "Failed to get location.")
             }
         }
-var ubicacion by remember {
-    mutableStateOf("")
-}
+
+
+
+    var ubicacion by remember {
+        mutableStateOf("")
+    }
     // Obtiene la última ubicación conocida
     DisposableEffect(context) {
         fusedLocationClient.lastLocation
@@ -93,9 +97,12 @@ var ubicacion by remember {
                 if (task.isSuccessful && task.result != null) {
                     val lastKnownLocation = task.result
                     // Utiliza lastKnownLocation como desees
-                    ubicacion="${lastKnownLocation.latitude},${lastKnownLocation.longitude}"
+                    ubicacion = "${lastKnownLocation.latitude},${lastKnownLocation.longitude}"
                     println("Mi ubicacion: Latitude: ${lastKnownLocation.latitude}, Longitude: ${lastKnownLocation.longitude}")
-                    Log.d(TAG, "Latitude: ${lastKnownLocation.latitude}, Longitude: ${lastKnownLocation.longitude}")
+                    Log.d(
+                        TAG,
+                        "Latitude: ${lastKnownLocation.latitude}, Longitude: ${lastKnownLocation.longitude}"
+                    )
                 } else {
                     Log.w(TAG, "Failed to get location.")
                 }

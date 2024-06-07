@@ -95,176 +95,165 @@ fun verParadasCercanasPas(
                 })
 
             horario?.let {
-                        var markerLatO by remember { mutableStateOf(0.0) }
-                        var markerLonO by remember { mutableStateOf(0.0) }
+                var markerLatO by remember { mutableStateOf(0.0) }
+                var markerLonO by remember { mutableStateOf(0.0) }
 
-                        val markerCoordenadasLatLngO =
-                            convertirStringALatLng(horario.horario_origen)
-                        //Origen
-                        markerCoordenadasLatLngO?.let {
-                            markerLatO = it.latitude
-                            markerLonO = it.longitude
-                        }
+                val markerCoordenadasLatLngO =
+                    convertirStringALatLng(horario.horario_origen)
+                //Origen
+                markerCoordenadasLatLngO?.let {
+                    markerLatO = it.latitude
+                    markerLonO = it.longitude
+                }
 
 //Destino
-                        var markerLatD by remember { mutableStateOf(0.0) }
-                        var markerLonD by remember { mutableStateOf(0.0) }
+                var markerLatD by remember { mutableStateOf(0.0) }
+                var markerLonD by remember { mutableStateOf(0.0) }
 
-                        val markerCoordenadasLatLngD =
-                            convertirStringALatLng(horario.horario_destino)
-                        markerCoordenadasLatLngD?.let {
-                            markerLatD = it.latitude
-                            markerLonD = it.longitude
-                        }
+                val markerCoordenadasLatLngD =
+                    convertirStringALatLng(horario.horario_destino)
+                markerCoordenadasLatLngD?.let {
+                    markerLatD = it.latitude
+                    markerLonD = it.longitude
+                }
 
 
 //Lista de los markers
 
-                        val paradasPorMarcador = mutableMapOf<String, ParadaData>()
-                        val origen = LatLng(markerLatO, markerLonO)
-                        val destino = LatLng(markerLatD, markerLonD)
-                        val altura = 200.dp
+                val paradasPorMarcador = mutableMapOf<String, ParadaData>()
+                val origen = LatLng(markerLatO, markerLonO)
+                val destino = LatLng(markerLatD, markerLonD)
+                val altura = 200.dp
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(maxh - altura) //70 del menu
-                        ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(maxh - altura) //70 del menu
+                ) {
 
-                            var paradasPositions = listOf<LatLng>()
-                            // Variable para almacenar la última ubicación de la cámara
-                            var ultimaUbicacionCamera: LatLng? = null
+                    var paradasPositions = listOf<LatLng>()
+                    // Variable para almacenar la última ubicación de la cámara
+                    var ultimaUbicacionCamera: LatLng? = null
 
-                            for (parada in paradas) {
+                    for (parada in paradas) {
 
-                                var markerLat by remember { mutableStateOf(0.0) }
-                                var markerLon by remember { mutableStateOf(0.0) }
-                                val markerCoordenadasLatLng =
-                                    convertirStringALatLng(parada.par_ubicacion)
+                        var markerLat by remember { mutableStateOf(0.0) }
+                        var markerLon by remember { mutableStateOf(0.0) }
+                        val markerCoordenadasLatLng =
+                            convertirStringALatLng(parada.par_ubicacion)
 
-                                markerCoordenadasLatLng?.let {
-                                    markerLat = it.latitude
-                                    markerLon = it.longitude
-                                }
-
-                                val ubiParada = LatLng(markerLat, markerLon)
-                                paradasPositions = paradasPositions + ubiParada
-
-                            }
-
-                            //Mapa
-                            var markerLat by remember { mutableStateOf(0.0) }
-                            var markerLon by remember { mutableStateOf(0.0) }
-
-                            var newParadas = paradas
-                            if (horario.horario_trayecto == "0") {
-                                val nParada = ParadaData(
-                                    par_ubicacion = horario.horario_destino,
-                                    par_nombre = "Destino",
-                                    par_hora = horario.horario_hora
-                                )
-                                newParadas = newParadas + nParada
-                            }
-                            if (horario.horario_trayecto == "1") {
-                                val nParada = ParadaData(
-                                    par_ubicacion = horario.horario_origen,
-                                    par_nombre = "Origen",
-                                    par_hora = horario.horario_hora
-                                )
-                                newParadas = newParadas + nParada
-                            }
-
-                            val context = LocalContext.current
-                            MapViewContainer { googleMap: GoogleMap ->
-                                // Habilita los controles de zoom
-                                googleMap.uiSettings.isZoomControlsEnabled = true
-                                // Agrega los marcadores
-                                for (parada in newParadas) {
-                                    val markerCoordenadasLatLng =
-                                        convertirStringALatLng(parada.par_ubicacion)
-                                    if (markerCoordenadasLatLng != null) {
-                                        markerLat = markerCoordenadasLatLng.latitude
-                                        markerLon = markerCoordenadasLatLng.longitude
-                                        // Hacer algo con las coordenadas LatLng
-                                        // println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-                                    } else {
-                                        println("Error al convertir la cadena a LatLng")
-                                    }
-
-                                    var imageName: String
-                                    /*Diferente marker para el origen o detsino y las paradas*/
-
-                                    if (parada.par_nombre == "Origen" || parada.par_nombre == "Destino") {
-
-                                        imageName = "origendestino"
-                                    } else {
-                                        imageName = "paradapas"
-                                    }
-                                    val image =
-                                        context.resources.getIdentifier(
-                                            imageName,
-                                            "drawable",
-                                            context.packageName
-                                        )
-                                    val bitmapDescriptor =
-                                        BitmapDescriptorFactory.fromResource(image)
-
-                                    val ubiParada = LatLng(markerLat, markerLon)
-                                    val markerOptions = MarkerOptions().position(ubiParada)
-                                    markerOptions.icon(bitmapDescriptor)
-
-                                    // markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.paradas))
-                                    val marker = googleMap.addMarker(markerOptions)
-                                    paradasPorMarcador[marker!!.id] = parada
-                                    // Actualiza la última ubicación de la cámara con la primera parada
-                                    ultimaUbicacionCamera = ubiParada
-
-                                    // Agregar un evento de clic al marcador
-                                    googleMap.setOnMarkerClickListener { marker ->
-                                        // Aquí puedes manejar el evento de clic en el marcador
-                                        val paradaSeleccionada = paradasPorMarcador[marker.id]
-                                        if (paradaSeleccionada != null) {
-                                            infparadas = paradaSeleccionada
-                                            show = true
-                                        }
-                                        true
-                                    }
-                                }
-
-                                ultimaUbicacionCamera?.let { ultimaUbicacion ->
-                                    val cameraUpdate =
-                                        CameraUpdateFactory.newLatLngZoom(
-                                            ultimaUbicacion,
-                                            16.0f
-                                        )
-                                    googleMap.animateCamera(cameraUpdate)
-                                }
-
-                            }
-
-
+                        markerCoordenadasLatLng?.let {
+                            markerLat = it.latitude
+                            markerLon = it.longitude
                         }
 
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(2.dp)
-                                .background(Color(126, 60, 127))
+                        val ubiParada = LatLng(markerLat, markerLon)
+                        paradasPositions = paradasPositions + ubiParada
+
+                    }
+
+                    //Mapa
+                    var markerLat by remember { mutableStateOf(0.0) }
+                    var markerLon by remember { mutableStateOf(0.0) }
+
+                    var newParadas = paradas
+                    if (horario.horario_trayecto == "0") {
+                        val nParada = ParadaData(
+                            par_ubicacion = horario.horario_destino,
+                            par_nombre = "Destino",
+                            par_hora = horario.horario_hora
                         )
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(altura)
-                                .padding(10.dp, 0.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start,
-                        ) {
-                            textInfHorario(
-                                horario = horario,
-                                origen = origen,
-                                destino = destino
-                            )
+                        newParadas = newParadas + nParada
+                    }
+                    if (horario.horario_trayecto == "1") {
+                        val nParada = ParadaData(
+                            par_ubicacion = horario.horario_origen,
+                            par_nombre = "Origen",
+                            par_hora = horario.horario_hora
+                        )
+                        newParadas = newParadas + nParada
+                    }
+
+                    val context = LocalContext.current
+                    MapViewContainer { googleMap: GoogleMap ->
+                        googleMap.uiSettings.isZoomControlsEnabled = true
+                        // Agrega los marcadores
+                        for (parada in newParadas) {
+                            val markerCoordenadasLatLng =
+                                convertirStringALatLng(parada.par_ubicacion)
+                            if (markerCoordenadasLatLng != null) {
+                                markerLat = markerCoordenadasLatLng.latitude
+                                markerLon = markerCoordenadasLatLng.longitude
+
+                            }
+                            var imageName: String
+                            if (parada.par_nombre == "Origen" || parada.par_nombre == "Destino") {
+                                imageName = "origendestino"
+                            } else {
+                                imageName = "paradapas"
+                            }
+                            val image =
+                                context.resources.getIdentifier(
+                                    imageName,
+                                    "drawable",
+                                    context.packageName
+                                )
+                            val bitmapDescriptor = BitmapDescriptorFactory.fromResource(image)
+                            val ubiParada = LatLng(markerLat, markerLon)
+                            val markerOptions = MarkerOptions().position(ubiParada)
+                            markerOptions.icon(bitmapDescriptor)
+                            val marker = googleMap.addMarker(markerOptions)
+                            paradasPorMarcador[marker!!.id] = parada
+
+                            // Actualiza la última ubicación de la cámara con la primera parada
+                            ultimaUbicacionCamera = ubiParada
+
+                            // Agregar un evento de clic al marcador
+                            googleMap.setOnMarkerClickListener { marker ->
+                                // Manejar el evento de clic en el marcador
+                                val paradaSeleccionada = paradasPorMarcador[marker.id]
+                                if (paradaSeleccionada != null) {
+                                    infparadas = paradaSeleccionada
+                                    show = true
+                                }
+                                true
+                            }
                         }
+
+                        ultimaUbicacionCamera?.let { ultimaUbicacion ->
+                            val cameraUpdate =
+                                CameraUpdateFactory.newLatLngZoom(
+                                    ultimaUbicacion,
+                                    16.0f
+                                )
+                            googleMap.animateCamera(cameraUpdate)
+                        }
+
+                    }
+
+
+                }
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(Color(126, 60, 127))
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(altura)
+                        .padding(10.dp, 0.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start,
+                ) {
+                    textInfHorario(
+                        horario = horario,
+                        origen = origen,
+                        destino = destino
+                    )
+                }
 
             }
         }
