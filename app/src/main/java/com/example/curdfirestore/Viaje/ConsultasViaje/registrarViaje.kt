@@ -39,7 +39,6 @@ fun conRegistrarViaje(
                 val respuesta = response.body()?.message ?: "Mensaje nulo"
                 val idViaje = response.body()?.viajeId.toString()
                 resp = respuesta
-println("Este es el id $idViaje")
                 val regresa="inicioviaje"
                 navController.navigate(route = "general_parada/$idViaje/$userId/$comPantalla/$regresa")
 

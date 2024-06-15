@@ -11,11 +11,9 @@ fun autenticaHuella(
     activity: MainActivity,
     exitoso: () -> Unit,
     fallido: () -> Unit,
-    maxIntentos: Int // Valor por defecto de 3 intentos
+    maxIntentos: Int
 ) {
-
     var intentos = 0
-
     val executor = ContextCompat.getMainExecutor(activity)
 
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
@@ -23,7 +21,7 @@ fun autenticaHuella(
         .setSubtitle("Por favor, coloca tu dedo en el sensor")
         .setNegativeButtonText("Cancelar")
         .build()
-    lateinit var biometricPrompt: BiometricPrompt // Define la variable fuera del constructor
+    lateinit var biometricPrompt: BiometricPrompt
 
      biometricPrompt = BiometricPrompt(activity, executor,
         object : BiometricPrompt.AuthenticationCallback() {
@@ -43,10 +41,8 @@ fun autenticaHuella(
             }
 
             override fun onAuthenticationFailed() {
-                intentos++ // Incrementa el contador de intentos al fallar la autenticación
-
+                intentos++
                 if (intentos >= maxIntentos) {
-
                     // Verifica si se alcanzó el límite de intentos
                     fallido()
                     Toast.makeText(
@@ -54,12 +50,9 @@ fun autenticaHuella(
                         "Limite de intentos superado",
                         Toast.LENGTH_SHORT
                     ).show()
-                    println("Autenticación fallida-----")
                     biometricPrompt.cancelAuthentication()
                 }
             }
         })
-
     biometricPrompt.authenticate(promptInfo)
-
 }

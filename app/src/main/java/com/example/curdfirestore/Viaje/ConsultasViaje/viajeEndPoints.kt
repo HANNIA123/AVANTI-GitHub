@@ -37,8 +37,6 @@ object RetrofitClientViaje {
 
 
 interface ApiServiceViaje{
-
-    //Agregado 13/03/2024 - hannia
     @POST("$newUrl/api/viaje/registrarviaje") // Reemplaza con la ruta de tu endpoint
     fun registrarViaje(@Body viajeData: ViajeData): Call<RespuestaApiViaje>
 

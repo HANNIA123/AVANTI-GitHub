@@ -18,10 +18,8 @@ import com.google.firebase.database.database
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun UbicacionRealTime(context: Context, userId:String) {
-
+fun UbicacionRealTime(context: Context, userId: String) {
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
-
 
     DisposableEffect(Unit) {
         if (!permissionState.hasPermission) {
@@ -36,9 +34,9 @@ fun UbicacionRealTime(context: Context, userId:String) {
 
             val locationHelper = LocationHelper(context)
             locationHelper.observeLocationUpdates { latitude, longitude ->
-               // println("Nuevas coordenada $latitude $longitude")
                 // Creamos un mapa solo con las coordenadas
-                val coordenadas: Map<String, Double> = mapOf("latitud" to latitude, "longitud" to longitude)
+                val coordenadas: Map<String, Double> =
+                    mapOf("latitud" to latitude, "longitud" to longitude)
                 // Guardamos las coordenadas dentro del nodo userId
                 referencia.setValue(coordenadas)
             }
@@ -46,21 +44,19 @@ fun UbicacionRealTime(context: Context, userId:String) {
     }
 }
 
-
 @SuppressLint("MissingPermission")
 class LocationHelper(private val context: Context) {
     private val fusedLocationClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(context)
     }
     private var locationCallback: LocationCallback? = null
-
     fun observeLocationUpdates(callback: (Double, Double) -> Unit) {
         val locationRequest = LocationRequest.create().apply {
             interval = 1000 // Intervalo de actualización en milisegundos
             fastestInterval = 500 // Intervalo más rápido en milisegundos
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY // Prioridad de la solicitud de ubicación
+            priority =
+                LocationRequest.PRIORITY_HIGH_ACCURACY // Prioridad de la solicitud de ubicación
         }
-
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.locations.forEach { location ->
@@ -68,11 +64,11 @@ class LocationHelper(private val context: Context) {
                 }
             }
         }
-
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-            locationCallback as LocationCallback, null)
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback as LocationCallback, null
+        )
     }
-
     fun stopLocationUpdates() {
         locationCallback?.let {
             fusedLocationClient.removeLocationUpdates(it)

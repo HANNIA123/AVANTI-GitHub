@@ -153,34 +153,28 @@ fun obtenerCoordenadas(
     var datosAnteriores: Map<String, Any>? = null
     UbicacionRealTime(context, viajeId)
 
-
     referencia.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            // Obtén los nuevos datos
             val nuevosDatos: Map<String, Any>? = dataSnapshot.value as? Map<String, Any>
-
             // Compara los nuevos datos con los datos anteriores
             if (nuevosDatos != null && nuevosDatos != datosAnteriores) {
-                // Los datos han cambiado, actúa en consecuencia
                 val latitud = nuevosDatos["latitud"] as Double
                 val longitud = nuevosDatos["longitud"] as Double
                 latLng = LatLng(latitud, longitud)
 
                 markerOptions = MarkerOptions().position(latLng).title("San Francisco")
-                // Haz lo que necesites con latitud y longitud
                 validar = true
 
-                // Actualiza los datos anteriores
                 datosAnteriores = nuevosDatos
 
             }
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
-            // Manejar errores, si es necesario
             println("Error al obtener los datos: ${databaseError.message}")
         }
     })
+
 
 
     //Paradas en el mapa y control de ellas

@@ -73,14 +73,21 @@ fun conBuscarViajePas(
     if (fin) {
         println("fin es true")
         if (viajes != null) {
+            println("VIAJEEEES $viajes")
             viajes!!.forEachIndexed { index, viaje ->
+
                 val horario = conObtenerHorarioId(horarioId = horarioId)
                 horario?.let { horario ->
+                    println("HORARIO $horario")
+                    val trayectoHorario= horario.horario_trayecto
                     val horaHorario = convertirStringAHora(horario.horario_hora)
+                    println("TRAYECTO HORARIO ${horario.horario_trayecto}")
                     val horaTipoViaje =
-                        if (horario.horario_trayecto === "0") {
+                        if (trayectoHorario == "0") {
+
                             viaje.viaje_hora_partida
                         } else {
+
                             viaje.viaje_hora_llegada
 
                         }
@@ -88,8 +95,10 @@ fun conBuscarViajePas(
                     val horariomas = horaHorario.plusMinutes(30)
                     val horariomenos = horaHorario.minusMinutes(30)
 
-                    if ((horaViaje.isBefore(horariomas) && horaViaje.isAfter(horariomenos)) || horaViaje == horariomenos || horaViaje == horariomas) {
+println("HORASSSS $horaViaje y horario $horaHorario")
+                    if ((horaViaje.isBefore(horariomas) && horaViaje.isAfter(horariomenos)) || horaViaje == horariomenos || horaViaje == horariomas || horaViaje==horaHorario) {
                         nuevaListaDeViajes.add(viaje)
+                  println("Encuentraa")
                     }
 
 

@@ -48,9 +48,6 @@ class LoginViewModel : ViewModel() {
                         auth.signOut() // Cerrar sesión inmediatamente si los tokens no coinciden
                         errorDis()
                     } else {
-
-
-
                             home()
                       }
                 } else {
