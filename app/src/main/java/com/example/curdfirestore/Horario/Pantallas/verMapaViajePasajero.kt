@@ -173,7 +173,7 @@ fun verMapaViajePasajero(
 
 
                     cabeceraConMenuPas(
-                        titulo = "Ver horario",
+                        titulo = "Ver viaje",
                         navController,
                         correo,
                         boton = { estaBoton ->
@@ -185,7 +185,7 @@ fun verMapaViajePasajero(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(maxh - 145.dp)
+                            .height(maxh - 150.dp)
                     ) {
                         val origen = LatLng(markerLatO, markerLonO)
                         val destino = LatLng(markerLatD, markerLonD)
@@ -370,7 +370,7 @@ fun verMapaViajePasajero(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(75.dp)
+                            .height(80.dp)
                             .padding(10.dp, 3.dp)
                             .background(Color.White),
                         horizontalArrangement = Arrangement.SpaceBetween, // Espacio entre los elementos en la fila

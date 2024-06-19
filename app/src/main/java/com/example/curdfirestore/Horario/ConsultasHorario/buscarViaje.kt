@@ -95,11 +95,13 @@ fun conBuscarViajePas(
                     val horariomas = horaHorario.plusMinutes(30)
                     val horariomenos = horaHorario.minusMinutes(30)
 
-println("HORASSSS $horaViaje y horario $horaHorario")
-                    if ((horaViaje.isBefore(horariomas) && horaViaje.isAfter(horariomenos)) || horaViaje == horariomenos || horaViaje == horariomas || horaViaje==horaHorario) {
-                        nuevaListaDeViajes.add(viaje)
-                  println("Encuentraa")
-                    }
+println("horaViaje $horaViaje y horaHorario $horaHorario  horamas: $horariomas horamenos $horariomenos")
+
+
+                        if ((horaViaje.isBefore(horariomas) && horaViaje.isAfter(horariomenos)) || horaViaje == horariomenos || horaViaje == horariomas || horaViaje == horaHorario) {
+                            nuevaListaDeViajes.add(viaje)
+                            println("Encuentraa")
+                        }
 
 
                     // Verifica si es la última iteración del bucle viajes

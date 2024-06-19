@@ -67,7 +67,7 @@ fun obtenerDistanciaParadas(
 
 
                     if (distancia <= 1500.0f) {
-
+println("Distancia correcta")
 
                         val nuevaP =
                             ParadaData(

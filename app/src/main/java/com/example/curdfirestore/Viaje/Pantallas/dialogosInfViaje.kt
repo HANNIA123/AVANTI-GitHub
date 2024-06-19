@@ -79,7 +79,7 @@ fun dialogSeleccionDia(
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "Selecciona un día de la semana",
+                        text = "Selecciona el día de la semana en que realizarás este viaje",
                         textAlign = TextAlign.Left,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -204,13 +204,13 @@ fun dialogoSeleccionTrayecto(
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "Selecciona el trayecto",
-                        textAlign = TextAlign.Left,
+                        text = "Selecciona el trayecto, recuerda que UPIITA debe ser tu punto de partida o de llegada.",
+                        textAlign = TextAlign.Justify,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(5.dp),
                         style = TextStyle(
-                            fontSize = 20.sp,
+                            fontSize = 18.sp,
                             color = Color.Black
 
                         )

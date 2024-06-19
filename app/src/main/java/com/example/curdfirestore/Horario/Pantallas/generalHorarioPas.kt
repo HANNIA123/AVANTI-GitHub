@@ -5,6 +5,7 @@ import android.os.Build
 
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 
 import androidx.compose.foundation.layout.Box
 
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.width
 
 
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.foundation.verticalScroll
 
@@ -47,11 +49,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -96,7 +100,7 @@ fun generalViajePas(
     }
 
     val altura = maxh - 130.dp
-    val tamEspacio = ((altura - 400.dp) / 4) - 20.dp
+    val tamEspacio = ((altura - 430.dp) / 4) - 20.dp
 
     var selectedHoraInicio by remember {
         mutableStateOf("")
@@ -142,16 +146,16 @@ fun generalViajePas(
         mutableStateOf("Tipo de trayecto")
     }
     var horaInicio by remember {
-        mutableStateOf("Hora de inicio ")
+        mutableStateOf("Hora de llegada ")
     }
     var horaFin by remember {
-        mutableStateOf("Hora de termino ")
+        mutableStateOf("Hora de salida ")
     }
     var horallegada by remember {
-        mutableStateOf("Hora de llegada a la UPIITA")
+        mutableStateOf("Hora de llegada")
     }
     var horasalida by remember {
-        mutableStateOf("Hora de salida de la UPIITA")
+        mutableStateOf("Hora de salida")
     }
 
     if (selectedHoraInicio != "") {
@@ -161,17 +165,17 @@ fun generalViajePas(
         } else if (selectedTrayecto.toString() == "[2]") {
             horallegada = "Llegada: $selectedHoraInicio hrs "
         } else {
-            horaInicio = "Hora de salida: $selectedHoraInicio hrs "
+            horaInicio = "Salida: $selectedHoraInicio hrs "
         }
     }
     if (selectedHoraFin != "") {
-        horaFin = "Hora de llegada: $selectedHoraFin hrs"
+        horaFin = "Salida: $selectedHoraFin hrs"
     }
 
 
     if (selectedTrayecto.isNotEmpty()) {
         trayectoCon = convertirATrayecto(numTrayecto = selectedTrayecto)
-        trayecto = "$trayectoCon"
+        trayecto = trayectoCon
     }
 
     // Mostrar días seleccionados
@@ -198,7 +202,7 @@ fun generalViajePas(
     var validador by remember {
         mutableStateOf(0)
     }
-
+val colorTxt= Color(57,58,57)
 
     LaunchedEffect(validador) {
         botonSiguiente = false
@@ -219,7 +223,7 @@ fun generalViajePas(
         ) {
 
             cabeceraEditarAtras(
-                titulo = "Registrar horario",
+                titulo = "Registrar viaje",
                 navController = navController,
                 ruta = "horario_inicio/$userId"
             )
@@ -241,19 +245,31 @@ fun generalViajePas(
 
                     Spacer(modifier = Modifier.height(15.dp))
 
+                        Text(
+                            text = "Los viajes registrados se agregarán a tu itinerario y se repetirán semanalmente.",
+                            style = TextStyle(
+                                color =colorTxt,
+                                fontSize = 18.sp,
+                                textAlign = TextAlign.Justify,
+                            ),
+
+                            )
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
                     Box(
                         contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()
                     ) {
+
                         Icon(  painter = painterResource(id = R.drawable.calendarhor),
                             contentDescription = "Calendario",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(210.dp),
+                                .height(150.dp),
                             tint = Color(137, 13, 86))
 
-
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     FilaIconoTexto2(
                         icono = R.drawable.calendar,
@@ -263,6 +279,7 @@ fun generalViajePas(
                     )
 
                     Spacer(modifier = Modifier.height(tamEspacio))
+
 
                     FilaIconoTexto2(
                         icono = R.drawable.trayecto,
@@ -278,6 +295,10 @@ fun generalViajePas(
                         selectedTrayecto.toString() == "[2]" -> horallegada
                         else -> horaInicio
                     }
+
+
+
+
                     FilaIconoTexto2(
                         icono = R.drawable.clock,
                         texto = tt,
@@ -346,7 +367,11 @@ fun generalViajePas(
             )
         }
 
-
+        val textoAux = when {
+            selectedTrayecto.toString() == "[1]" -> "¿Cual es tu horario de salida de UPIITA?"
+            selectedTrayecto.toString() == "[2]" -> "¿Cúal es tu horario de llegada a la UPIITA?"
+            else -> "Este horario depende del trayecto seleccionado"
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -370,7 +395,7 @@ fun generalViajePas(
 
                 timepicker(
                     initialTime = LocalTime.NOON,
-                    title = "Selecciona el horario de inicio del viaje",
+                    title = textoAux
 
                     ) {
                     pickedTimeInicio = it

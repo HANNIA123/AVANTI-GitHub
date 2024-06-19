@@ -87,7 +87,7 @@ fun dialogoConfirmarEliminarHorarioP(
                         contentScale = ContentScale.FillBounds
                     )
                     Text(
-                        text = "Este horario se eliminará definitivamente. ¿Deseas continuar?",
+                        text = "Este viaje se eliminará definitivamente. ¿Deseas continuar?",
                         textAlign = TextAlign.Justify,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -142,7 +142,6 @@ fun dialogoConfirmarEliminarHorarioP(
 }
 
 
-
 @Composable
 fun dialogoConfirmarEliminarHorarioSE(
     onDismiss: () -> Unit,
@@ -181,7 +180,7 @@ fun dialogoConfirmarEliminarHorarioSE(
                         contentScale = ContentScale.FillBounds
                     )
                     Text(
-                        text = "Este horario se eliminará definitivamente. ¿Deseas continuar?",
+                        text = "Este viaje se eliminará definitivamente. ¿Deseas continuar?",
                         textAlign = TextAlign.Justify,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -337,7 +336,7 @@ fun dialogoConfirmarEliminarHorarioSEA(
                         contentScale = ContentScale.FillBounds
                     )
                     Text(
-                        text = "Este horario se eliminará definitivamente. ¿Deseas continuar?",
+                        text = "Este viaje se eliminará definitivamente. ¿Deseas continuar?",
                         textAlign = TextAlign.Justify,
                         modifier = Modifier
                             .fillMaxWidth()

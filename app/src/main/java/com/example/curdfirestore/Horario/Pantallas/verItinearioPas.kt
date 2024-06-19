@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -216,9 +217,22 @@ fun verItinerarioPas(
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(10.dp),
+                                            .padding(10.dp)
+                                            .clickable {
+                                                if (it.horario_solicitud == "No") {
+                                                    navController.navigate("ver_mapa_viaje_pas_sin/${it.horario_id}/$userId/$pantalla")
+                                                } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Aceptada") {
+                                                    navController.navigate("ver_mapa_viaje_pas/${it.horario_id}/$userId/$pantalla")
+                                                } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Pendiente") {
+                                                    navController.navigate("ver_mapa_viaje_pas/${it.horario_id}/$userId/$pantalla")
+                                                } else {
+                                                    navController.navigate("ver_mapa_viaje_pas/${it.horario_id}/$userId/$pantalla")
+                                                }
+
+                                            }
+                                        ,
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                        horizontalArrangement = Arrangement.SpaceBetween,
                                     ) {
 
                                         textoHoraItinerario(hora = "${it.horario_hora} hrs")

@@ -1,4 +1,4 @@
-package com.example.curdfirestore.Horario.Pantallas
+package com.example.curdfirestore.Horario.Pantallas.Editar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,11 +55,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun registrarOrigenPasajero(
+fun registrarOrigenPasajeroEditar(
     navController: NavController,
     userid: String,
     dia: String,
     horao: String,
+    idHorario:String,
+    uDestino:String
 
 ) {
     var maxh by remember {
@@ -115,12 +117,8 @@ fun registrarOrigenPasajero(
             .height(maxh)
     ) {
 
+cabeceraConBotonAtras(titulo = "Registrar origen", navController = navController)
 
-        cabeceraEditarAtras(
-            titulo = "Registrar origen",
-            navController = navController,
-            ruta = "general_horario_pasajero/$userid"
-        )
 
         Column(
             modifier = Modifier
@@ -157,14 +155,7 @@ fun registrarOrigenPasajero(
                         }
                     }
                     if (primeraVez == 0) {
-                        obtenerUbicacionInicial(
-                            navController = navController,
-                            userId = userid,
-                            onUbicacionObtenida =
-                            { nuevaUbicacion ->
-                                ubicacion = nuevaUbicacion
-                            }
-                        )
+                       ubicacion=uDestino
 
                     } else {
                         ubicacion = ubiMarker

@@ -40,6 +40,7 @@ import com.example.curdfirestore.R
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
+import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
 import com.example.curdfirestore.Viaje.Pantallas.mapaMarkerDestino
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -101,7 +102,13 @@ fun registrarDestinoPasajero(
             .fillMaxWidth()
             .height(maxh)
     ) {
-        cabeceraConBotonAtras(titulo = "Registrar destino", navController = navController)
+
+        cabeceraEditarAtras(
+            titulo = "Registrar destino",
+            navController = navController,
+            ruta = "general_horario_pasajero/$userid"
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()

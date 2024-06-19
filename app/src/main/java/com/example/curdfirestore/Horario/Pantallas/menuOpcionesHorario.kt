@@ -19,7 +19,8 @@ fun menuHorarioOpcionesSin(
     onDismissRequest: () -> Unit,
     offset: Dp,
     onOption1Click: () -> Unit,
-    onOption2Click: () -> Unit
+    onOption2Click: () -> Unit,
+    onOption3Click: () -> Unit
 ) {
     DropdownMenu(
         expanded = expanded,
@@ -42,6 +43,15 @@ fun menuHorarioOpcionesSin(
         }) {
             Text(
                 text = "Eliminar",
+                style = TextStyle(color = Color(137, 13, 88))
+            )
+        }
+        DropdownMenuItem(onClick = {
+            onOption3Click()
+            onDismissRequest()
+        }) {
+            Text(
+                text = "Editar",
                 style = TextStyle(color = Color(137, 13, 88))
             )
         }

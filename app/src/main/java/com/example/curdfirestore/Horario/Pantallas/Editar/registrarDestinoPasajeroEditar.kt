@@ -1,4 +1,4 @@
-package com.example.curdfirestore.Horario.Pantallas
+package com.example.curdfirestore.Horario.Pantallas.Editar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,9 +39,8 @@ import com.example.curdfirestore.NivelAplicacion.searchPlaces
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
-import com.example.curdfirestore.Viaje.Funciones.obtenerUbicacionInicial
-import com.example.curdfirestore.Viaje.Pantallas.cabeceraEditarAtras
-import com.example.curdfirestore.Viaje.Pantallas.mapaMarker
+
+import com.example.curdfirestore.Viaje.Pantallas.mapaMarkerDestino
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -55,32 +54,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun registrarOrigenPasajero(
+fun registrarDestinoPasajeroEditar(
     navController: NavController,
     userid: String,
     dia: String,
     horao: String,
+    idHorario:String,
+    uOrigen:String
 
-) {
+    ) {
     var maxh by remember {
         mutableStateOf(0.dp)
     }
 
-
     BoxWithConstraints {
         maxh = this.maxHeight
     }
-
-
-
-    var showPar by remember {
-        mutableStateOf(false)
-    }
-
     var ubicacion by remember {
         mutableStateOf("")
     }
-
 
     var latitud by remember {
         mutableStateOf("")
@@ -88,18 +80,12 @@ fun registrarOrigenPasajero(
     var longitud by remember {
         mutableStateOf("")
     }
-
     var pasarlatitud by remember {
         mutableStateOf("")
     }
     var pasarlongitud by remember {
         mutableStateOf("")
     }
-
-    var ubicacionpasar by remember { //agregado
-        mutableStateOf("")
-    }
-
     var valorMapa: String by remember { mutableStateOf("barra") } //El que regresa
     var TipoBusqueda: String by remember { mutableStateOf("barra") } //El que paso
     var ubiMarker by remember { mutableStateOf("19.3898164,-99.11023") }
@@ -108,6 +94,9 @@ fun registrarOrigenPasajero(
     var primeraVez by remember {
         mutableStateOf(0)
     }
+    var ubicacionpasar by remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
@@ -115,34 +104,22 @@ fun registrarOrigenPasajero(
             .height(maxh)
     ) {
 
-
-        cabeceraEditarAtras(
-            titulo = "Registrar origen",
-            navController = navController,
-            ruta = "general_horario_pasajero/$userid"
-        )
+        cabeceraConBotonAtras(titulo = "Registrar destino", navController = navController)
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(maxh - 70.dp),
+                    .height(maxh - 70.dp)
             ) {
-
-
                 if (valorMapa == "barra") {
-
-                    var searchResults = remember { mutableStateOf(emptyList<Place>()) }
+                    val searchResults = remember { mutableStateOf(emptyList<Place>()) }
                     val context = LocalContext.current
-                    var searchQuery = remember { mutableStateOf("") }
+                    val searchQuery = remember { mutableStateOf("") }
                     var selectedPlace by remember { mutableStateOf<Place?>(null) }
-
-
                     LaunchedEffect(searchQuery.value) {
                         // Lanzar un bloque coroutine para ejecutar la búsqueda de lugares
                         try {
@@ -150,49 +127,36 @@ fun registrarOrigenPasajero(
                                 searchPlaces(searchQuery.value, context)
                             }
                             searchResults.value = results
-
                         } catch (e: Exception) {
                             // Manejar cualquier error que pueda ocurrir durante la búsqueda
                             e.printStackTrace()
                         }
                     }
-                    if (primeraVez == 0) {
-                        obtenerUbicacionInicial(
-                            navController = navController,
-                            userId = userid,
-                            onUbicacionObtenida =
-                            { nuevaUbicacion ->
-                                ubicacion = nuevaUbicacion
-                            }
-                        )
 
+                    if (primeraVez == 0) {
+                      ubicacion=uOrigen
                     } else {
                         ubicacion = ubiMarker
-
                     }
-                    ubicacionpasar=ubicacion //aqui
 
+                    ubicacionpasar = ubicacion
                     if (ubicacion != "") {
                         val markerCoordenadasLatLng = convertirStringALatLng(ubicacion)
                         var miUbic by remember {
                             mutableStateOf(LatLng(0.0, 0.0))
                         }
-                        println("Coordenadas Location----- $ubicacion")
 
                         if (markerCoordenadasLatLng != null) {
-                            var markerLat = markerCoordenadasLatLng.latitude
-                            var markerLon = markerCoordenadasLatLng.longitude
+                            val markerLat = markerCoordenadasLatLng.latitude
+                            val markerLon = markerCoordenadasLatLng.longitude
                             miUbic = LatLng(markerLat, markerLon)
-                            // Hacer algo con las coordenadas LatLng
-                            println("Latitud: ${markerCoordenadasLatLng.latitude}, Longitud: ${markerCoordenadasLatLng.longitude}")
-                        } else {
-                            // La conversión falló
-                            println("Error al convertir la cadena a LatLng")
                         }
+
 
                         var direccion by remember {
                             mutableStateOf("")
                         }
+
                         var markerState = rememberMarkerState(position = miUbic)
                         direccion = convertCoordinatesToAddress(coordenadas = miUbic)
                         var cameraPositionState = rememberCameraPositionState {
@@ -211,7 +175,7 @@ fun registrarOrigenPasajero(
                             )
                             pasarlatitud = place.latLng.latitude.toString()
                             pasarlongitud = place.latLng.longitude.toString()
-                            ubicacionpasar = "$pasarlatitud,$pasarlongitud" //Esto
+                            ubicacionpasar = "$pasarlatitud,$pasarlongitud"
 
                             cameraPositionState.position = CameraPosition.fromLatLngZoom(
                                 LatLng(
@@ -229,18 +193,15 @@ fun registrarOrigenPasajero(
                         GoogleMap(
                             modifier = Modifier
                                 .fillMaxSize(),
-
                             cameraPositionState = cameraPositionState
                         ) {
-
                             if (selectedPlace == null) {
                                 Marker(
                                     state = markerState,
-                                    title = "Origen",
+                                    title = "Destino",
                                     snippet = "Ubicación: $direccion",
                                     icon = BitmapDescriptorFactory.fromResource(R.drawable.marcador),
                                 )
-
                             } else {
                                 selectedPlace?.let { place ->
                                     Marker(
@@ -250,18 +211,15 @@ fun registrarOrigenPasajero(
                                                 place.latLng.longitude
                                             )
                                         ),
-                                        title = "Origen",
+                                        title = "Destino",
                                         snippet = "Ubicación: $direccion",
                                         icon = BitmapDescriptorFactory.fromResource(R.drawable.marcador),
                                     )
                                 }
                             }
                         }
-
                     }
-
-
-                    val TextoBarra = "¿De dónde sales?"
+                    val TextoBarra = "¿A dónde vas?"
                     Column(
                         modifier = Modifier
                             .align(Alignment.TopStart)
@@ -280,6 +238,7 @@ fun registrarOrigenPasajero(
                             TextoBarra
                         )
                     }
+
                 } else {
                     var newUbi by remember {
                         mutableStateOf("")
@@ -290,13 +249,12 @@ fun registrarOrigenPasajero(
                         newUbi = "$pasarlatitud,$pasarlongitud"
                     }
 
-                    ubiMarker = mapaMarker(ubicacionMarker = "$newUbi")
+                    ubiMarker = mapaMarkerDestino(ubicacionMarker = newUbi)
                     TipoBusqueda = "marker"
-                    ubicacionpasar=ubiMarker //Esto
+                    ubicacionpasar = ubiMarker //Esto
 
                 }
                 if (valorMapa == "marker") {
-
                     //Boton para regresar a la barra
                     Column(
                         modifier = Modifier
@@ -329,7 +287,6 @@ fun registrarOrigenPasajero(
                                 modifier = Modifier.padding(5.dp)
 
                             )
-
                             Text(
                                 text = "Buscar por dirección",
                                 style = TextStyle(
@@ -339,12 +296,8 @@ fun registrarOrigenPasajero(
                                 modifier = Modifier
                                     .align(Alignment.CenterVertically)
                             )
-
                         }
-
-
                     }
-
                 }
 
                 Button(
@@ -358,41 +311,43 @@ fun registrarOrigenPasajero(
                     ),
                     onClick = {
                         boton = true
-                        showPar=true
                     }) {
-                    Text(text = "Siguiente",
+                    Text(
+                        text = "Siguiente",
                         style = TextStyle(
                             fontSize = 20.sp
                         )
                     )
                 }
 
-            }
 
+            }
         }
 
     }
-
     if (boton == true && ejecutado == false) {
-        val comPantalla="muestra"
-
-        val destino = "19.5114059,-99.1265259" //Coordenadas de UPIITA
+        val comPantalla = "muestra"
+        val origen = "19.5114059,-99.1265259" //Coordenadas de UPIITA
         val horarioData = HorarioData(
             usu_id = userid,
             horario_dia = dia,
-            horario_hora= horao,
-            horario_origen = ubicacionpasar,
-            horario_destino = destino,
-            horario_trayecto = "1",
+            horario_hora = horao,
+            horario_origen = origen,
+            horario_destino = ubicacionpasar,
+            horario_trayecto = "0",
             horario_status = "Disponible",
             horario_solicitud = "No",
         )
 
-        conRegistrarHorario(navController, userid,horarioData, comPantalla)
+        conRegistrarHorario(navController, userid, horarioData, comPantalla)
 
-
-
-        //GuardarViaje(navController, userid, viajeData,comPantalla)
         ejecutado = true
     }
+
 }
+
+
+
+
+
+
