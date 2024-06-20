@@ -122,7 +122,10 @@ lineaGris()
                             Spacer(modifier = Modifier.height(5.dp))
                             //Informacion del viaje
                             textTituloInfSolcitud("Información del viaje")
-
+                            textoInformacionSolicitud(
+                                etiqueta = "Día",
+                                contenido = viaje.viaje_dia
+                            )
                             if (viaje.viaje_trayecto == "0")// origen UPIITA{
                             {
                                 textoInformacionSolicitud(etiqueta = "Origen", contenido = "UPIITA")

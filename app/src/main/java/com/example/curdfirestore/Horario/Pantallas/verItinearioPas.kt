@@ -260,13 +260,16 @@ fun verItinerarioPas(
                                                 etiqueta = "Solicitud",
                                                 contenido = if (it.horario_solicitud == "No") {
                                                     "Sin solicitud"
-                                                } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Aceptada") {
-                                                    "Solicitud aceptada"
-                                                } else if (it.horario_solicitud == "Si" && solicitud?.solicitud_status == "Pendiente") {
-                                                    "Solicitud pendiente"
-                                                } else {
-                                                    "Solicitud pendiente"
+                                                } else{
+                                                    if (solicitud?.solicitud_status == "Aceptada") {
+                                                        "Solicitud aceptada"
+                                                    } else if (solicitud?.solicitud_status == "Pendiente") {
+                                                        "Solicitud pendiente"
+                                                    } else {
+                                                        "Solicitud pendiente"
+                                                    }
                                                 }
+
                                             )
 
                                         }

@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.ui.theme.Aplicacion.cabecera
+import com.example.avanti.ui.theme.Aplicacion.cabeceraSin
 import com.example.curdfirestore.R
 import com.example.curdfirestore.Usuario.Conductor.Pantallas.mhv
 import com.example.curdfirestore.Usuario.Pasajero.menuPas
@@ -60,8 +61,8 @@ fun horariosInicio(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            cabeceraSin(titulo = "Viaje")
 
-            cabecera(titulo = "Viajes", navController, "ver_notificacion_pasajero/$userId")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
