@@ -223,6 +223,8 @@ fun verConductores(
 
                                     if (solicitudes.isNotEmpty()) {
                                         val listaDias = mutableListOf<String>()
+                                        val listaConductores = mutableListOf<String>()
+
 
                                         solicitudes.forEachIndexed { index, solicitud ->
 
@@ -239,68 +241,76 @@ fun verConductores(
                                                         diaActual
                                                     )
                                                 ) {
+                                                    fun buscarConductor(nombre: String): Boolean {
+                                                        return listaConductores.contains(nombre)
+                                                    }
                                                     listaDias.add("viaje")
                                                     val conductor =
                                                         conObtenerUsuarioId(correo = conId)
                                                     conductor?.let {
                                                         val nombreCompleto =
                                                             "${conductor.usu_nombre} ${conductor.usu_primer_apellido}"
-
-                                                        Row(
-                                                            modifier = Modifier.fillMaxWidth(),
-                                                            verticalAlignment = Alignment.CenterVertically
-                                                        ) {
-                                                            // Contenido de la columna
-                                                            Column(
-                                                                modifier = Modifier
-                                                                    .weight(1f)
-                                                                    .padding(start = 8.dp)
+                                                        val encontrado = buscarConductor(nombreCompleto)
+                                                        if(!encontrado){
+                                                            listaConductores.add(nombreCompleto)
+                                                            Row(
+                                                                modifier = Modifier.fillMaxWidth(),
+                                                                verticalAlignment = Alignment.CenterVertically
                                                             ) {
-                                                                Text(
-                                                                    text = nombreCompleto,
-                                                                    style = TextStyle(
-                                                                        color = Color.Black,
-                                                                        fontSize = 20.sp,
-                                                                        textAlign = TextAlign.Start,
-                                                                    ),
+                                                                // Contenido de la columna
+                                                                Column(
+                                                                    modifier = Modifier
+                                                                        .weight(1f)
+                                                                        .padding(start = 8.dp)
+                                                                ) {
+                                                                    Text(
+                                                                        text = nombreCompleto,
+                                                                        style = TextStyle(
+                                                                            color = Color.Black,
+                                                                            fontSize = 20.sp,
+                                                                            textAlign = TextAlign.Start,
+                                                                        ),
+                                                                    )
+                                                                }
+
+                                                                CoilImage(
+                                                                    url = conductor.usu_foto,
+                                                                    modifier = Modifier
+                                                                        .size(90.dp)
+                                                                        .clip(CircleShape)
+                                                                        .align(Alignment.Bottom),
                                                                 )
                                                             }
 
-                                                            CoilImage(
-                                                                url = conductor.usu_foto,
-                                                                modifier = Modifier
-                                                                    .size(90.dp)
-                                                                    .clip(CircleShape)
-                                                                    .align(Alignment.Bottom),
-                                                            )
-                                                        }
+                                                            botonesVerPasajeros { buttonText ->
+                                                                when (buttonText) {
+                                                                    "Contacto" -> {
+                                                                        usuarioCon = conductor
+                                                                        conductor_id = conId
+                                                                        dialogoContact = true
+                                                                    }
 
-                                                        botonesVerPasajeros { buttonText ->
-                                                            when (buttonText) {
-                                                                "Contacto" -> {
-                                                                    usuarioCon = conductor
-                                                                    conductor_id = conId
-                                                                    dialogoContact = true
-                                                                }
+                                                                    "Reportar" -> {
+                                                                        usuarioCon = conductor
+                                                                        conductor_id = conId
+                                                                        dialogoInf = true
+                                                                    }
 
-                                                                "Reportar" -> {
-                                                                    usuarioCon = conductor
-                                                                    conductor_id = conId
-                                                                    dialogoInf = true
-                                                                }
+                                                                    "Borrar" -> {
+                                                                        id_solicitud = solId
+                                                                        id_viaje = viaId
+                                                                        id_horario = horId
+                                                                        conductor_id=conId
+                                                                        dialogoBorrar = true
 
-                                                                "Borrar" -> {
-                                                                    id_solicitud = solId
-                                                                    id_viaje = viaId
-                                                                    id_horario = horId
-                                                                    conductor_id=conId
-                                                                    dialogoBorrar = true
-
+                                                                    }
                                                                 }
                                                             }
+                                                            lineaGris()
+                                                            Spacer(modifier = Modifier.height(20.dp))
                                                         }
-                                                        lineaGris()
-                                                        Spacer(modifier = Modifier.height(20.dp))
+
+
                                                     }
                                                 }
                                             }

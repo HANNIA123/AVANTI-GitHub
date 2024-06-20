@@ -227,6 +227,10 @@ fun verPasajeros(
 
                                     if (solicitudes.isNotEmpty()) {
                                         val listaDias = mutableListOf<String>()
+                                        val listaPasajeros = mutableListOf<String>()
+
+
+
 
                                         solicitudes.forEachIndexed { index, solicitud ->
 
@@ -243,68 +247,81 @@ fun verPasajeros(
                                                         diaActual
                                                     )
                                                 ) {
+                                                    fun buscarPasajero(nombre: String): Boolean {
+                                                        return listaPasajeros.contains(nombre)
+                                                    }
+
                                                     listaDias.add("viaje")
                                                     val pasajero =
                                                         conObtenerUsuarioId(correo = pasId)
                                                     pasajero?.let {
+
+
                                                         val nombreCompleto =
                                                             "${pasajero.usu_nombre} ${pasajero.usu_primer_apellido}"
+                                                        val encontrado = buscarPasajero(nombreCompleto)
 
-                                                        Row(
-                                                            modifier = Modifier.fillMaxWidth(),
-                                                            verticalAlignment = Alignment.CenterVertically
-                                                        ) {
-                                                            // Contenido de la columna
-                                                            Column(
-                                                                modifier = Modifier
-                                                                    .weight(1f)
-                                                                    .padding(start = 8.dp)
-                                                            ) {
-                                                                Text(
-                                                                    text = nombreCompleto,
-                                                                    style = TextStyle(
-                                                                        color = Color.Black,
-                                                                        fontSize = 20.sp,
-                                                                        textAlign = TextAlign.Start,
-                                                                    ),
-                                                                )
-                                                            }
 
-                                                            CoilImage(
-                                                                url = pasajero.usu_foto,
-                                                                modifier = Modifier
-                                                                    .size(90.dp)
-                                                                    .clip(CircleShape)
-                                                                    .align(Alignment.Bottom),
-                                                            )
-                                                        }
 
-                                                        botonesVerPasajeros { buttonText ->
-                                                            when (buttonText) {
-                                                                "Contacto" -> {
-                                                                    usuarioPas = pasajero
-                                                                    pasajero_id = pasId
-                                                                    dialogoContact = true
-                                                                }
+if(!encontrado){
+    listaPasajeros.add(nombreCompleto)
 
-                                                                "Reportar" -> {
-                                                                    usuarioPas = pasajero
-                                                                    pasajero_id = pasId
-                                                                    dialogoInf = true
-                                                                }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Contenido de la columna
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
+        ) {
+            Text(
+                text = nombreCompleto,
+                style = TextStyle(
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Start,
+                ),
+            )
+        }
 
-                                                                "Borrar" -> {
-                                                                    id_solicitud = solId
-                                                                    id_viaje = viaId
-                                                                    id_horario = horId
-                                                                    pasajero_id=pasId
-                                                                    dialogoBorrar = true
+        CoilImage(
+            url = pasajero.usu_foto,
+            modifier = Modifier
+                .size(90.dp)
+                .clip(CircleShape)
+                .align(Alignment.Bottom),
+        )
+    }
 
-                                                                }
-                                                            }
-                                                        }
-                                                        lineaGris()
-                                                        Spacer(modifier = Modifier.height(20.dp))
+    botonesVerPasajeros { buttonText ->
+        when (buttonText) {
+            "Contacto" -> {
+                usuarioPas = pasajero
+                pasajero_id = pasId
+                dialogoContact = true
+            }
+
+            "Reportar" -> {
+                usuarioPas = pasajero
+                pasajero_id = pasId
+                dialogoInf = true
+            }
+
+            "Borrar" -> {
+                id_solicitud = solId
+                id_viaje = viaId
+                id_horario = horId
+                pasajero_id=pasId
+                dialogoBorrar = true
+
+            }
+        }
+    }
+    lineaGris()
+    Spacer(modifier = Modifier.height(20.dp))
+}
                                                     }
                                                 }
                                             }
