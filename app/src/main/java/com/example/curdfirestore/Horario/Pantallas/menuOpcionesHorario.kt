@@ -72,7 +72,7 @@ fun menuHorarioOpciones(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
         modifier = Modifier.padding(top = 8.dp).background(Color.White),
-        offset = DpOffset(48.dp, offset)
+        offset = DpOffset((-8).dp, offset)
     ) {
         DropdownMenuItem(onClick = {
             onOption1Click()

@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -73,7 +74,7 @@ fun generalViajeCon(
     }
 
     val altura = maxh - 120.dp
-    val tamEspacio = ((altura - 479.dp) / 7) - 10.dp
+    val tamEspacio = ((altura - 485.dp) / 7) - 10.dp
 
     var selectedHoraInicio by remember {
         mutableStateOf("")
@@ -206,7 +207,7 @@ fun generalViajeCon(
         botonSiguiente = false
     }
 
-
+    val colorTxt= Color(57,58,57)
 
     Scaffold {
         Column(
@@ -245,6 +246,19 @@ fun generalViajeCon(
                 ) {
 
                     Spacer(modifier = Modifier.height(15.dp))
+
+                    Text(
+                        text = "Los viajes registrados se agregarán a tu itinerario y se repetirán semanalmente.",
+                        style = TextStyle(
+                            color =colorTxt,
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Justify,
+                        ),
+
+                        )
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
                     FilaIconoTexto2(
                         icono = R.drawable.calendar,
                         texto = dia,
