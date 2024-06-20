@@ -11,6 +11,7 @@ fun autenticaHuella(
     activity: MainActivity,
     exitoso: () -> Unit,
     fallido: () -> Unit,
+    noCompletado: () -> Unit,
     maxIntentos: Int
 ) {
     var intentos = 0
@@ -26,11 +27,11 @@ fun autenticaHuella(
      biometricPrompt = BiometricPrompt(activity, executor,
         object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                fallido()
+                noCompletado()
                 // Maneja el error de autenticación
                 Toast.makeText(
                     activity,
-                    "Limite de intentos superado",
+                    "Ingresa tu huella nuevamente",
                     Toast.LENGTH_SHORT
                 ).show()
             }

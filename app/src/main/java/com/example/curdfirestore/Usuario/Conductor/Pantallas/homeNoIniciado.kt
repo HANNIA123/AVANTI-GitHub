@@ -151,18 +151,11 @@ fun homeNoIniciado(
                                 }
 
 
-
-
                                 val time1: LocalTime = LocalTime.of(23, 59)
                                 val timeActual = convertirStringAHora(obtenerHoraActual())
-
                                 val time2: LocalTime = LocalTime.of(23, 0)
-
                                 val time3: LocalTime = LocalTime.of(0, 0)
-
-
                                 val time4: LocalTime = LocalTime.of(1, 0)
-
 
                                 if (timeActual.isBefore(time1) && timeActual.isAfter(time2)) {
 
@@ -171,8 +164,6 @@ fun homeNoIniciado(
                                                 convertirStringAHora(it.second.viaje_hora_partida).isAfter(
                                                     time2
                                                 )
-
-
                                     }
 
                                 }
@@ -190,7 +181,7 @@ fun homeNoIniciado(
                                 else {
 
                                     viajesFiltrados = viajes.filter {
-                                        it.second.viaje_status=="Disponible" &&
+
                                         it.second.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
                                                 convertirStringAHora(it.second.viaje_hora_partida).isAfter(
                                                     horaMinima
@@ -201,17 +192,6 @@ fun homeNoIniciado(
                                     }
                                 }
 
-
-                                /* val viajesFiltrados = viajes!!.filter {
-                                      it.viaje_dia == obtenerNombreDiaEnEspanol(diaActual) &&
-                                              convertirStringAHora(it.viaje_hora_partida).isAfter(
-                                                  horaMinima
-                                              ) && convertirStringAHora(it.viaje_hora_partida).isBefore(
-                                          horaMaxima
-                                      )
-
-                                  }
-*/
 
                                 if (viajesFiltrados!!.isNotEmpty()) {
                                     val viajesProximos =
@@ -267,7 +247,14 @@ fun homeNoIniciado(
                                                             texto =
                                                                 "No puedes inciar este viaje porque no tienen ningún pasajero confirmado"
                                                             botonNoIniciar = true
-                                                        } else {
+                                                        }
+                                                        else if (viaje.second.viaje_status=="Cancelado")
+                                                        {
+                                                            texto =
+                                                                "No puedes inciar este viaje porque lo has cancelado, vuelve a activarlo"
+                                                            botonNoIniciar = true
+                                                        }
+                                                            else {
 
                                                             navController.navigate("empezar_viaje/$userid/${viaje.first}")
                                                         }
@@ -276,7 +263,7 @@ fun homeNoIniciado(
                                                     modifier = Modifier.width(180.dp)
                                                 ) {
                                                     Text(
-                                                        text = "Ver viaje", style = TextStyle(
+                                                        text = "Iniciar", style = TextStyle(
                                                             fontSize = 18.sp,
                                                             color = Color.White
                                                         )

@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -215,7 +216,14 @@ fun verItinerarioCon(
 
                                     Row(
                                         modifier = Modifier
-                                            .fillMaxWidth().padding(10.dp),
+                                            .fillMaxWidth().padding(10.dp).clickable {
+                                                if (it.viaje_paradas != "0") {
+                                                    navController.navigate("ver_mapa_viaje/${it.viaje_id}/$userId")
+                                                } else {
+                                                    navController.navigate("ver_mapa_viaje_sin/${it.viaje_id}/$userId")
+                                                }
+
+                                            },
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {

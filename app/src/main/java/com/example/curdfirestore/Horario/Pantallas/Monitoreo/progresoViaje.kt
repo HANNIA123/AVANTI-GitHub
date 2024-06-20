@@ -29,13 +29,13 @@ fun barraProgresoViaje(
     val lineaW = maxw / (totalParadas + 2)
     Column(
         modifier = Modifier
-            .height(45.dp)
+            .height(50.dp)
             .background(Color.White)
             .padding(10.dp)
     ) {
         Text(
             texto,
-            fontSize = 12.sp,
+            fontSize = 14.sp,
             color = Color.Black
         )
         Spacer(modifier = Modifier.height(5.dp))

@@ -152,6 +152,121 @@ fun dialogSeleccionMotivo(
 }
 
 @Composable
+fun dialogSeleccionMotivoPas(
+    onDismiss: () -> Unit,
+    onDaysSelected: (Set<Int>) -> Unit
+) {
+    var selectedMotivo by remember { mutableStateOf(0) }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f)),
+
+        ) {
+
+        Dialog(
+            onDismissRequest = {
+                //onDismiss()
+            },
+            content = {
+                // Contenido del diálogo
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(15.dp)
+
+                ) {
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Text(
+                        text = "Selecciona el motivo",
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.Black
+
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Lista de motivos de reporte
+                    val daysOfWeek =
+                        listOf(
+                            "Acoso",
+                            "Cancelación de viaje",
+                            "No asistió al punto de encuentro",
+                            "Llegó tarde al punto de encuentro",
+                            "Otros"
+                        )
+
+                    // Botones para seleccionar/deseleccionar motivo
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(500.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        items(daysOfWeek.size) { index ->
+                            val isSelected = index + 1 == selectedMotivo
+                            ReporteButton(
+                                day = daysOfWeek[index],
+                                isSelected = isSelected,
+
+                                onToggle = {
+                                    selectedMotivo = if (isSelected) 0 else index + 1
+                                }
+
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(40.dp))
+
+
+                    // Botón de confirmación
+
+                    Row(modifier = Modifier.align(Alignment.End)) {
+                        TextButton(onClick = { onDismiss() }) {
+                            Text(
+                                text = "CANCELAR",
+                                style = TextStyle(
+                                    Color(137, 67, 242),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        TextButton(
+                            onClick = {
+
+                                onDaysSelected(if (selectedMotivo != 0) setOf(selectedMotivo) else emptySet())
+                                onDismiss()
+
+                            }) {
+                            Text(
+                                text = "ACEPTAR",
+                                style = TextStyle(
+                                    Color(137, 67, 242),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                )
+                            )
+                        }
+                    }
+
+                }
+            },
+
+            )
+    }
+}
+
+@Composable
 fun ReporteButton(
     day: String,
     isSelected: Boolean,

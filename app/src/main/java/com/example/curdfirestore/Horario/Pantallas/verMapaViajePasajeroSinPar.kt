@@ -358,12 +358,7 @@ fun verMapaViajePasajeroSinPar(
                         }else{
                             textoNegro(Texto = "Llegada a UPIITA: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
                         }
-
-
-
                     }
-
-
 
                     IconButton(
                         onClick = {

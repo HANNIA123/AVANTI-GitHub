@@ -66,10 +66,12 @@ import com.example.curdfirestore.Viaje.ConsultasViaje.registrarHistorialViaje
 import com.example.curdfirestore.Viaje.Funciones.UbicacionRealTime
 import com.example.curdfirestore.Viaje.Funciones.accionesComienzoViaje
 import com.example.curdfirestore.Viaje.Funciones.accionesTerminoViaje
+import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.obtenerHoraActualSec
 import com.example.curdfirestore.Viaje.Funciones.registrarHistorialBloqueo
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViaje
+import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViajePas
 import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
 import com.example.curdfirestore.Viaje.Pantallas.Huella.dialogoHuellaFallida
 import com.example.curdfirestore.lineaCargando
@@ -123,7 +125,9 @@ fun obtenerCoordenadas(
     var textoDialogo by remember {
         mutableStateOf("")
     }
-
+    var botonNotificacionNoValidacion by remember {
+        mutableStateOf(false)
+    }
     var huellaIngresada by remember {
         mutableStateOf(false)
     }
@@ -316,7 +320,7 @@ fun obtenerCoordenadas(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(maxh - 181.dp)
+                            .height(maxh - 186.dp)
                     ) {
                         val cameraPosition = remember {
                             CameraPosition(
@@ -368,8 +372,7 @@ fun obtenerCoordenadas(
                             paradasOrdenadas.forEach { parada ->
                                 val parLatLng = convertirStringALatLng(parada.second.par_ubicacion)
                                 if (parLatLng != null) {
-
-
+                                    val direccionPar= convertCoordinatesToAddress(coordenadas = parLatLng)
                                     Marker(
                                         state = MarkerState(
                                             position = LatLng(
@@ -378,7 +381,7 @@ fun obtenerCoordenadas(
                                             )
                                         ),
                                         title = "Parada ${parada.second.par_nombre}",
-                                        //snippet = "Dirección: $direccionPar",
+                                        snippet = "Dirección: $direccionPar",
                                         icon = BitmapDescriptorFactory.fromResource(R.drawable.paradas),
                                     )
                                 }
@@ -490,7 +493,17 @@ fun obtenerCoordenadas(
                                     num = listParadasRecorridas.size
                                     // numParadaActual = listParadasRecorridas.size
                                     if (viajeComenzado.isEmpty()) {
-                                        autenticaHuella(
+                                        accionesComienzoViaje(
+                                            viajeId = viajeId,
+                                            solicitudes = solicitudes,
+                                            conductorId = userId,
+                                            hisCreado = hisCreado,
+                                            idInicioViaje = idInicioViaje,
+
+
+                                            )
+
+                                       /* autenticaHuella(
                                             activity = activity1,
                                             exitoso = {
                                                 huellaCorrecta = true
@@ -504,6 +517,7 @@ fun obtenerCoordenadas(
                                             },
                                             maxIntentos = 3
                                         )
+                                        */
 
 
                                     } else {
@@ -523,7 +537,10 @@ fun obtenerCoordenadas(
                                                     huellaIngresada = true
                                                     huellaCorrecta = false
                                                 },
-                                                maxIntentos = 3
+                                                noCompletado = {
+                                                               huellaIngresada=false
+                                                },
+                                                maxIntentos = 4
                                             )
 
                                             botonParadas = true
@@ -615,7 +632,7 @@ fun obtenerCoordenadas(
                             )
 
                         }
-
+/*
                         //--------Acciones al iniciar el viaje---------
                         if (botonInicioViaje) {
 
@@ -642,7 +659,7 @@ fun obtenerCoordenadas(
                                         val viajeIniciado = HistorialViajesData(
                                             conductor_id = userId,
                                             validacion_conductor_inicio = false,
-                                            bloqueo_inicio_viaje = true,
+                                            bloqueo_inicio_viaje = false,
                                             viaje_id = viajeId,
                                             fecha_bloqueo_viaje = obtenerFechaFormatoddmmyyyy(),
                                             hora_bloqueo_viaje = obtenerHoraActualSec()
@@ -662,6 +679,7 @@ fun obtenerCoordenadas(
                             }
 
                         }
+                        */
 
 
                         //--------Acciones en las paradas---------
@@ -683,6 +701,8 @@ fun obtenerCoordenadas(
                                     botonNotificacionValida = true
 
                                 } else {
+
+
                                     dialogoAutFall = true
                                     actualizarCampoSolicitudPorBusqueda(
                                         "parada_id",
@@ -691,6 +711,7 @@ fun obtenerCoordenadas(
                                         "no"
 
                                     )
+                                    botonNotificacionNoValidacion=true
                                 }
 
                                 historial?.let {
@@ -775,6 +796,20 @@ fun obtenerCoordenadas(
                             }
                             botonNotificacionFin = false
                         }
+                        if (botonNotificacionNoValidacion) {
+                            if (solicitudes != null) {
+                                conductor?.let {
+                                    registrarNotificacionViaje(
+                                        tipoNot = "vni",
+                                        solicitudes!!,
+                                        userId,
+                                        viajeId,
+                                        conductor
+                                    )
+                                }
+                            }
+                            botonNotificacionNoValidacion=false
+                        }
 
                     }
 
@@ -815,11 +850,12 @@ fun obtenerCoordenadas(
             )
         }
     }
+
     if (viajeFinalizado) {
         dialogoViajeFinalizo(
             "El viaje ha finalizado",
             navController,
-            ruta = "homeconductor/$userId"
+            ruta = "homeconductor_no/$userId"
         )
     }
 

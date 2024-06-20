@@ -64,6 +64,12 @@ fun enviarNotificacion(
         titulo = title
         cuerpo = "$nombre $p_apellido $texto"
     }
+    else if(tipo=="vni"){
+        titulo = title
+        cuerpo = "$nombre $p_apellido $texto"
+    }
+
+
     else{
         println("NO ENTRAAAA")
     }

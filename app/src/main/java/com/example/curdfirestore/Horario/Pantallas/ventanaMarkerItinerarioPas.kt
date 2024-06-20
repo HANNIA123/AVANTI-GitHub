@@ -30,6 +30,7 @@ import com.example.avanti.MarkerItiData
 import com.example.avanti.SolicitudData
 import com.example.avanti.Usuario.ConsultasUsuario.conObtenerUsuarioId
 import com.example.avanti.ui.theme.Aplicacion.CoilImage
+import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.textInMarker
 import com.example.curdfirestore.textoNegrita
@@ -132,9 +133,25 @@ fun ventanaMarkerItinerarioPas(
                                 Spacer(modifier = Modifier.height(10.dp))
 
 
+                                val viaje = conObtenerViajeRT(viajeId = solicitud.viaje_id)
+
                                 val conductor = conObtenerUsuarioId(correo = solicitud.conductor_id)
 
-                                conductor?.let {
+                                viaje?.let {
+                                    val status = viaje.viaje_status
+                                    val (color, textoValidacion) = when (status) {
+                                        "Disponible" -> Color(
+                                            21,
+                                            154,
+                                            78
+                                        ) to "Confirmado"
+
+
+                                        else -> Color.Red to "Cancelado"
+
+                                    }
+
+                                    conductor?.let {
 
                                     Row(
                                         modifier = Modifier
@@ -150,17 +167,26 @@ fun ventanaMarkerItinerarioPas(
                                         )
 
                                         Spacer(modifier = Modifier.width(15.dp))
-                                        textoNegrita(
-                                            texto = "${conductor.usu_nombre} ${conductor.usu_primer_apellido}",
-                                            tam = 15.0f,
-                                            color = Color.Black
-                                        )
+                                        Column {
+                                            textoNegrita(
+                                                texto = "${conductor.usu_nombre} ${conductor.usu_primer_apellido}",
+                                                tam = 15.0f,
+                                                color = Color.Black
+                                            )
+                                            textoNegrita(
+                                                texto = textoValidacion,
+                                                tam = 14.0f,
+                                                color = color
+                                            )
+
+                                        }
 
 
                                     }
 
 
                                 }
+                            }
 
                             }
                         }

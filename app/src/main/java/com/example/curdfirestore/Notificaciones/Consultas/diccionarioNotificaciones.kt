@@ -40,6 +40,9 @@ fun TextoNotificacionVer(tipoNot:String):String{
     else if(tipoNot=="vt"){
         texto="ha finalizado un viaje."
     }
+    else if(tipoNot=="vni"){
+        texto="ha fallado su validación de identidad."
+    }
     else{
         texto="Notificación recibida."
     }
@@ -96,6 +99,10 @@ fun TextoNotificacionEnviar(tipoNot:String): Pair<String, String> {
     else if(tipoNot=="vt"){
         title="Viaje terminado"
         texto="ha finalizado el viaje."
+    }
+    else if(tipoNot=="vni") {
+        title = "Validación de identidad fallida"
+        texto = "no ha validado su identidad."
     }
     else{
         texto="Notificacion recibida."

@@ -23,3 +23,20 @@ fun convertiraMotivo(numMotivo: Set<Int>):String{
     return motivo
 
 }
+
+@Composable
+fun convertiraMotivoPas(numMotivo: Set<Int>):String{
+    var motivo by remember {
+        mutableStateOf("")
+    }
+
+    motivo = when (numMotivo) {
+        setOf(1) -> "Acoso"
+        setOf(2) -> "Cancelación de viaje"
+        setOf(3) -> "No asistió a punto de encuentro"
+        setOf(4) -> "Llegó tarde al punto de encuentro"
+        setOf(5) -> "Otros"
+        else -> ""
+    }
+    return motivo
+}

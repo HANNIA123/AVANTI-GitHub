@@ -56,6 +56,7 @@ import com.example.curdfirestore.Usuario.Pasajero.menuDesplegablePas
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerHistorialViajeRT
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeRT
 import com.example.curdfirestore.Viaje.ConsultasViaje.editarDocumentoHistorial
+import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.registrarNotificacionViajePas
 import com.example.curdfirestore.Viaje.Pantallas.Huella.autenticaHuella
@@ -94,6 +95,9 @@ fun verUbicacionMonitoreo(
     }
     var textoDialogo by remember {
         mutableStateOf("")
+    }
+    var botonNotificacionNoValidacion by remember {
+        mutableStateOf(false)
     }
     var botonNotificacionParada by remember {
         mutableStateOf(false)
@@ -151,7 +155,6 @@ fun verUbicacionMonitoreo(
     val coroutineScope = rememberCoroutineScope()
 
 
-
     var maxh by remember {
         mutableStateOf(0.dp)
     }
@@ -189,7 +192,7 @@ fun verUbicacionMonitoreo(
 
     val infHorario = conObtenerHorarioId(horarioId = horarioId)
     //val usuarioCon= conObtenerUsuarioId(correo = parada!!.user_id)
-    val usuarioPas= conObtenerUsuarioId(correo = userId)
+    val usuarioPas = conObtenerUsuarioId(correo = userId)
     println("USUARIO PASAJERO $usuarioPas")
 
 
@@ -201,9 +204,9 @@ fun verUbicacionMonitoreo(
     conObtenerSolicitudesPorViaje(viajeId, "Aceptada") { resultado ->
         solicitudes = resultado
     }
- var idHis by remember {
-     mutableStateOf("")
- }
+    var idHis by remember {
+        mutableStateOf("")
+    }
 
     Box {
         Column(
@@ -221,12 +224,12 @@ fun verUbicacionMonitoreo(
                 boton = { estaBoton ->
                     boton = estaBoton
                 },
-"ver_notificaciones_pasajero/$userId"
-                )
+                "ver_notificaciones_pasajero/$userId"
+            )
 
             infViaje?.let {
                 idHis = infViaje.viaje_id_iniciado
-                if(idHis!="") {
+                if (idHis != "") {
                     historial = conObtenerHistorialViajeRT(viajeId = idHis)
                 }
 
@@ -285,7 +288,7 @@ fun verUbicacionMonitoreo(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(maxh - 181.dp)
+                    .height(maxh - 186.dp)
             ) {
                 val cameraPosition = remember {
                     CameraPosition(
@@ -371,9 +374,27 @@ fun verUbicacionMonitoreo(
                             )
                         }
                     }
+                    parada?.let {
+                        val paradaLatLng = convertirStringALatLng(parada.par_ubicacion)
+                        val direccionPar =
+                            paradaLatLng?.let { it1 -> convertCoordinatesToAddress(coordenadas = it1) }
+                        if (paradaLatLng != null) {
+                            Marker(
+                                state = MarkerState(
+                                    position = LatLng(
+                                        paradaLatLng.latitude,
+                                        paradaLatLng.longitude
+                                    )
+                                ),
+                                title = "Punto de encuentro",
+                                snippet = "Dirección: $direccionPar",
+                                icon = BitmapDescriptorFactory.fromResource(R.drawable.paradas),
+
+                                )
+                        }
+
+                    }
                 }
-
-
 
 
             }
@@ -408,8 +429,8 @@ fun verUbicacionMonitoreo(
                             ),
                             onClick = {
 
-huellaCorrecta=false
-                                huellaIngresada=false
+                                huellaCorrecta = false
+                                huellaIngresada = false
                                 autenticaHuella(
                                     activity = activity1,
                                     exitoso = {
@@ -421,7 +442,10 @@ huellaCorrecta=false
                                         huellaCorrecta = false
                                         huellaIngresada = true
                                     },
-                                    maxIntentos = 3
+                                    noCompletado = {
+                                        huellaIngresada = false
+                                    },
+                                    maxIntentos = 4
 
                                 )
                                 botonLlegada = true
@@ -450,11 +474,12 @@ huellaCorrecta=false
 
                             solicitud?.let {
 
-                                val textoVal= if(solicitud.second.solicitud_validacion_pasajero=="si"){
-                                    "Has sido validado"
-                                }else{
-                                    "No has sido validado"
-                                }
+                                val textoVal =
+                                    if (solicitud.second.solicitud_validacion_pasajero == "si") {
+                                        "Has sido validado"
+                                    } else {
+                                        "No has sido validado"
+                                    }
 
                                 Text(
                                     text = textoVal,
@@ -468,7 +493,6 @@ huellaCorrecta=false
                                     )
                                 )
                             }
-
 
 
                         }
@@ -510,7 +534,6 @@ huellaCorrecta=false
                     botonNotificacionParada = true
                     if (huellaIngresada) {
 
-
                         if (historial != null) {
                             val listaPasajerosVal = historial!!.validacion_pasajeros
                             val listaIdPasajeros = historial!!.ids_pasajeros
@@ -528,7 +551,7 @@ huellaCorrecta=false
                                     "horario_id" to horarioId
                                 )
                                 editarDocumentoHistorial(idHis, nuevosValores)
-botonNotificacionValidacion=true
+                                botonNotificacionValidacion = true
                             } else {
                                 textoDialogo =
                                     "Tu identidad no ha sido validada.El coductor será notificado "
@@ -551,6 +574,7 @@ botonNotificacionValidacion=true
                         }
                         actualizarCampoParada(paradaId, "par_llegada_pas", "si")
 
+                        botonNotificacionNoValidacion=true
                         botonLlegada = false
                     }
 
@@ -584,7 +608,6 @@ botonNotificacionValidacion=true
                     }
 
 
-
                 }
 
             }
@@ -599,13 +622,16 @@ botonNotificacionValidacion=true
         )
     }
     if (dialogoNoValida) {
+
         dialogoHuellaFallida(
             onDismiss = {
                 dialogoNoValida = false
 
-                        },
+            },
             text = textoDialogo
         )
+
+
     }
 
     if (verInformacionViaje) {
@@ -627,6 +653,18 @@ botonNotificacionValidacion=true
             "home_pasajero/$userId"
         )
     }
+    if (botonNotificacionNoValidacion) {
+        solicitud?.let {
+            registrarNotificacionViajePas(
+                tipoNot = "vni",
+                solicitud,
+                userId,
+                viajeId
+            )
+        }
+    }
+
+
     if (!cargando) {
         lineaCargando(text = "Cargando Mapa....")
     }

@@ -56,6 +56,7 @@ import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
 import com.example.curdfirestore.Parada.ConsultasParada.conObtenerParadaId
 import com.example.curdfirestore.Reportes.ConsultasReporte.conRegistrarReporte
 import com.example.curdfirestore.Reportes.Funciones.convertiraMotivo
+import com.example.curdfirestore.Reportes.Funciones.convertiraMotivoPas
 import com.example.curdfirestore.Viaje.ConsultasViaje.conObtenerViajeId
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirADia
@@ -95,7 +96,7 @@ fun dialogoReportarPasajero(
     }
 
     if (selectedMotivo.isNotEmpty()) {
-        motivoCon = convertiraMotivo(numMotivo = selectedMotivo)
+        motivoCon = convertiraMotivoPas(numMotivo = selectedMotivo)
         motivo = "Motivo: $motivoCon"
 
     }
@@ -267,7 +268,7 @@ fun dialogoReportarPasajero(
     }
     // Diálogo para la selección de días
     if (showDialogMotivo) {
-        dialogSeleccionMotivo(
+        dialogSeleccionMotivoPas(
             onDismiss = { showDialogMotivo = false },
             onDaysSelected = { selectedMotivo = it }
         )

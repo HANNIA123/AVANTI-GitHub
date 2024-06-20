@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
+
 @Composable
 fun menuHorarioOpcionesSin(
     expanded: Boolean,
@@ -65,14 +66,13 @@ fun menuHorarioOpciones(
     offset: Dp,
     txtBoton:String,
     onOption1Click: () -> Unit,
-    onOption2Click: () -> Unit,
-
+    onOption2Click: () -> Unit
 ) {
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
         modifier = Modifier.padding(top = 8.dp).background(Color.White),
-        offset = DpOffset((-8).dp, offset)
+        offset = DpOffset(0.dp, offset)
     ) {
         DropdownMenuItem(onClick = {
             onOption1Click()
@@ -92,6 +92,5 @@ fun menuHorarioOpciones(
                 style = TextStyle(color = Color(137, 13, 88))
             )
         }
-
     }
 }
