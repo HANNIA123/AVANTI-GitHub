@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.HorarioData
 import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
+import com.example.curdfirestore.Horario.ConsultasHorario.conEditarHorarioDocumento
 import com.example.curdfirestore.Horario.ConsultasHorario.conRegistrarHorario
 import com.example.curdfirestore.NivelAplicacion.SearchBar
 import com.example.curdfirestore.NivelAplicacion.searchPlaces
@@ -365,22 +366,19 @@ cabeceraConBotonAtras(titulo = "Registrar origen", navController = navController
     }
 
     if (boton == true && ejecutado == false) {
-        val comPantalla="muestra"
-
         val destino = "19.5114059,-99.1265259" //Coordenadas de UPIITA
-        val horarioData = HorarioData(
-            usu_id = userid,
-            horario_dia = dia,
-            horario_hora= horao,
-            horario_origen = ubicacionpasar,
-            horario_destino = destino,
-            horario_trayecto = "1",
-            horario_status = "Disponible",
-            horario_solicitud = "No",
-        )
+        val nuevosValores = mapOf(
+            "usu_id" to userid,
+            "horario_dia" to dia,
+            "horario_hora" to horao,
+            "horario_origen" to ubicacionpasar,
+            "horario_destino" to destino,
+            "horario_trayecto" to "1",
+            "horario_status" to "Disponible",
+            "horario_solicitud" to "No",
 
-        conRegistrarHorario(navController, userid,horarioData, comPantalla)
-
+            )
+        conEditarHorarioDocumento(idHorario, nuevosValores, userid, navController)
 
 
         //GuardarViaje(navController, userid, viajeData,comPantalla)

@@ -33,10 +33,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.avanti.HorarioData
 import com.example.avanti.ui.theme.Aplicacion.cabeceraConBotonAtras
+import com.example.avanti.ui.theme.Aplicacion.obtenerFechaFormatoddmmyyyy
+import com.example.avanti.ui.theme.Aplicacion.obtenerHoraActual
+import com.example.curdfirestore.Horario.ConsultasHorario.conEditarHorarioDocumento
+import com.example.curdfirestore.Horario.ConsultasHorario.conObtenerHorarioId
 import com.example.curdfirestore.Horario.ConsultasHorario.conRegistrarHorario
 import com.example.curdfirestore.NivelAplicacion.SearchBar
 import com.example.curdfirestore.NivelAplicacion.searchPlaces
 import com.example.curdfirestore.R
+import com.example.curdfirestore.Solicitud.ConsultasSolicitud.conObtenerSolicitudByHorarioRT
+import com.example.curdfirestore.Viaje.ConsultasViaje.editarDocumentoHistorial
 import com.example.curdfirestore.Viaje.Funciones.convertCoordinatesToAddress
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 
@@ -134,7 +140,7 @@ fun registrarDestinoPasajeroEditar(
                     }
 
                     if (primeraVez == 0) {
-                      ubicacion=uOrigen
+                        ubicacion = uOrigen
                     } else {
                         ubicacion = ubiMarker
                     }
@@ -325,27 +331,31 @@ fun registrarDestinoPasajeroEditar(
         }
 
     }
-    if (boton == true && ejecutado == false) {
-        val comPantalla = "muestra"
-        val origen = "19.5114059,-99.1265259" //Coordenadas de UPIITA
-        val horarioData = HorarioData(
-            usu_id = userid,
-            horario_dia = dia,
-            horario_hora = horao,
-            horario_origen = origen,
-            horario_destino = ubicacionpasar,
-            horario_trayecto = "0",
-            horario_status = "Disponible",
-            horario_solicitud = "No",
-        )
 
-        conRegistrarHorario(navController, userid, horarioData, comPantalla)
+    if (boton == true && ejecutado == false) {
+
+        val origen = "19.5114059,-99.1265259" //Coordenadas de UPIITA
+
+
+        val nuevosValores = mapOf(
+            "usu_id" to userid,
+            "horario_dia" to dia,
+            "horario_hora" to horao,
+            "horario_origen" to origen,
+            "horario_destino" to ubicacionpasar,
+            "horario_trayecto" to "0",
+            "horario_status" to "Disponible",
+            "horario_solicitud" to "No",
+
+            )
+        conEditarHorarioDocumento(idHorario, nuevosValores, userid, navController)
+
 
         ejecutado = true
+
+
     }
-
 }
-
 
 
 

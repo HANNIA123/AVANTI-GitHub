@@ -65,7 +65,8 @@ fun menuHorarioOpciones(
     offset: Dp,
     txtBoton:String,
     onOption1Click: () -> Unit,
-    onOption2Click: () -> Unit
+    onOption2Click: () -> Unit,
+
 ) {
     DropdownMenu(
         expanded = expanded,
@@ -91,5 +92,6 @@ fun menuHorarioOpciones(
                 style = TextStyle(color = Color(137, 13, 88))
             )
         }
+
     }
 }

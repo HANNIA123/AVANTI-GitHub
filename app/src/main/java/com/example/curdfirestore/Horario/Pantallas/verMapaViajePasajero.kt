@@ -1,4 +1,5 @@
 package com.example.curdfirestore.Horario.Pantallas
+
 import android.annotation.SuppressLint
 
 import android.content.Context
@@ -48,6 +49,7 @@ import com.example.curdfirestore.Viaje.Funciones.calculateDistance
 import com.example.curdfirestore.Viaje.Funciones.convertirStringALatLng
 import com.example.curdfirestore.Viaje.Funciones.convertirTrayecto
 import com.example.curdfirestore.Viaje.Funciones.getDirections
+import com.example.curdfirestore.Viaje.Pantallas.Editar.dialogoConfirmarEditarHorario
 import com.example.curdfirestore.lineaCargando
 import com.example.curdfirestore.textoNegro
 
@@ -86,23 +88,20 @@ fun verMapaViajePasajero(
         maxh = this.maxHeight
     }
 
-    var horarioData= conObtenerHorarioId(horarioId = horarioId)
-    val solicitud= conObtenerSolicitud(horarioId)
+    var horarioData = conObtenerHorarioId(horarioId = horarioId)
+    val solicitud = conObtenerSolicitud(horarioId)
 
     val paradaId = solicitud?.parada_id
-    var paradas = if (paradaId != null) conObtenerParadaId(paradaId) else null
-
-
-
+    val paradas = if (paradaId != null) conObtenerParadaId(paradaId) else null
 
 
     //Para la ventana de carga
     var isLoading by remember { mutableStateOf(true) }
 
 //Agregados
-    var filterviajes by remember { mutableStateOf<List<MarkerItiData>?>(null) }
+    val filterviajes by remember { mutableStateOf<List<MarkerItiData>?>(null) }
 
-    var listaActual = filterviajes?.toMutableList() ?: mutableListOf()
+    val listaActual = filterviajes?.toMutableList() ?: mutableListOf()
     val paradasPorMarcador = mutableMapOf<String, MarkerItiData>()
 
     var infparadas by remember { mutableStateOf<MarkerItiData?>(null) }
@@ -115,9 +114,10 @@ fun verMapaViajePasajero(
 
     //Para el menú de opciones de viaje
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf("") }
+
 
     var showEliminar by rememberSaveable { mutableStateOf(false) }
+    var showEditar by rememberSaveable { mutableStateOf(false) }
     var showCancelar by rememberSaveable { mutableStateOf(false) }
 
     if (isLoading) {
@@ -162,7 +162,6 @@ fun verMapaViajePasajero(
 
             Box {
 
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -170,7 +169,6 @@ fun verMapaViajePasajero(
                         .background(Color.White)
 
                 ) {
-
 
                     cabeceraConMenuPas(
                         titulo = "Ver viaje",
@@ -180,7 +178,6 @@ fun verMapaViajePasajero(
                             boton = estaBoton
                         })
                     //  cabeceraConBotonCerrarViaje("Ver viaje", navController, correo)
-
 
                     Box(
                         modifier = Modifier
@@ -219,34 +216,32 @@ fun verMapaViajePasajero(
                         )
 
 
+                        var markerLat by remember { mutableStateOf(0.0) }
+                        var markerLon by remember { mutableStateOf(0.0) }
+                        val markerCoordenadasLatLng = convertirStringALatLng(paradas.par_ubicacion)
 
-                            var markerLat by remember { mutableStateOf(0.0) }
-                            var markerLon by remember { mutableStateOf(0.0) }
-                            val markerCoordenadasLatLng = convertirStringALatLng(paradas.par_ubicacion)
+                        if (markerCoordenadasLatLng != null) {
+                            markerLat = markerCoordenadasLatLng.latitude
+                            markerLon = markerCoordenadasLatLng.longitude
+                            // Hacer algo con las coordenadas LatLng
+                            // println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
+                        }
+                        val ubiParada = LatLng(markerLat, markerLon)
+                        val nParada = MarkerItiData(
+                            marker_ubicacion = ubiParada,
+                            marker_hora = paradas.par_hora,
+                            marker_titulo = paradas.par_nombre,
+                            marker_id = paradas.par_id
+                        )
 
-                            if (markerCoordenadasLatLng != null) {
-                                markerLat = markerCoordenadasLatLng.latitude
-                                markerLon = markerCoordenadasLatLng.longitude
-                                // Hacer algo con las coordenadas LatLng
-                                // println("Latitud: ${markerCoordenadasLatLngO.latitude}, Longitud: ${markerCoordenadasLatLngO.longitude}")
-                            }
-                            val ubiParada = LatLng(markerLat, markerLon)
-                            val nParada = MarkerItiData(
-                                marker_ubicacion = ubiParada,
-                                marker_hora = paradas.par_hora,
-                                marker_titulo = paradas.par_nombre,
-                                marker_id = paradas.par_id
-                            )
-
-                            listaActual.add(nParada)
-                            markerPositions = markerPositions + ubiParada
-                            paradasPositions = paradasPositions + ubiParada
-                            titlesPositions = titlesPositions + paradas.par_nombre
-                            horaPositions = horaPositions + paradas.par_hora
+                        listaActual.add(nParada)
+                        markerPositions = markerPositions + ubiParada
+                        paradasPositions = paradasPositions + ubiParada
+                        titlesPositions = titlesPositions + paradas.par_nombre
+                        horaPositions = horaPositions + paradas.par_hora
 
                         val context = LocalContext.current
                         // Antes de cargar el mapa, muestra la ventana de carga
-
 
 
                         MapViewContainer { googleMap: GoogleMap ->
@@ -274,7 +269,8 @@ fun verMapaViajePasajero(
                                         context.packageName
                                     )
                                 val bitmapDescriptor = BitmapDescriptorFactory.fromResource(image)
-                                val markerOptions = MarkerOptions().position(newMarker.marker_ubicacion)
+                                val markerOptions =
+                                    MarkerOptions().position(newMarker.marker_ubicacion)
                                 markerOptions.icon(bitmapDescriptor)
                                 val marker = googleMap.addMarker(markerOptions)
                                 paradasPorMarcador[marker!!.id] = newMarker
@@ -332,7 +328,6 @@ fun verMapaViajePasajero(
                         }
 
 
-
                         val texBot = if (horarioData.horario_status == "Disponible") {
                             "Cancelar horario"
                         } else {
@@ -346,8 +341,7 @@ fun verMapaViajePasajero(
                             offset = (-48).dp,
                             txtBoton = texBot,
                             onOption1Click = {
-                                var conpantalla = "nomuestra"
-                                var regresa = "vermapa"
+
                                 //navController.navigate("general_parada/$viajeId/$correo/$conpantalla/$regresa")
                                 // ruta nueva parada
                                 horarioStatus = horarioData.horario_status
@@ -355,7 +349,7 @@ fun verMapaViajePasajero(
                             },
                             onOption2Click = {
                                 showEliminar = true
-                            },
+                            }
 
                         )
 
@@ -384,14 +378,18 @@ fun verMapaViajePasajero(
                             val trayecto = convertirTrayecto(horarioData.horario_trayecto)
                             textoNegro(Texto = horarioData.horario_dia, tamTexto = 16f)
                             textoNegro(Texto = trayecto, tamTexto = 16f)
-                             if(horarioData.horario_trayecto == "0"){
-                                 textoNegro(Texto = "Salida de UPIITA: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
-                             }else{
-                                 textoNegro(Texto = "Llegada a UPIITA: " + horarioData.horario_hora + " hrs", tamTexto = 16f)
-                             }
+                            if (horarioData.horario_trayecto == "0") {
+                                textoNegro(
+                                    Texto = "Salida de UPIITA: " + horarioData.horario_hora + " hrs",
+                                    tamTexto = 16f
+                                )
+                            } else {
+                                textoNegro(
+                                    Texto = "Llegada a UPIITA: " + horarioData.horario_hora + " hrs",
+                                    tamTexto = 16f
+                                )
+                            }
 
-
-                            //textoGris(Texto = horarioData.horario_hora + " hrs", tamTexto = 16f)
 
                         }
 
@@ -429,25 +427,33 @@ fun verMapaViajePasajero(
                 }
 
                 if (showEliminar) {
-                    if(solicitud?.solicitud_status == "Aceptada") {
+                    if (solicitud?.solicitud_status == "Aceptada") {
                         dialogoConfirmarEliminarHorarioSEA(
                             onDismiss = { showEliminar = false },
-                            horarioId, solicitud.viaje_id, correo,solicitud,
+                            horarioId, solicitud.viaje_id, correo, solicitud,
                             navController
                         )
-                    }else if (solicitud?.solicitud_status == "Pendiente"){
+                    } else if (solicitud?.solicitud_status == "Pendiente") {
                         dialogoConfirmarEliminarHorarioSE(
                             onDismiss = { showEliminar = false },
                             horarioId, correo,
                             navController
                         )
-                    }else{
+                    } else {
                         dialogoConfirmarEliminarHorarioSE(
                             onDismiss = { showEliminar = false },
                             horarioId, correo,
                             navController
                         )
                     }
+                }
+                if (showEditar) {
+                    dialogoConfirmarEditarHorario(
+                        onDismiss = { showEditar = false },
+                        horarioId = horarioId,
+                        userId = correo,
+                        navController = navController
+                    )
                 }
 
                 if (show) {
@@ -458,8 +464,6 @@ fun verMapaViajePasajero(
                         horarioData.horario_trayecto,
                         { show = false })
                 }
-
-
 
 
             }
