@@ -46,6 +46,8 @@ import com.example.curdfirestore.R
 import com.example.curdfirestore.Solicitud.ConsultasSolicitud.eliminarSolicitudPorHorarioId
 
 import com.example.curdfirestore.Viaje.ConsultasViaje.aumentarLugaresDeViaje
+import com.example.curdfirestore.Viaje.ConsultasViaje.disminuirPasajerosDeViaje
+import com.example.curdfirestore.Viaje.ConsultasViaje.disminuirPasajerosDeViajeConf
 
 
 @Composable
@@ -282,6 +284,8 @@ fun dialogoConfirmarEliminarHorarioSEA(
                 }
                 eliminarHorario(documentId = horarioId,navController, userId)
                 aumentarLugaresDeViaje(viajeId)
+                disminuirPasajerosDeViaje(viajeId)
+                disminuirPasajerosDeViajeConf(viajeId)
                 eliminarSolicitudPorHorarioId(horarioId)
 
                 //---------------------------ENVIAR NOTIFICACIÓN-------------------------------------

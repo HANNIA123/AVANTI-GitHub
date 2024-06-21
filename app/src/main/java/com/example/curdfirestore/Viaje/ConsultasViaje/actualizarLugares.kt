@@ -24,3 +24,49 @@ val newLugares=lugaresActuales + 1
         println("Error al intentar actualizar el campo viaje_lugares: $e")
     }
 }
+
+fun disminuirPasajerosDeViaje(viajeId: String) {
+    try {
+        val db = FirebaseFirestore.getInstance()
+        val viajeRef = db.collection("viaje").document(viajeId)
+
+        viajeRef.get().addOnSuccessListener { viajeDoc ->
+            val PasajerosActuales = viajeDoc.getString("viaje_num_pasajeros")?.toIntOrNull() ?: 0
+            val newPasajeros=PasajerosActuales - 1
+            viajeRef.update("viaje_num_pasajeros", newPasajeros.toString())
+                .addOnSuccessListener {
+                    println("Campo viaje_lugares actualizado correctamente para el viaje con ID: $viajeId.")
+                }
+                .addOnFailureListener { e ->
+                    println("Error al intentar actualizar el campo viaje_lugares: $e")
+                }
+        }.addOnFailureListener { e ->
+            println("Error al obtener el documento de viaje: $e")
+        }
+    } catch (e: Exception) {
+        println("Error al intentar actualizar el campo viaje_lugares: $e")
+    }
+}
+fun disminuirPasajerosDeViajeConf(viajeId: String) {
+    try {
+        val db = FirebaseFirestore.getInstance()
+        val viajeRef = db.collection("viaje").document(viajeId)
+
+        viajeRef.get().addOnSuccessListener { viajeDoc ->
+            val PasajerosActuales = viajeDoc.getString("viaje_num_pasajeros_conf")?.toIntOrNull() ?: 0
+            val newPasajeros=PasajerosActuales - 1
+            viajeRef.update("viaje_num_pasajeros_conf", newPasajeros.toString())
+                .addOnSuccessListener {
+                    println("Campo viaje_lugares actualizado correctamente para el viaje con ID: $viajeId.")
+                }
+                .addOnFailureListener { e ->
+                    println("Error al intentar actualizar el campo viaje_lugares: $e")
+                }
+        }.addOnFailureListener { e ->
+            println("Error al obtener el documento de viaje: $e")
+        }
+    } catch (e: Exception) {
+        println("Error al intentar actualizar el campo viaje_lugares: $e")
+    }
+}
+

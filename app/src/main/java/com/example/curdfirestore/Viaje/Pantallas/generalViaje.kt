@@ -140,10 +140,10 @@ fun generalViajeCon(
         mutableStateOf("Tipo de trayecto")
     }
     var horaInicio by remember {
-        mutableStateOf("Hora de inicio del viaje")
+        mutableStateOf("Hora de inicio")
     }
     var horaFin by remember {
-        mutableStateOf("Hora de termino del viaje")
+        mutableStateOf("Hora de termino")
     }
 
     if (selectedTarifa != "") {
