@@ -173,7 +173,7 @@ fun verMapaViajePasajero(
 
 
                     cabeceraConMenuPas(
-                        titulo = "Ver horario",
+                        titulo = "Ver viaje",
                         navController,
                         correo,
                         boton = { estaBoton ->
@@ -334,9 +334,9 @@ fun verMapaViajePasajero(
 
 
                         val texBot = if (horarioData.horario_status == "Disponible") {
-                            "Cancelar horario"
+                            "Cancelar viaje"
                         } else {
-                            "Activar horario"
+                            "Activar viaje"
                         }
 
 

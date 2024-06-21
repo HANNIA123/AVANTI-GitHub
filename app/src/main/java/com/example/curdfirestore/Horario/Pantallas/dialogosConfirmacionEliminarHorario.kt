@@ -367,7 +367,7 @@ fun dialogoConfirmarEliminarHorarioSEA(
                             onClick = {
                               eliminar=true
                             }) {
-                            Text(text = "ACEPTAR",
+                            Text(text = "CONTINUAR",
                                 style = TextStyle(
                                     Color(137,67,242),
                                     fontWeight = FontWeight.Bold,

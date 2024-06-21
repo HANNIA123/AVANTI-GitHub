@@ -73,9 +73,9 @@ fun dialogoConfirmarCancelacionP(
 
 
     val textoBot = if (horarioStatus == "Disponible") {
-        "El horario será cancelado hasta que vuelvas activarlo ¿Deseas continuar?"
+        "El viaje será cancelado hasta que vuelvas activarlo ¿Deseas continuar?"
     } else {
-        "El horario estará disponible nuevamente ¿Deseas continuar?"
+        "El viaje estará disponible nuevamente ¿Deseas continuar?"
     }
 
     val newStatus = if (horarioStatus == "Disponible") {
@@ -215,7 +215,7 @@ fun dialogoConfirmarCancelacionP(
 
                             }) {
                             Text(
-                                text = "ACEPTAR",
+                                text = "CONTINUAR",
                                 style = TextStyle(
                                     Color(137, 67, 242),
                                     fontWeight = FontWeight.Bold,

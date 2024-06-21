@@ -35,7 +35,7 @@ fun mensajeNoHorarios() {
     Spacer(modifier = Modifier.height(15.dp))
 
     Text(
-        text = "No hay ningún horario registrados para hoy",
+        text = "No hay ningún viaje registrados para hoy",
         style = TextStyle(
             color = Color(86, 86, 86),
             fontSize = 18.sp,
